@@ -1,0 +1,19 @@
+<lint-module
+    format="1"
+    dir="/Users/nani/.pub-cache/hosted/pub.dev/location-7.0.1/android"
+    name=":location"
+    type="LIBRARY"
+    maven="com.lyokone.location:location:1.0-SNAPSHOT"
+    agpVersion="8.7.0"
+    buildFolder="/Users/nani/Desktop/glc-agent-app/build/location"
+    bootClassPath="/Users/nani/Library/Android/sdk/platforms/android-34/android.jar:/Users/nani/Library/Android/sdk/build-tools/34.0.0/core-lambda-stubs.jar"
+    javaSourceLevel="1.8"
+    compileTarget="android-34"
+    neverShrinking="true">
+  <lintOptions
+      abortOnError="true"
+      absolutePaths="true"
+      checkReleaseBuilds="true"
+      explainIssues="true"/>
+  <variant name="release"/>
+</lint-module>
