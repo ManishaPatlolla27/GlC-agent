@@ -10,6 +10,8 @@ class ApiConstants {
   static const String dashboard = "/lms-api/agent/getMyAnalytics";
   static const String bottom = "/lms-api/agent/getBottomBarMenu";
   static const String welcome = "/api/glc-utils/getWelcomeScreens";
+  static const String profilemenu = "/lms-api/agent/getProfileMenu";
+  static const String alerts = "/lms-api/agent/getMyFarmlandAlerts";
   static const String configApi = "/api/glc-utils/getAppResources";
   static const String getEndPoints = "/api/glc-utils/getApiEndpoints";
 }

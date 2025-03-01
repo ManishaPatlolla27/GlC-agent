@@ -6,6 +6,7 @@ import 'package:nex2u/viewModel/configuration_view_model.dart';
 import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:nex2u/viewModel/login_view_model.dart';
+import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
 import 'package:nex2u/viewModel/welcome_view_model.dart';
 import 'package:provider/provider.dart';
@@ -50,6 +51,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => WelcomeViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileMenuViewModel(),
         ),
       ],
       child: MaterialApp(

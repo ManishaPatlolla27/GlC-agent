@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/view/alertdetails.dart';
+import 'package:nex2u/view/mappointerpick.dart';
 import 'package:nex2u/view/myshortlist.dart';
 import 'package:nex2u/view/notification.dart';
 import 'package:nex2u/view/onboarding.dart';
@@ -34,6 +35,7 @@ class AppPages {
       AppRoutes.search: (context) => const SearchFarmlandScreen(),
       AppRoutes.alertdetails: (context) => const AlertDetailsScreen(),
       AppRoutes.notifications: (context) => const NotificationsScreen(),
+      AppRoutes.map: (context) => const HomeMap(),
     };
   }
 }

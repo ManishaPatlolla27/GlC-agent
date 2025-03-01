@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 application
-INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:2:5-33:19
+INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:5:5-40:19
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml
 MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:5-16:19
 MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:10:5-16:19
@@ -37,8 +37,8 @@ MERGED from [com.google.maps.android:android-maps-utils:3.6.0] /Users/nani/.grad
 	android:name
 		INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml
 manifest
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:1:1-45:12
-MERGED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:1:1-45:12
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:1:1-52:12
+MERGED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:1:1-52:12
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml:1:1-7:12
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml:1:1-7:12
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml:1:1-7:12
@@ -51,6 +51,7 @@ MERGED from [:flutter_plugin_android_lifecycle] /Users/nani/Desktop/GlC-agent/bu
 MERGED from [:flutter_secure_storage] /Users/nani/Desktop/GlC-agent/build/flutter_secure_storage/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-10:12
 MERGED from [:fluttertoast] /Users/nani/Desktop/GlC-agent/build/fluttertoast/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [:path_provider_android] /Users/nani/Desktop/GlC-agent/build/path_provider_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
+MERGED from [:permission_handler_android] /Users/nani/Desktop/GlC-agent/build/permission_handler_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.window:window:1.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/5093ab42d2307deb2d7ac0b7f5718c38/transformed/jetified-window-1.2.0/AndroidManifest.xml:17:1-31:12
 MERGED from [androidx.window:window-java:1.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/c1f85211ae6978d0218d51595a7f7e62/transformed/jetified-window-java-1.2.0/AndroidManifest.xml:17:1-21:12
 MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:17:1-44:12
@@ -91,26 +92,40 @@ MERGED from [com.getkeepsafe.relinker:relinker:1.4.5] /Users/nani/.gradle/caches
 		INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:1:11-69
+uses-permission#android.permission.INTERNET
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:2:5-67
+MERGED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:2:5-67
+MERGED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:2:5-67
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:24:5-67
+MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:24:5-67
+	android:name
+		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:2:22-64
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:3:5-79
+MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-79
+MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-79
+	android:name
+		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:3:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:4:5-81
+MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-81
+MERGED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-81
+	android:name
+		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:4:22-78
 queries
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:39:5-44:15
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:46:5-51:15
 MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:30:5-34:15
 MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:30:5-34:15
 intent#action:name:android.intent.action.PROCESS_TEXT+data:mimeType:text/plain
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:40:9-43:18
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:47:9-50:18
 action#android.intent.action.PROCESS_TEXT
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:41:13-72
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:48:13-72
 	android:name
-		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:41:21-70
+		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:48:21-70
 data
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:42:13-50
+ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:49:13-50
 	android:mimeType
-		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:42:19-48
-uses-permission#android.permission.INTERNET
-ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml:6:5-66
-MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:24:5-67
-MERGED from [com.google.android.gms:play-services-maps:18.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/223e4c2782dceb65140338abe6972c59/transformed/jetified-play-services-maps-18.2.0/AndroidManifest.xml:24:5-67
-	android:name
-		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml:6:22-64
+		ADDED from /Users/nani/Desktop/GlC-agent/android/app/src/main/AndroidManifest.xml:49:19-48
 uses-sdk
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml
@@ -133,6 +148,8 @@ MERGED from [:fluttertoast] /Users/nani/Desktop/GlC-agent/build/fluttertoast/int
 MERGED from [:fluttertoast] /Users/nani/Desktop/GlC-agent/build/fluttertoast/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:path_provider_android] /Users/nani/Desktop/GlC-agent/build/path_provider_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [:path_provider_android] /Users/nani/Desktop/GlC-agent/build/path_provider_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:permission_handler_android] /Users/nani/Desktop/GlC-agent/build/permission_handler_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
+MERGED from [:permission_handler_android] /Users/nani/Desktop/GlC-agent/build/permission_handler_android/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:5:5-44
 MERGED from [androidx.window:window:1.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/5093ab42d2307deb2d7ac0b7f5718c38/transformed/jetified-window-1.2.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.window:window:1.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/5093ab42d2307deb2d7ac0b7f5718c38/transformed/jetified-window-1.2.0/AndroidManifest.xml:20:5-44
 MERGED from [androidx.window:window-java:1.2.0] /Users/nani/.gradle/caches/8.10.2/transforms/c1f85211ae6978d0218d51595a7f7e62/transformed/jetified-window-java-1.2.0/AndroidManifest.xml:19:5-44
@@ -203,14 +220,6 @@ MERGED from [com.getkeepsafe.relinker:relinker:1.4.5] /Users/nani/.gradle/caches
 		INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml
 	android:minSdkVersion
 		INJECTED from /Users/nani/Desktop/GlC-agent/android/app/src/debug/AndroidManifest.xml
-uses-permission#android.permission.ACCESS_COARSE_LOCATION
-ADDED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:5-81
-	android:name
-		ADDED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:7:22-78
-uses-permission#android.permission.ACCESS_FINE_LOCATION
-ADDED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:5-79
-	android:name
-		ADDED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:8:22-76
 service#com.lyokone.location.FlutterLocationService
 ADDED from [:location] /Users/nani/Desktop/GlC-agent/build/location/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml:11:9-15:56
 	android:enabled

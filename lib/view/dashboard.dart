@@ -270,7 +270,7 @@ class _HomeScreenState extends State<HomeScreen> {
               context,
               MaterialPageRoute(
                   builder: (context) => const ApprovedFarmlandsScreen()));
-        } else if (title == "Buyer Leads") {
+        } else if (title == "Farmlands Leads") {
           Navigator.push(
               context,
               MaterialPageRoute(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
+import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -17,14 +19,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.initState();
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<ProfileViewModel>(context, listen: false).profile(context);
+      Provider.of<DashboardViewModel>(context, listen: false)
+          .dashboard(context);
+      Provider.of<ProfileMenuViewModel>(context, listen: false)
+          .profilemenu(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final profilemenuViewModel = Provider.of<ProfileMenuViewModel>(context);
     final profileViewModel = Provider.of<ProfileViewModel>(context);
+    final dashboardViewModel = Provider.of<DashboardViewModel>(context);
+    final profilemenuresponse = profilemenuViewModel.bottomresponse;
 
     final response = profileViewModel.profileresponse;
+    final dashboardresponse = dashboardViewModel.dashboardresponse;
+
     return Scaffold(
       backgroundColor: Colors.white, // Set background to white
       appBar: AppBar(
@@ -48,7 +59,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundImage: AssetImage('assets/profile.jpg'),
+                  backgroundImage: AssetImage('assets/logo.png'),
                 ),
                 SizedBox(width: 16),
                 Column(
@@ -56,21 +67,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     SizedBox(height: 20),
                     Text(
-                      response!.firstName.toString() +
-                          " " +
-                          response!.lastName.toString(),
+                      "${response?.firstName ?? ''} ${response?.lastName ?? ''}",
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(response.userId.toString(),
+                    Text(response?.userId.toString() ?? '',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
           ),
-
-          // Mobile Number & Email (Moved below profile image)
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
@@ -81,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.phone, color: Colors.grey, size: 16),
                     SizedBox(width: 8),
-                    Text(response.mobileNumber.toString(),
+                    Text(response?.mobileNumber.toString() ?? '',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -90,27 +97,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.email, color: Colors.grey, size: 16),
                     SizedBox(width: 8),
-                    Text(response.userEmail.toString(),
+                    Text(response?.userEmail.toString() ?? '',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
           ),
-
           SizedBox(height: 10),
           Divider(thickness: 1),
-
           Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const Column(
+                Column(
                   children: [
                     Text(
-                      "₹10000.00",
+                      dashboardresponse?.totalEarnings.toString() ?? '0',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -121,10 +125,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: 1,
                     height: 40,
                     color: Colors.grey), // Divider between items
-                const Column(
+                Column(
                   children: [
                     Text(
-                      "20",
+                      dashboardresponse?.totalCredits.toString() ?? '0',
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
@@ -134,19 +138,32 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ],
             ),
           ),
-
           Divider(thickness: 1),
-
-          _buildProfileOption(
-              Icons.account_balance_wallet, "Total Farm Alerts"),
-          _buildProfileOption(Icons.favorite_border, "My Shortlists"),
-          _buildProfileOption(Icons.notifications_none, "Notifications"),
-          _buildProfileOption(Icons.help_outline, "Help"),
-
-          Spacer(),
-
+          if (profilemenuresponse != null && profilemenuresponse.isNotEmpty)
+            Expanded(
+              child: ListView.builder(
+                itemCount: profilemenuresponse.length,
+                itemBuilder: (context, index) {
+                  final menu = profilemenuresponse[index];
+                  return ListTile(
+                    leading: Image.network(menu.menuIcon ?? "",
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset("assets/home.png"),
+                        width: 20,
+                        height: 20),
+                    title: Text(menu.menuTitle ?? "Unknown"),
+                    onTap: () {
+                      if (menu.menuTitle == "My Shortlists") {
+                        Navigator.pushNamed(context, AppRoutes.myshortlist);
+                      } else if (menu.menuTitle == "Notifications") {
+                        Navigator.pushNamed(context, AppRoutes.notifications);
+                      }
+                    },
+                  );
+                },
+              ),
+            ),
           Divider(thickness: 1),
-
           ListTile(
             leading: Icon(Icons.logout, color: Colors.red),
             title: Text("Log Out", style: TextStyle(color: Colors.red)),
@@ -158,20 +175,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildProfileOption(IconData icon, String title) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.black),
-      title: Text(title),
-      onTap: () {
-        if (title == "My Shortlists") {
-          Navigator.pushNamed(context, AppRoutes.myshortlist);
-        } else if (title == "Notifications") {
-          Navigator.pushNamed(context, AppRoutes.notifications);
-        }
-      },
     );
   }
 }
