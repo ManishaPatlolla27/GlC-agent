@@ -6,6 +6,10 @@ class ApiConstants {
   static const String forgotpassword =
       "/api/glc-auth/generateAndSendUserOTP?loginId=";
   static const String validateotp = "/api/glc-auth/updateUserPasswordWithOTP";
+  static const String profile = "/lms-api/account/getUserDetails";
+  static const String dashboard = "/lms-api/agent/getMyAnalytics";
+  static const String bottom = "/lms-api/agent/getBottomBarMenu";
+  static const String welcome = "/api/glc-utils/getWelcomeScreens";
   static const String configApi = "/api/glc-utils/getAppResources";
   static const String getEndPoints = "/api/glc-utils/getApiEndpoints";
 }

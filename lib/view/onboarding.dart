@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/viewModel/welcome_view_model.dart';
+import 'package:provider/provider.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -11,24 +14,17 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentIndex = 0;
+  List<WelcomeScreens> carouselImages = [];
 
-  final List<String> carouselImages = [
-    'assets/slider1.png',
-    'assets/slider2.png',
-    'assets/slider3.png',
-  ];
-
-  final List<String> titles = [
-    'Smart\nGrowth',
-    'Lead Learn\nGrow Achieve',
-    'Stay\nMotivated',
-  ];
-
-  final List<String> descriptions = [
-    'Set a goal based on how active you are,\nor how active you’d like to be, each day.',
-    'Keep learning and pushing forward.\nAchieve your goals with consistency.',
-    'Stay inspired with personalized tips\nand reminders to keep going.',
-  ];
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<WelcomeViewModel>(context, listen: false);
+      await provider.welcome(context);
+      carouselImages = provider.dashboardresponse?.welcomeScreens ?? [];
+    });
+  }
 
   void _onNextPressed() {
     if (_currentIndex < carouselImages.length - 1) {
@@ -42,6 +38,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final welcomeViewModel = Provider.of<WelcomeViewModel>(context);
+
+    // if (response == null || response.welcomeScreens == null) {
+    //   return const Center(child: CircularProgressIndicator());
+    // }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
@@ -65,9 +67,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 fit: StackFit.expand,
                 children: [
                   // Background Image
-                  Image.asset(
-                    carouselImages[index],
+                  Image.network(
+                    carouselImages[index].imageUrl.toString(),
                     fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Image.asset("assets/logo.png"),
                   ),
                   // Overlay Gradient
                   Container(
@@ -76,7 +80,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         begin: Alignment.bottomCenter,
                         end: Alignment.center,
                         colors: [
-                          Colors.black.withValues(alpha: 0.7),
+                          Colors.black.withOpacity(0.7), // ✅ Fixed
                           Colors.transparent,
                         ],
                       ),
@@ -91,7 +95,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          titles[index],
+                          carouselImages[index].title.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 38,
@@ -100,9 +104,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          descriptions[index],
+                          carouselImages[index].description.toString(),
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.white.withOpacity(0.9), // ✅ Fixed
                             fontSize: 16,
                           ),
                         ),
@@ -129,7 +133,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentIndex == index
                         ? Colors.white
-                        : Colors.white.withValues(alpha: 0.4),
+                        : Colors.white.withOpacity(0.4), // ✅ Fixed
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );

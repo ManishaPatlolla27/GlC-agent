@@ -58,7 +58,7 @@ class _SplashViewState extends State<SplashView> {
               },
               errorBuilder: (context, error, stackTrace) {
                 return Image.asset(
-                  "assets/splashbackground.png", // Fallback image
+                  "assets/logo.png", // Fallback image
                   fit: BoxFit.fill,
                 );
               },

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/dashboard/DashBoardResponse.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
-import 'package:nex2u/view/allfarmlands.dart';
 import 'package:nex2u/view/pendingfarmlands.dart';
+import 'package:provider/provider.dart';
 
+import '../viewModel/dashboard_viewmodel.dart';
+import 'allfarmlands.dart';
 import 'approvedfarmland.dart';
 import 'farmlandleads.dart';
 
@@ -16,27 +19,37 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool isAmountSelected = true; // Track selected tab
   bool isAmountVisible = false; // Track if amount is visible
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      Provider.of<DashboardViewModel>(context, listen: false)
+          .dashboard(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dashboardViewModel = Provider.of<DashboardViewModel>(context);
+
+    final response = dashboardViewModel.dashboardresponse;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
-          padding: const EdgeInsets.only(
-              left: 16, top: 0, bottom: 0, right: 0), // Increased left padding
+          padding: const EdgeInsets.only(left: 16),
           child: Image.asset(
-            'assets/menu.png', // Replace with your actual asset path
-            width: 24, // Adjust size as needed
+            'assets/menu.png', // Ensure this asset exists in pubspec.yaml
+            width: 24,
             height: 24,
           ),
         ),
         actions: [
           ElevatedButton.icon(
-            onPressed: () {
-              Navigator.pushNamed(context, AppRoutes.alert);
-            },
+            onPressed: () => Navigator.pushNamed(context, AppRoutes.alert),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEB8801),
               shape: RoundedRectangleBorder(
@@ -48,12 +61,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(width: 10),
           GestureDetector(
-            onTap: () {
-              Navigator.pushNamed(context, AppRoutes.notifications);
-            },
+            onTap: () => Navigator.pushNamed(context, AppRoutes.notifications),
             child: Image.asset(
-              'assets/notification.png', // Replace with your actual asset path
-              width: 24, // Adjust size as needed
+              'assets/notification.png',
+              width: 24,
               height: 24,
             ),
           ),
@@ -61,277 +72,47 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Welcome Back,",
-              style: TextStyle(fontSize: 18, color: Colors.grey),
-            ),
-            const Text(
-              "Ram",
-              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
-            ),
-
+            const Text("Welcome Back,",
+                style: TextStyle(fontSize: 18, color: Colors.grey)),
+            Text(response!.firstName.toString(),
+                style:
+                    const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
 
             // Amount / Credits Toggle
-            Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isAmountSelected = true;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
-                      decoration: BoxDecoration(
-                        color: isAmountSelected
-                            ? const Color(0xFF8280FF)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "Amount",
-                        style: TextStyle(
-                          color:
-                              isAmountSelected ? Colors.white : Colors.black54,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isAmountSelected = false;
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 200),
-                      padding:
-                          const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
-                      decoration: BoxDecoration(
-                        color: !isAmountSelected
-                            ? const Color(0xFF8280FF)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Text(
-                        "Credits",
-                        style: TextStyle(
-                          color:
-                              !isAmountSelected ? Colors.white : Colors.black54,
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            toggleAmountCredits(),
 
             const SizedBox(height: 16),
 
-            // Show Earnings Card only if Amount tab is selected
-            if (isAmountSelected)
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Stack(
-                  children: [
-                    // Rupee Watermark (Bottom Right)
-                    const Positioned(
-                      top: 25,
-                      bottom: 0,
-                      right: 20,
-                      child: Opacity(
-                        opacity: 0.06,
-                        child: Icon(
-                          Icons.currency_rupee,
-                          size: 90,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
+            // Show Earnings or Credits Card
+            isAmountSelected ? earningsCard(response) : creditsCard(response),
 
-                    // Main Content
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Top Row: "Total Earnings" & Arrow Icon
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Total Earnings",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white),
-                              ),
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(Icons.arrow_outward,
-                                  color: Colors.white, size: 18),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        // Amount & Eye Icon
-                        Row(
-                          children: [
-                            Text(
-                              isAmountVisible ? "₹ 20,000.00" : "₹ XXXXXXX.XX",
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 10),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isAmountVisible = !isAmountVisible;
-                                });
-                              },
-                              child: Icon(
-                                isAmountVisible
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              )
-            else
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
-                  ),
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Stack(
-                  children: [
-                    // Rupee Watermark (Bottom Right)
-                    Positioned(
-                      top: 30,
-                      bottom: 0,
-                      right: 20,
-                      child: Image.asset(
-                        'assets/coins.png',
-                        height: 48,
-                        color: Colors.white,
-                      ),
-                    ),
-
-                    // Main Content
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Top Row: "Total Earnings" & Arrow Icon
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              "Available Credits",
-                              style:
-                                  TextStyle(color: Colors.white, fontSize: 16),
-                            ),
-                            Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(color: Colors.white),
-                              ),
-                              padding: const EdgeInsets.all(6),
-                              child: const Icon(Icons.arrow_outward,
-                                  color: Colors.white, size: 18),
-                            ),
-                          ],
-                        ),
-
-                        const SizedBox(height: 8),
-
-                        // Amount & Eye Icon
-                        const Row(
-                          children: [
-                            Text(
-                              "Comming Soon",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 10),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
             const SizedBox(height: 16),
 
             // Grid Items
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                mainAxisSpacing: 15,
-                crossAxisSpacing: 15,
-                childAspectRatio: 1,
-                children: [
-                  gridItem("All Farmlands", "28", 'assets/allfarmlandicon.png'),
-                  gridItem(
-                    "Pending Farmlands",
-                    "24",
-                    'assets/pendingfarmlands.png',
-                  ),
-                  gridItem(
-                    "Approved Farmlands",
-                    "13",
-                    'assets/approvedfarmland.png',
-                  ),
-                  gridItem(
-                    "Buyer Leads",
-                    "26",
-                    'assets/farmlandleads.png',
-                  ),
-                ],
-              ),
+              child: response?.farmlandAnalytics != null &&
+                      response!.farmlandAnalytics!.isNotEmpty
+                  ? GridView.builder(
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        mainAxisSpacing: 15,
+                        crossAxisSpacing: 15,
+                        childAspectRatio: 1,
+                      ),
+                      itemCount: response!.farmlandAnalytics!.length,
+                      itemBuilder: (context, index) {
+                        final item = response!.farmlandAnalytics![index];
+                        return gridItem(item.title.toString(),
+                            item.count.toString(), item.icon.toString());
+                      },
+                    )
+                  : const Center(child: Text("No data available")),
             ),
           ],
         ),
@@ -339,100 +120,194 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Grid Item
-  Widget gridItem(String title, String count, String iconPath) {
+  // Toggle Switch for Amount / Credits
+  Widget toggleAmountCredits() {
+    return Container(
+      padding: const EdgeInsets.all(4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          toggleButton("Amount", isAmountSelected, true),
+          toggleButton("Credits", !isAmountSelected, false),
+        ],
+      ),
+    );
+  }
+
+  // Toggle Button
+  Widget toggleButton(String title, bool isSelected, bool selectAmount) {
     return GestureDetector(
-        onTap: () {
-          if (title == "All Farmlands") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const FarmlandsScreen()),
-            );
-          } else if (title == "Pending Farmlands") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const PendingFarmlandsScreen()),
-            );
-          } else if (title == "Approved Farmlands") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const ApprovedFarmlandsScreen()),
-            );
-          } else if (title == "Buyer Leads") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const FarmlandLeadScreen()),
-            );
-          }
-        },
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(25),
-            boxShadow: const [
-              BoxShadow(
-                color: Colors.black12,
-                blurRadius: 15,
-                spreadRadius: 2,
-                offset: Offset(0, 4), // Slight elevation
-              ),
-            ],
+      onTap: () => setState(() => isAmountSelected = selectAmount),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
+        decoration: BoxDecoration(
+          color: isSelected ? const Color(0xFF8280FF) : Colors.transparent,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          title,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.black54,
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
           ),
-          padding: const EdgeInsets.all(12),
-          child: Stack(
-            children: [
-              // Top-left Icon
-              Positioned(
-                top: 0,
-                left: 0,
-                child: Image.asset(
-                  iconPath,
-                  width: 52,
-                  height: 52,
-                ),
+        ),
+      ),
+    );
+  }
+
+  // Earnings Card
+  Widget earningsCard(DashboardResponse? response) {
+    return infoCard(
+      "Total Earnings",
+      isAmountVisible
+          ? "₹ " + response!.totalEarnings.toString() + ".00"
+          : "₹ XXXXXXX.XX",
+      Icons.currency_rupee,
+      () => setState(() => isAmountVisible = !isAmountVisible),
+      isAmountVisible ? Icons.visibility : Icons.visibility_off,
+    );
+  }
+
+  // Credits Card
+  Widget creditsCard(DashboardResponse? response) {
+    return infoCard(
+      "Available Credits",
+      "Coming Soon",
+      null,
+      null,
+      null,
+      assetImage: 'assets/coins.png',
+    );
+  }
+
+  // Generic Info Card
+  Widget infoCard(String title, String amount, IconData? watermarkIcon,
+      VoidCallback? toggleVisibility, IconData? visibilityIcon,
+      {String? assetImage}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+            colors: [Color(0xFF8280FF), Color(0xFF5B5A94)]),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Stack(
+        children: [
+          if (watermarkIcon != null)
+            Positioned(
+              top: 25,
+              right: 20,
+              child: Opacity(
+                opacity: 0.06,
+                child: Icon(watermarkIcon, size: 70, color: Colors.white),
               ),
-
-              // Main Content: Title + Number & Arrow Row
-              Column(
-                crossAxisAlignment:
-                    CrossAxisAlignment.start, // Align text to left
+            ),
+          if (assetImage != null)
+            Positioned(
+              top: 30,
+              right: 20,
+              child: Image.asset(assetImage, height: 48, color: Colors.white),
+            ),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Text(title,
+                    style: const TextStyle(color: Colors.white, fontSize: 16)),
+                Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white)),
+                  padding: const EdgeInsets.all(6),
+                  child: const Icon(Icons.arrow_outward,
+                      color: Colors.white, size: 18),
+                ),
+              ]),
+              const SizedBox(height: 8),
+              Row(
                 children: [
-                  const SizedBox(height: 70), // Space for top-left icon
-                  Text(
-                    title,
-                    style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.normal,
-                        color: Color.fromARGB(104, 3, 3, 3)),
-                  ),
-                  const SizedBox(height: 10),
-
-                  // Row with Number & Right Arrow
-                  Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.spaceBetween, // Space out elements
-                    children: [
-                      Text(
-                        count,
-                        style: const TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 20,
-                        color: Colors.black54,
-                      ),
-                    ],
-                  ),
+                  Text(amount,
+                      style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold)),
+                  const SizedBox(width: 10),
+                  if (toggleVisibility != null)
+                    GestureDetector(
+                        onTap: toggleVisibility,
+                        child: Icon(visibilityIcon, color: Colors.white)),
                 ],
               ),
             ],
           ),
-        ));
+        ],
+      ),
+    );
   }
 
-// Tab Button Widget
+  // Grid Item
+  Widget gridItem(String title, String count, String iconPath) {
+    return GestureDetector(
+      onTap: () {
+        if (title == "All Farmlands") {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const FarmlandsScreen()));
+        } else if (title == "Pending Farmlands") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const PendingFarmlandsScreen()));
+        } else if (title == "Approved Farmlands") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const ApprovedFarmlandsScreen()));
+        } else if (title == "Buyer Leads") {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const FarmlandLeadScreen()));
+        }
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: const [
+            BoxShadow(
+                color: Colors.black12,
+                blurRadius: 15,
+                spreadRadius: 2,
+                offset: Offset(0, 4))
+          ],
+        ),
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image.network(iconPath ?? "",
+                errorBuilder: (context, error, stackTrace) =>
+                    Image.asset("assets/logo.png"),
+                width: 52,
+                height: 52),
+            const SizedBox(height: 10),
+            Text(title,
+                style: const TextStyle(fontSize: 12, color: Colors.black54)),
+            const SizedBox(height: 10),
+            Text(count,
+                style:
+                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
+    );
+  }
 }

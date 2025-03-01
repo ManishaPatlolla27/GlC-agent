@@ -196,7 +196,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
         ],
       ),
 
-      // Bottom Navigation Bar
+      // bottom Navigation Bar
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         selectedItemColor: Colors.deepPurple,

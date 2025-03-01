@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/viewModel/profile_view_model.dart';
+import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -10,15 +13,26 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      Provider.of<ProfileViewModel>(context, listen: false).profile(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final profileViewModel = Provider.of<ProfileViewModel>(context);
+
+    final response = profileViewModel.profileresponse;
     return Scaffold(
       backgroundColor: Colors.white, // Set background to white
       appBar: AppBar(
-        title: const Text("My Profile", style: TextStyle(color: Colors.black)),
+        title: Text("My Profile", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -26,7 +40,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       ),
       body: Column(
         children: [
-          const Padding(
+          Padding(
             padding: EdgeInsets.all(16.0),
             child: Row(
               crossAxisAlignment:
@@ -42,11 +56,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     SizedBox(height: 20),
                     Text(
-                      "Ram Kishore",
+                      response!.firstName.toString() +
+                          " " +
+                          response!.lastName.toString(),
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text("ID: 579SD32", style: TextStyle(color: Colors.grey)),
+                    Text(response.userId.toString(),
+                        style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
@@ -54,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
 
           // Mobile Number & Email (Moved below profile image)
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -64,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.phone, color: Colors.grey, size: 16),
                     SizedBox(width: 8),
-                    Text("+91-9123456789",
+                    Text(response.mobileNumber.toString(),
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -73,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.email, color: Colors.grey, size: 16),
                     SizedBox(width: 8),
-                    Text("rkishore@gmail.com",
+                    Text(response.userEmail.toString(),
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -81,8 +98,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          const SizedBox(height: 10),
-          const Divider(thickness: 1),
+          SizedBox(height: 10),
+          Divider(thickness: 1),
 
           Padding(
             padding:
@@ -118,7 +135,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          const Divider(thickness: 1),
+          Divider(thickness: 1),
 
           _buildProfileOption(
               Icons.account_balance_wallet, "Total Farm Alerts"),
@@ -126,14 +143,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildProfileOption(Icons.notifications_none, "Notifications"),
           _buildProfileOption(Icons.help_outline, "Help"),
 
-          const Spacer(),
+          Spacer(),
 
-          const Divider(thickness: 1),
+          Divider(thickness: 1),
 
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text("Log Out", style: TextStyle(color: Colors.red)),
-            onTap: () {},
+            leading: Icon(Icons.logout, color: Colors.red),
+            title: Text("Log Out", style: TextStyle(color: Colors.red)),
+            onTap: () {
+              Navigator.pushReplacementNamed(context, AppRoutes.login);
+              const storage = FlutterSecureStorage();
+              storage.write(key: 'userloggedin', value: 'false');
+            },
           ),
         ],
       ),

@@ -52,6 +52,8 @@ class LoginViewModel with ChangeNotifier {
         _showSuccessDialog('Loggedin successfully', context);
         const storage = FlutterSecureStorage();
         await storage.write(key: 'userloggedin', value: 'true');
+        await storage.write(key: 'auth_token', value: response.accessToken);
+
         if (!context.mounted) return;
         Navigator.pushNamed(context, AppRoutes.home);
         // You can also navigate to the next screen

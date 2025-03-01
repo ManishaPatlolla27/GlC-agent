@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nex2u/page_routing/app_pages.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/viewModel/bottom_view_model.dart';
 import 'package:nex2u/viewModel/configuration_view_model.dart';
+import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:nex2u/viewModel/login_view_model.dart';
+import 'package:nex2u/viewModel/profile_view_model.dart';
+import 'package:nex2u/viewModel/welcome_view_model.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -34,6 +38,18 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => ForgotPasswordViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ProfileViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => DashboardViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => BottomViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => WelcomeViewModel(),
         ),
       ],
       child: MaterialApp(
