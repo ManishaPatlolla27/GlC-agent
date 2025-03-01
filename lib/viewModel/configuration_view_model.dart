@@ -1,11 +1,13 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/endpoints/api_end_points_response.dart';
 import 'package:nex2u/models/resources/config_reponse.dart';
 import 'package:nex2u/repo/config_repository.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ConfigurationViewModel with ChangeNotifier {
   ConfigResponse? appConfig;
+  ApiEndPointsResponse? enpoints;
   Future<void> loadConfig() async {
     try {
       final repository = ConfigRepository();
@@ -37,7 +39,7 @@ class ConfigurationViewModel with ChangeNotifier {
         },
       );
       if (response != null) {
-        appConfig = response;
+        enpoints = response;
         notifyListeners();
       }
     } catch (e) {
