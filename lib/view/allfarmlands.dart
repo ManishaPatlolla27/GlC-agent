@@ -7,10 +7,10 @@ class FarmlandsScreen extends StatefulWidget {
   const FarmlandsScreen({super.key});
 
   @override
-  _FarmlandsScreenState createState() => _FarmlandsScreenState();
+  FarmlandsScreenState createState() => FarmlandsScreenState();
 }
 
-class _FarmlandsScreenState extends State<FarmlandsScreen> {
+class FarmlandsScreenState extends State<FarmlandsScreen> {
   bool isAmountSelected = true; // Track selected tab
 
   final List<Map<String, String>> farmlandList = [
@@ -57,8 +57,9 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("All Farmlands", style: TextStyle(color: Colors.black)),
-        leading: Icon(Icons.arrow_back, color: Colors.black),
+        title:
+            const Text("All Farmlands", style: TextStyle(color: Colors.black)),
+        leading: const Icon(Icons.arrow_back, color: Colors.black),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
@@ -71,16 +72,18 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             // Toggle Tabs
             Container(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+                boxShadow: const [
+                  BoxShadow(color: Colors.black12, blurRadius: 5)
+                ],
               ),
               child: Row(
                 children: [
@@ -92,11 +95,11 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                         });
                       },
                       child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
                           color: isAmountSelected
-                              ? Color(0xFF8280FF)
+                              ? const Color(0xFF8280FF)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -114,7 +117,7 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
@@ -123,11 +126,11 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                         });
                       },
                       child: AnimatedContainer(
-                        duration: Duration(milliseconds: 200),
-                        padding: EdgeInsets.symmetric(vertical: 12),
+                        duration: const Duration(milliseconds: 200),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
                         decoration: BoxDecoration(
                           color: !isAmountSelected
-                              ? Color(0xFF8280FF)
+                              ? const Color(0xFF8280FF)
                               : Colors.transparent,
                           borderRadius: BorderRadius.circular(20),
                         ),
@@ -153,13 +156,13 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
             // Dynamic "Showing Total List" Section
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
                 ),
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
+                image: const DecorationImage(
                   image: AssetImage('assets/curvelyframe.png'),
                   fit: BoxFit.cover,
                 ),
@@ -171,12 +174,12 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                     isAmountSelected
                         ? "Total Alerts"
                         : "Showing Total Farmlands",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
+                    style: const TextStyle(color: Colors.white, fontSize: 16),
                   ),
-                  SizedBox(height: 8),
+                  const SizedBox(height: 8),
                   Text(
                     currentList.length.toString(), // Dynamic count
-                    style: TextStyle(
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -195,14 +198,15 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                 itemBuilder: (context, index) {
                   final item = currentList[index];
                   return Card(
-                    margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 8),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
                     elevation: 4,
                     color: Colors.white,
                     child: ListTile(
-                      contentPadding: EdgeInsets.all(8),
+                      contentPadding: const EdgeInsets.all(8),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
@@ -216,7 +220,7 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                       ),
                       title: Text(
                         "ID: ${item['id']}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -226,7 +230,8 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                         children: [
                           Text(
                             item['location']!,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12),
                           ),
                           Text(
                             "Status: ${item['status']}",
@@ -243,15 +248,17 @@ class _FarmlandsScreenState extends State<FarmlandsScreen> {
                         size: 18,
                       ),
                       onTap: () {
-                        if (isAmountSelected)
+                        if (isAmountSelected) {
                           Navigator.pushNamed(context, AppRoutes.alertdetails);
-                        else
+                        } else {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => FarmlandStatusScreen(),
+                              builder: (context) =>
+                                  const FarmlandStatusScreen(),
                             ),
                           );
+                        }
                       },
                     ),
                   );

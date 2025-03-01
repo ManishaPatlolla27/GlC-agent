@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class BuyerAlertScreen extends StatefulWidget {
   const BuyerAlertScreen({super.key});
   @override
-  _CreateAlertScreenState createState() => _CreateAlertScreenState();
+  CreateAlertScreenState createState() => CreateAlertScreenState();
 }
 
-class _CreateAlertScreenState extends State<BuyerAlertScreen> {
+class CreateAlertScreenState extends State<BuyerAlertScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? selectedReligion;
@@ -79,7 +79,7 @@ class _CreateAlertScreenState extends State<BuyerAlertScreen> {
                       }
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF8280FF),
+                      backgroundColor: const Color(0xFF8280FF),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),

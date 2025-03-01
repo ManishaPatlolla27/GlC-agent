@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:nex2u/data/base_api_client.dart';
 
 import '../data/api_urls.dart';
@@ -13,7 +14,7 @@ class ForgotRepository {
         headers: {'accept': 'application/json'},
       );
     } catch (e) {
-      print("Error sending OTP: $e");
+      debugPrint("Error sending OTP: $e");
       return false; // Return false if request fails
     }
   }

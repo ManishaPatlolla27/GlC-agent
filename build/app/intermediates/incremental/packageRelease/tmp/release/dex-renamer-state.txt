@@ -1,4 +1,0 @@
-#Fri Feb 28 19:08:55 IST 2025
-base.0=/Users/nani/Desktop/glc-agent-app/build/app/intermediates/dex/release/minifyReleaseWithR8/classes.dex
-path.0=classes.dex
-renamed.0=classes.dex

@@ -6,11 +6,11 @@ class PendingFarmlandsScreen extends StatefulWidget {
   const PendingFarmlandsScreen({super.key});
 
   @override
-  _FarmlandsScreenState createState() => _FarmlandsScreenState();
+  FarmlandsScreenState createState() => FarmlandsScreenState();
 }
 
-class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
-  final _formKey = GlobalKey<FormState>();
+class FarmlandsScreenState extends State<PendingFarmlandsScreen> {
+  final formKey = GlobalKey<FormState>();
   final List<Map<String, String>> farmlandList = [
     {'id': 'GLCSOS 02', 'location': 'East Godavari, AP', 'status': 'Pending'},
     {'id': 'GLCSOS 03', 'location': 'East Godavari, AP', 'status': 'Pending'},
@@ -39,9 +39,10 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text("Pending Farmlands", style: TextStyle(color: Colors.black)),
+        title: const Text("Pending Farmlands",
+            style: TextStyle(color: Colors.black)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           }, // Add navigation function
@@ -58,23 +59,23 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
                 ),
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
+                image: const DecorationImage(
                   image: AssetImage('assets/curvelyframe.png'),
                   fit: BoxFit.cover, // Ensures the image covers the container
                 ),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -99,7 +100,7 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
                 itemBuilder: (context, index) {
                   final farmland = farmlandList[index];
                   return Card(
-                    margin: EdgeInsets.symmetric(
+                    margin: const EdgeInsets.symmetric(
                         horizontal: 0, vertical: 8), // Adjusted spacing
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -107,7 +108,7 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
                     elevation: 4,
                     color: Colors.white,
                     child: ListTile(
-                      contentPadding: EdgeInsets.all(8),
+                      contentPadding: const EdgeInsets.all(8),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
@@ -119,7 +120,7 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
                       ),
                       title: Text(
                         "ID: ${farmland['id']}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -129,7 +130,8 @@ class _FarmlandsScreenState extends State<PendingFarmlandsScreen> {
                         children: [
                           Text(
                             farmland['location']!,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12),
                           ),
                           Text(
                             "Status: ${farmland['status']}",

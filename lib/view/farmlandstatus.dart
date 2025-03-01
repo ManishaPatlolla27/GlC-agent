@@ -16,8 +16,10 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {Navigator.pop(context);}, // Add navigation function
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
+          }, // Add navigation function
         ),
         title: RichText(
           text: const TextSpan(
@@ -39,7 +41,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
         ),
         actions: [
           IconButton(
-            icon: Icon(Icons.info_outline, color: Colors.black),
+            icon: const Icon(Icons.info_outline, color: Colors.black),
             onPressed: () {},
           )
         ],
@@ -50,7 +52,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
           Container(
             width: double.infinity,
             height: 180,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               image: DecorationImage(
                 image: AssetImage(
                     'assets/farmland.png'), // Change this to actual image
@@ -71,7 +73,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
                             blurRadius: 10,
@@ -83,7 +85,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           // Current Status
-                          Text.rich(
+                          const Text.rich(
                             TextSpan(
                               children: [
                                 TextSpan(
@@ -148,7 +150,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                           _buildTimelineStep(
                             title: "Super Admin",
                             status: "Pending",
-                             isLastStep: true,
+                            isLastStep: true,
                           ),
                         ],
                       ),
@@ -164,7 +166,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                             color: Colors.black12,
                             blurRadius: 10,
@@ -172,7 +174,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
@@ -200,7 +202,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
         selectedItemColor: Colors.deepPurple,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
-        items: [
+        items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
             label: "Home",
@@ -219,74 +221,76 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
   }
 
   Widget _buildTimelineStep({
-  required String title,
-  required String status,
-  bool isCompleted = false,
-  bool isLastStep = false, // New parameter to check if this is the last step
-}) {
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Column(
-        children: [
-          Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  color: isCompleted 
-                      ? Color(0xFF8280FF).withOpacity(0.2) 
-                      : Colors.grey.withOpacity(0.2), // Glow effect
-                  shape: BoxShape.circle,
+    required String title,
+    required String status,
+    bool isCompleted = false,
+    bool isLastStep = false, // New parameter to check if this is the last step
+  }) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Column(
+          children: [
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    color: isCompleted
+                        ? const Color(0xFF8280FF).withValues(alpha: 0.2)
+                        : Colors.grey.withValues(alpha: 0.2), // Glow effect
+                    shape: BoxShape.circle,
+                  ),
                 ),
-              ),
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: isCompleted ? Color(0xFF8280FF) : Colors.grey,
-                  shape: BoxShape.circle,
+                Container(
+                  width: 12,
+                  height: 12,
+                  decoration: BoxDecoration(
+                    color: isCompleted ? const Color(0xFF8280FF) : Colors.grey,
+                    shape: BoxShape.circle,
+                  ),
                 ),
+              ],
+            ),
+            if (!isLastStep) ...[
+              // Hide the vertical line for the last step
+              const SizedBox(height: 5),
+              Container(
+                width: 2,
+                height: 40,
+                color: isCompleted
+                    ? const Color(0xFF8280FF)
+                    : Colors.grey.withValues(alpha: 0.5),
               ),
+              const SizedBox(height: 5),
             ],
-          ),
-          if (!isLastStep) ...[ // Hide the vertical line for the last step
-            const SizedBox(height: 5),
-            Container(
-              width: 2,
-              height: 40,
-              color: isCompleted ? Color(0xFF8280FF) : Colors.grey.withOpacity(0.5),
-            ),
-            const SizedBox(height: 5),
           ],
-        ],
-      ),
-      const SizedBox(width: 16), // Increased gap between pointer and text
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 14,
-              color: isCompleted ? Color(0xFF8280FF) : Colors.black,
-              fontWeight: FontWeight.bold,
+        ),
+        const SizedBox(width: 16), // Increased gap between pointer and text
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 14,
+                color: isCompleted ? const Color(0xFF8280FF) : Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          Text(
-            status,
-            style: TextStyle(
-              fontSize: 12,
-              color: isCompleted ? Colors.green : Colors.grey,
-              fontWeight: FontWeight.bold,
+            Text(
+              status,
+              style: TextStyle(
+                fontSize: 12,
+                color: isCompleted ? Colors.green : Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-        ],
-      ),
-    ],
-  );
-}
-
+          ],
+        ),
+      ],
+    );
+  }
 }

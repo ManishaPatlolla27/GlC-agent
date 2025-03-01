@@ -8,7 +8,7 @@ import 'package:nex2u/view/passwordupdate.dart';
 import 'package:nex2u/view/validateotp.dart';
 
 import '../view/buyeralert.dart';
-import '../view/createAlert.dart';
+import '../view/create_alert.dart';
 import '../view/editprofile.dart';
 import '../view/forgotpassword.dart';
 import '../view/home.dart';
@@ -29,7 +29,7 @@ class AppPages {
       AppRoutes.home: (context) => const HomePage(),
       AppRoutes.alert: (context) => const CreateAlertScreen(),
       AppRoutes.editprofile: (context) => const EditProfileScreen(),
-      AppRoutes.myshortlist: (context) => MyShortlistsScreen(),
+      AppRoutes.myshortlist: (context) => const MyShortlistsScreen(),
       AppRoutes.buyer: (context) => const BuyerAlertScreen(),
       AppRoutes.search: (context) => const SearchFarmlandScreen(),
       AppRoutes.alertdetails: (context) => const AlertDetailsScreen(),

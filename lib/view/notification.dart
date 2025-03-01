@@ -4,10 +4,10 @@ class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
 
   @override
-  _NotificationsScreenState createState() => _NotificationsScreenState();
+  NotificationsScreenState createState() => NotificationsScreenState();
 }
 
-class _NotificationsScreenState extends State<NotificationsScreen> {
+class NotificationsScreenState extends State<NotificationsScreen> {
   List<Map<String, dynamic>> notifications = [
     {
       'id': 'ALRTSOS 01',
@@ -69,32 +69,32 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFF8280FF),
+        backgroundColor: const Color(0xFF8280FF),
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.white),
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
             Navigator.pop(context);
           },
         ),
         title: Text(
           "Notifications (${notifications.length})",
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
       ),
       body: ListView.builder(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         itemCount: notifications.length,
         itemBuilder: (context, index) {
           final notification = notifications[index];
 
           return Container(
-            padding: EdgeInsets.symmetric(vertical: 16, horizontal: 12),
-            margin: EdgeInsets.only(bottom: 12),
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+            margin: const EdgeInsets.only(bottom: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(color: Colors.black12, blurRadius: 4, spreadRadius: 1)
               ],
             ),
@@ -120,7 +120,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Container(
                           width: 8,
                           height: 8,
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             color: Colors.black,
                             shape: BoxShape.circle,
                           ),
@@ -128,7 +128,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                   ],
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
 
                 // Notification Content
                 Expanded(
@@ -137,15 +137,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     children: [
                       RichText(
                         text: TextSpan(
-                          style: TextStyle(
+                          style: const TextStyle(
                               color: Colors.black, fontSize: 14, height: 1.5),
                           children: [
                             TextSpan(
                               text:
                                   "${notification['type']} ID: ${notification['id']} ",
-                              style: TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(fontWeight: FontWeight.bold),
                             ),
-                            TextSpan(text: "has been "),
+                            const TextSpan(text: "has been "),
                             TextSpan(
                               text: notification['status'],
                               style: TextStyle(
@@ -156,12 +156,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                           ],
                         ),
                       ),
-                      SizedBox(height: 4),
+                      const SizedBox(height: 4),
                       Text(
                         notification['message'],
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
-                      SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
                       // Actions (Mark as Read & Clear)
                       Row(
@@ -172,7 +172,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                 notifications[index]['isUnread'] = false;
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               "Mark as read",
                               style: TextStyle(
                                   fontSize: 12,
@@ -180,14 +180,14 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                                   color: Colors.black),
                             ),
                           ),
-                          SizedBox(width: 16),
+                          const SizedBox(width: 16),
                           GestureDetector(
                             onTap: () {
                               setState(() {
                                 notifications.removeAt(index);
                               });
                             },
-                            child: Text(
+                            child: const Text(
                               "Clear",
                               style: TextStyle(
                                   fontSize: 12,

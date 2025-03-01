@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: Padding(
-          padding: EdgeInsets.only(
+          padding: const EdgeInsets.only(
               left: 16, top: 0, bottom: 0, right: 0), // Increased left padding
           child: Image.asset(
             'assets/menu.png', // Replace with your actual asset path
@@ -38,15 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
               Navigator.pushNamed(context, AppRoutes.alert);
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Color(0xFFEB8801),
+              backgroundColor: const Color(0xFFEB8801),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            icon: Icon(Icons.add, color: Colors.white),
-            label: Text("Alert", style: TextStyle(color: Colors.white)),
+            icon: const Icon(Icons.add, color: Colors.white),
+            label: const Text("Alert", style: TextStyle(color: Colors.white)),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
           GestureDetector(
             onTap: () {
               Navigator.pushNamed(context, AppRoutes.notifications);
@@ -57,11 +57,11 @@ class _HomeScreenState extends State<HomeScreen> {
               height: 24,
             ),
           ),
-          SizedBox(width: 10),
+          const SizedBox(width: 10),
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -69,20 +69,20 @@ class _HomeScreenState extends State<HomeScreen> {
               "Welcome Back,",
               style: TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            Text(
+            const Text(
               "Ram",
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Amount / Credits Toggle
             Container(
-              padding: EdgeInsets.all(4),
+              padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
-                boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 5)],
+                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -94,12 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 52),
+                          const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
                       decoration: BoxDecoration(
                         color: isAmountSelected
-                            ? Color(0xFF8280FF)
+                            ? const Color(0xFF8280FF)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -121,12 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       });
                     },
                     child: AnimatedContainer(
-                      duration: Duration(milliseconds: 200),
+                      duration: const Duration(milliseconds: 200),
                       padding:
-                          EdgeInsets.symmetric(vertical: 8, horizontal: 52),
+                          const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
                       decoration: BoxDecoration(
                         color: !isAmountSelected
-                            ? Color(0xFF8280FF)
+                            ? const Color(0xFF8280FF)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(20),
                       ),
@@ -145,15 +145,15 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Show Earnings Card only if Amount tab is selected
             if (isAmountSelected)
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
                   ),
                   borderRadius: BorderRadius.circular(20),
@@ -161,7 +161,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: Stack(
                   children: [
                     // Rupee Watermark (Bottom Right)
-                    Positioned(
+                    const Positioned(
                       top: 25,
                       bottom: 0,
                       right: 20,
@@ -183,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "Total Earnings",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 16),
@@ -193,27 +193,27 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(color: Colors.white),
                               ),
-                              padding: EdgeInsets.all(6),
-                              child: Icon(Icons.arrow_outward,
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.arrow_outward,
                                   color: Colors.white, size: 18),
                             ),
                           ],
                         ),
 
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
                         // Amount & Eye Icon
                         Row(
                           children: [
                             Text(
                               isAmountVisible ? "₹ 20,000.00" : "₹ XXXXXXX.XX",
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                            SizedBox(width: 10),
+                            const SizedBox(width: 10),
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -237,9 +237,9 @@ class _HomeScreenState extends State<HomeScreen> {
             else
               Container(
                 width: double.infinity,
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(
+                  gradient: const LinearGradient(
                     colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
                   ),
                   borderRadius: BorderRadius.circular(20),
@@ -266,7 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
+                            const Text(
                               "Available Credits",
                               style:
                                   TextStyle(color: Colors.white, fontSize: 16),
@@ -276,17 +276,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                 shape: BoxShape.circle,
                                 border: Border.all(color: Colors.white),
                               ),
-                              padding: EdgeInsets.all(6),
-                              child: Icon(Icons.arrow_outward,
+                              padding: const EdgeInsets.all(6),
+                              child: const Icon(Icons.arrow_outward,
                                   color: Colors.white, size: 18),
                             ),
                           ],
                         ),
 
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
 
                         // Amount & Eye Icon
-                        Row(
+                        const Row(
                           children: [
                             Text(
                               "Comming Soon",
@@ -304,7 +304,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 ),
               ),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Grid Items
             Expanded(
@@ -372,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(25),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 15,
@@ -381,7 +381,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ],
           ),
-          padding: EdgeInsets.all(12),
+          padding: const EdgeInsets.all(12),
           child: Stack(
             children: [
               // Top-left Icon
@@ -400,15 +400,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment:
                     CrossAxisAlignment.start, // Align text to left
                 children: [
-                  SizedBox(height: 70), // Space for top-left icon
+                  const SizedBox(height: 70), // Space for top-left icon
                   Text(
                     title,
-                    style: TextStyle(
+                    style: const TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.normal,
-                        color: const Color.fromARGB(104, 3, 3, 3)),
+                        color: Color.fromARGB(104, 3, 3, 3)),
                   ),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 10),
 
                   // Row with Number & Right Arrow
                   Row(
@@ -417,10 +417,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Text(
                         count,
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.arrow_forward_ios,
                         size: 20,
                         color: Colors.black54,

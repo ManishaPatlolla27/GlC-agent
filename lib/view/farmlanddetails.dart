@@ -7,7 +7,7 @@ class PendingFarmlanddetailsScreen extends StatefulWidget {
   const PendingFarmlanddetailsScreen({super.key});
 
   @override
-  _FarmlandsScreenState createState() => _FarmlandsScreenState();
+  FarmlandsScreenState createState() => FarmlandsScreenState();
 }
 
 int _currentIndex = 0;
@@ -17,7 +17,7 @@ final List<String> _imageUrls = [
   'assets/farmland.png',
 ];
 
-class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
+class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +69,7 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 return Container(
                                   width: 8.0,
                                   height: 8.0,
-                                  margin: EdgeInsets.symmetric(horizontal: 4.0),
+                                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: _currentIndex == entry.key
@@ -88,13 +88,13 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                             child: Row(
                               children: [
                                 IconButton(
-                                  icon: Icon(Icons.arrow_back,
+                                  icon: const Icon(Icons.arrow_back,
                                       color: Colors.white),
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
                                 ),
-                                Text(
+                                const Text(
                                   "Farmlands",
                                   style: TextStyle(
                                       color: Colors.white, fontSize: 16),
@@ -104,7 +104,7 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                           ),
 
                           // Favorite Icon
-                          Positioned(
+                          const Positioned(
                             top: 50,
                             right: 16,
                             child: Icon(Icons.favorite_border,
@@ -131,7 +131,7 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  Column(
+                                  const Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
@@ -158,19 +158,19 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => Searchlands(),
+                                          builder: (context) => const Searchlands(),
                                         ),
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      foregroundColor: Color(0xFF8280FF),
+                                      foregroundColor: const Color(0xFF8280FF),
                                       side:
-                                          BorderSide(color: Color(0xFF8280FF)),
+                                          const BorderSide(color: Color(0xFF8280FF)),
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(20)),
                                     ),
-                                    child: Text("Compare"),
+                                    child: const Text("Compare"),
                                   ),
                                 ],
                               ),
@@ -178,7 +178,7 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                           ),
                         ),
 
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
 
                         // Key Features Section
                         _buildCardSection("Key Feature:", [
@@ -227,14 +227,14 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
             color: Colors.white,
             margin: EdgeInsets.zero,
             elevation: 4,
-            shape: RoundedRectangleBorder(
+            shape: const RoundedRectangleBorder(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16))),
             child: Container(
-              padding: EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Column(
+                  const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Cost:",
@@ -251,13 +251,13 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                       Navigator.pushNamed(context, AppRoutes.buyer);
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF8280FF),
+                      backgroundColor: const Color(0xFF8280FF),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
                       padding:
-                          EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                          const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                     ),
-                    child: Text("Send Leads",
+                    child: const Text("Send Leads",
                         style: TextStyle(color: Colors.white, fontSize: 16)),
                   ),
                 ],
@@ -276,9 +276,9 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontSize: 14, color: Colors.black)),
+          Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
           Text(value,
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -291,7 +291,7 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: TextStyle(fontSize: 14, color: Colors.black)),
+          Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
           Icon(
             isAvailable ? Icons.check : Icons.close,
             color: isAvailable ? Colors.green : Colors.red,
@@ -318,12 +318,12 @@ class _FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
               children: [
                 Text(
                   title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Icon(Icons.add),
+                const Icon(Icons.add),
               ],
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Column(children: children),
           ],
         ),

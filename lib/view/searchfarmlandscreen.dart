@@ -4,10 +4,10 @@ class SearchFarmlandScreen extends StatefulWidget {
   const SearchFarmlandScreen({super.key});
 
   @override
-  _SearchFarmlandScreenState createState() => _SearchFarmlandScreenState();
+  SearchFarmlandScreenState createState() => SearchFarmlandScreenState();
 }
 
-class _SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
+class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   String? selectedState;
   String? selectedDistrict;
   RangeValues budgetRange = const RangeValues(15, 80);
@@ -81,7 +81,7 @@ class _SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
               values: budgetRange,
               min: 5,
               max: 200,
-              activeColor: Color(0xFF8280FF),
+              activeColor: const Color(0xFF8280FF),
               inactiveColor: Colors.grey[300],
               onChanged: (RangeValues values) {
                 setState(() {
@@ -197,8 +197,8 @@ class _SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  children: const [
+                const Row(
+                  children: [
                     Icon(Icons.location_on, size: 14, color: Colors.grey),
                     SizedBox(width: 4),
                     Text(
@@ -292,10 +292,10 @@ class _SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.blueAccent.withOpacity(0.2),
+        color: Colors.blueAccent.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Text(text, style: TextStyle(color: Colors.blueAccent)),
+      child: Text(text, style: const TextStyle(color: Colors.blueAccent)),
     );
   }
 }

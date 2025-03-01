@@ -4,7 +4,7 @@
             "outputFile": "com.glc.agent.glcagent.app-mergeDebugResources-29:/values-en-rCA/values-en-rCA.xml",
             "map": [
                 {
-                    "source": "/Users/nani/.gradle/caches/8.10.2/transforms/8cf478dec41eed746328fa8046755ba2/transformed/core-1.13.1/res/values-en-rCA/values-en-rCA.xml",
+                    "source": "C:\\Users\\manisha.p\\.gradle\\caches\\8.10.2\\transforms\\06f1d28345e99554a5d9fca85b6b394d\\transformed\\core-1.13.1\\res\\values-en-rCA\\values-en-rCA.xml",
                     "from": {
                         "startLines": "2,3,4,5,6,7,8,9",
                         "startColumns": "4,4,4,4,4,4,4,4",

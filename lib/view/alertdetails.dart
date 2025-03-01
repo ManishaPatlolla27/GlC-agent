@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 class AlertDetailsScreen extends StatefulWidget {
   const AlertDetailsScreen({super.key});
   @override
-  _AlertDetailsScreenState createState() => _AlertDetailsScreenState();
+  AlertDetailsScreenState createState() => AlertDetailsScreenState();
 }
 
-class _AlertDetailsScreenState extends State<AlertDetailsScreen> {
+class AlertDetailsScreenState extends State<AlertDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? selectedReligion;

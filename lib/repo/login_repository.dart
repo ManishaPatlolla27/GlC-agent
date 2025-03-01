@@ -2,12 +2,12 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/data/api_urls.dart';
 import 'package:nex2u/data/base_api_client.dart';
 
-import '../models/login/LoginRequest.dart';
-import '../models/login/LoginResponse.dart';
+import '../models/login/login_request.dart';
+import '../models/login/login_response.dart';
 
 class LoginRepository {
   final BaseApiClient _apiClient = BaseApiClient();
-  final _storage = const FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   // Login method using BaseApiClient
   Future<LoginResponse> login(LoginRequest loginRequest) async {
     try {

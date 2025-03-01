@@ -4,10 +4,10 @@ class MyShortlistsScreen extends StatefulWidget {
   const MyShortlistsScreen({super.key});
 
   @override
-  _MyShortlistsScreenState createState() => _MyShortlistsScreenState();
+  MyShortlistsScreenState createState() => MyShortlistsScreenState();
 }
 
-class _MyShortlistsScreenState extends State<MyShortlistsScreen> {
+class MyShortlistsScreenState extends State<MyShortlistsScreen> {
   List<Map<String, dynamic>> farmlands = [
     {
       "id": 1,
@@ -61,10 +61,10 @@ class _MyShortlistsScreenState extends State<MyShortlistsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Row(
+        title: const Row(
           children: [
             Text("Profile",
                 style: TextStyle(color: Colors.black, fontSize: 16)),
@@ -78,7 +78,7 @@ class _MyShortlistsScreenState extends State<MyShortlistsScreen> {
         padding: const EdgeInsets.all(16.0),
         child: GridView.builder(
           itemCount: farmlands.length,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
@@ -107,7 +107,7 @@ class _MyShortlistsScreenState extends State<MyShortlistsScreen> {
                         right: 10,
                         child: GestureDetector(
                           onTap: () => toggleWishlist(index),
-                          child: CircleAvatar(
+                          child: const CircleAvatar(
                             backgroundColor: Colors.white,
                             radius: 14,
                             child: Icon(
@@ -121,17 +121,17 @@ class _MyShortlistsScreenState extends State<MyShortlistsScreen> {
                     ],
                   ),
                 ),
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Text(item["name"],
-                    style: TextStyle(fontWeight: FontWeight.bold)),
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
                 Text(item["location"],
-                    style: TextStyle(color: Colors.black54, fontSize: 12)),
-                SizedBox(height: 4),
+                    style: const TextStyle(color: Colors.black54, fontSize: 12)),
+                const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(item["price"],
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold)),
                   ],
                 ),

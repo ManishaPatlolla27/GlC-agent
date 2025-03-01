@@ -6,11 +6,11 @@ class ApprovedFarmlandsScreen extends StatefulWidget {
   const ApprovedFarmlandsScreen({super.key});
 
   @override
-  _FarmlandsScreenState createState() => _FarmlandsScreenState();
+  FarmlandsScreenState createState() => FarmlandsScreenState();
 }
 
-class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
-  final _formKey = GlobalKey<FormState>();
+class FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
+  final formKey = GlobalKey<FormState>();
   final List<Map<String, String>> farmlandList = [
     {
       'id': 'GLCSOS 02',
@@ -59,9 +59,9 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title:
-            Text("Approved Farmlands", style: TextStyle(color: Colors.black)),
-        leading: Icon(Icons.arrow_back, color: Colors.black),
+        title: const Text("Approved Farmlands",
+            style: TextStyle(color: Colors.black)),
+        leading: const Icon(Icons.arrow_back, color: Colors.black),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16), // Added right padding
@@ -74,23 +74,23 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
             Container(
               width: double.infinity,
-              padding: EdgeInsets.all(20),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
                   colors: [Color(0xFF8280FF), Color(0xFF5B5A94)],
                 ),
                 borderRadius: BorderRadius.circular(20),
-                image: DecorationImage(
+                image: const DecorationImage(
                   image: AssetImage('assets/curvelyframe.png'),
                   fit: BoxFit.cover, // Ensures the image covers the container
                 ),
               ),
-              child: Column(
+              child: const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -115,7 +115,7 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                 itemBuilder: (context, index) {
                   final farmland = farmlandList[index];
                   return Card(
-                    margin: EdgeInsets.symmetric(
+                    margin: const EdgeInsets.symmetric(
                         horizontal: 0, vertical: 8), // Adjusted spacing
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -123,7 +123,7 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                     elevation: 4,
                     color: Colors.white,
                     child: ListTile(
-                      contentPadding: EdgeInsets.all(8),
+                      contentPadding: const EdgeInsets.all(8),
                       leading: ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.asset(
@@ -135,7 +135,7 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                       ),
                       title: Text(
                         "ID: ${farmland['id']}",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
                         ),
@@ -145,7 +145,8 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                         children: [
                           Text(
                             farmland['location']!,
-                            style: TextStyle(color: Colors.grey, fontSize: 12),
+                            style: const TextStyle(
+                                color: Colors.grey, fontSize: 12),
                           ),
                           Text(
                             "Status: ${farmland['status']}",
@@ -166,7 +167,7 @@ class _FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => FarmlandStatusScreen(),
+                            builder: (context) => const FarmlandStatusScreen(),
                           ),
                         );
                       },

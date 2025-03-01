@@ -1,12 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:nex2u/page_routing/app_pages.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/viewModel/configuration_view_model.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:nex2u/viewModel/login_view_model.dart';
 import 'package:provider/provider.dart';
 
-void main() {
-  runApp(const MyApp());
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final configService = ConfigurationViewModel();
+  await configService.loadConfig();
+  await configService.loadApiEndPoints();
+
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => configService,
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -14,6 +26,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final configService = Provider.of<ConfigurationViewModel>(context);
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
@@ -24,10 +37,13 @@ class MyApp extends StatelessWidget {
         ),
       ],
       child: MaterialApp(
+        title: 'Green Land Capital',
         debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: configService.appConfig?.primaryColor ?? Colors.blue,
+        ),
         routes: AppPages.routes,
         initialRoute: AppRoutes.initial,
-        title: "Nex2U",
       ),
     );
   }

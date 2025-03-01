@@ -1,4 +1,4 @@
-import '../models/login/LoginResponse.dart';
+import '../models/login/login_response.dart';
 
 class AppConstants {
   AppConstants._();

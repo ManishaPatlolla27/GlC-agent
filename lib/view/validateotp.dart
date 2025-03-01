@@ -63,19 +63,19 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     Image.asset('assets/logo.png', height: 90),
-                    SizedBox(height: 20),
-                    Text(
+                    const SizedBox(height: 20),
+                    const Text(
                       "Welcome to Green Land Capital",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
-                    SizedBox(height: 120),
+                    const SizedBox(height: 120),
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       alignment: Alignment.centerLeft,
-                      child: Text(
+                      child: const Text(
                         "Validate OTP",
                         style: TextStyle(
                           color: Colors.white,
@@ -89,18 +89,18 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
               ],
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             // Form Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 10),
-                    Text(
+                    const SizedBox(height: 10),
+                    const Text(
                       "Please enter the code received to your\nRegistered Mail",
                       style: TextStyle(
                         color: Colors.black,
@@ -108,7 +108,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     // OTP Field
                     PinCodeTextField(
@@ -120,9 +120,9 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
                         borderRadius: BorderRadius.circular(5),
-                        inactiveColor: Color(0xFF7B69EE),
-                        activeColor: Color(0xFF7B69EE),
-                        selectedColor: Color(0xFF7B69EE),
+                        inactiveColor: const Color(0xFF7B69EE),
+                        activeColor: const Color(0xFF7B69EE),
+                        selectedColor: const Color(0xFF7B69EE),
                         fieldWidth: 50,
                         fieldHeight: 50,
                       ),
@@ -136,7 +136,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       },
                     ),
 
-                    SizedBox(height: 150),
+                    const SizedBox(height: 150),
 
                     // Submit Button
                     SizedBox(
@@ -144,12 +144,12 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isButtonEnabled
-                              ? Color(0xFF7B69EE)
+                              ? const Color(0xFF7B69EE)
                               : Colors.grey, // Disabled color
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          padding: EdgeInsets.symmetric(vertical: 14),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                         onPressed: isButtonEnabled
                             ? () async {
@@ -161,7 +161,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                                     context, AppRoutes.password);
                               }
                             : null, // Disable button if OTP is not 5 digits
-                        child: Text(
+                        child: const Text(
                           "Submit",
                           style: TextStyle(
                             color: Colors.white,
@@ -172,7 +172,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

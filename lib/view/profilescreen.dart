@@ -14,11 +14,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white, // Set background to white
       appBar: AppBar(
-        title: Text("My Profile", style: TextStyle(color: Colors.black)),
+        title: const Text("My Profile", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -54,8 +54,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           ),
 
           // Mobile Number & Email (Moved below profile image)
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -81,8 +81,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          SizedBox(height: 10),
-          Divider(thickness: 1),
+          const SizedBox(height: 10),
+          const Divider(thickness: 1),
 
           Padding(
             padding:
@@ -90,7 +90,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Column(
+                const Column(
                   children: [
                     Text(
                       "₹10000.00",
@@ -104,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: 1,
                     height: 40,
                     color: Colors.grey), // Divider between items
-                Column(
+                const Column(
                   children: [
                     Text(
                       "20",
@@ -118,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           ),
 
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
 
           _buildProfileOption(
               Icons.account_balance_wallet, "Total Farm Alerts"),
@@ -126,13 +126,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildProfileOption(Icons.notifications_none, "Notifications"),
           _buildProfileOption(Icons.help_outline, "Help"),
 
-          Spacer(),
+          const Spacer(),
 
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
 
           ListTile(
-            leading: Icon(Icons.logout, color: Colors.red),
-            title: Text("Log Out", style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("Log Out", style: TextStyle(color: Colors.red)),
             onTap: () {},
           ),
         ],

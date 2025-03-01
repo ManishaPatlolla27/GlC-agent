@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../models/login/LoginRequest.dart';
-import '../models/login/LoginResponse.dart';
+import '../models/login/login_request.dart';
+import '../models/login/login_response.dart';
 import '../page_routing/app_routes.dart';
 import '../repo/login_repository.dart';
 import '../res/validation_alert.dart';
@@ -11,11 +11,9 @@ import '../utils/internet_connectivity.dart';
 class LoginViewModel with ChangeNotifier {
   TextEditingController mobileController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  var context;
 
   validateAndLogin(BuildContext context, TextEditingController emailController,
       TextEditingController passwordController) async {
-    this.context = context;
     if (await isNetworkAvailable()) {
       // Simulate network request
       if (!context.mounted) return;
@@ -24,7 +22,7 @@ class LoginViewModel with ChangeNotifier {
   }
 
   // Function to validate mobile number
-  bool _validateMobileNumber(String mobileNumber) {
+  bool validateMobileNumber(String mobileNumber) {
     const validNumberPattern = r"^[6-9][0-9]{9}$";
     RegExp regExp = RegExp(validNumberPattern);
 
@@ -54,15 +52,18 @@ class LoginViewModel with ChangeNotifier {
         _showSuccessDialog('Loggedin successfully', context);
         const storage = FlutterSecureStorage();
         await storage.write(key: 'userloggedin', value: 'true');
+        if (!context.mounted) return;
         Navigator.pushNamed(context, AppRoutes.home);
         // You can also navigate to the next screen
         // Navigator.pushNamed(context, '/otpVerification');
       } else {
         // Handle failure case (e.g., OTP not sent)
+        if (!context.mounted) return;
         _showErrorDialog('Failed to send OTP: ${response.message}', context);
       }
     } catch (e) {
       // Handle any exceptions or network errors
+      if (!context.mounted) return;
       _showErrorDialog('Login failed: $e', context);
     } finally {
       _setLoading(false);

@@ -61,22 +61,22 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    SizedBox(height: 40),
+                    const SizedBox(height: 40),
                     Image.asset(
                       'assets/logo.png',
                       height: 90,
                     ), // Logo overlaid on the login frame
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     const Text(
                       "Welcome to Green Land Capital",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
-                    SizedBox(height: 80),
+                    const SizedBox(height: 80),
 
                     // Moved "Sign in to your Account" Below "Welcome"
                     Container(
                       width: double.infinity, // Makes it span the full width
-                      padding: EdgeInsets.symmetric(horizontal: 24),
+                      padding: const EdgeInsets.symmetric(horizontal: 24),
                       alignment:
                           Alignment.centerLeft, // Aligns text to the left
                       child: const Column(
@@ -99,11 +99,11 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
               ],
             ),
 
-            SizedBox(height: 30),
+            const SizedBox(height: 30),
 
             // Form Section
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24),
+              padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -117,7 +117,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
 
                     // Email Field
                     TextFormField(
@@ -152,7 +152,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                       },
                     ),
 
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
 
                     // Password Field with Show/Hide Toggle
                     TextFormField(
@@ -187,7 +187,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                       },
                     ),
 
-                    SizedBox(height: 50),
+                    const SizedBox(height: 50),
 
                     // Login Button
                     SizedBox(
@@ -217,7 +217,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                       ),
                     ),
 
-                    SizedBox(height: 30),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

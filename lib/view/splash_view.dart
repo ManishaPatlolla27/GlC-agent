@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:provider/provider.dart';
+
+import '../viewModel/configuration_view_model.dart';
 
 class SplashView extends StatefulWidget {
   const SplashView({super.key});
@@ -13,7 +16,11 @@ class _SplashViewState extends State<SplashView> {
   @override
   void initState() {
     super.initState();
-    _navigateAfterDelay();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        _navigateAfterDelay();
+      },
+    );
   }
 
   Future<void> _navigateAfterDelay() async {
@@ -32,21 +39,41 @@ class _SplashViewState extends State<SplashView> {
 
   @override
   Widget build(BuildContext context) {
+    final configService = Provider.of<ConfigurationViewModel>(context);
+    debugPrint("Splash Background URL: ${configService.appConfig?.splashBg}");
+
     return Scaffold(
-      body: Container(
-        height: double.infinity,
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage('assets/splashbackground.png'),
-            fit: BoxFit.cover,
+      body: Stack(
+        children: [
+          /// Background Image with Loading & Error Handling
+          Positioned.fill(
+            child: Image.network(
+              configService.appConfig?.splashBg?.trim() ?? "",
+              fit: BoxFit.fill,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                return const Center(
+                    child:
+                        CircularProgressIndicator()); // Show loader while loading
+              },
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset(
+                  "assets/splashbackground.png", // Fallback image
+                  fit: BoxFit.fill,
+                );
+              },
+            ),
           ),
-        ),
-        child: Center(
-          child: Image.asset(
-            'assets/logo.png',
+
+          /// App Logo
+          Center(
+            child: Image.network(
+              configService.appConfig?.appLogo ?? "",
+              errorBuilder: (context, error, stackTrace) =>
+                  Image.asset("assets/logo.png"),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

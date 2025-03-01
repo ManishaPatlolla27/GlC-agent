@@ -66,6 +66,7 @@ Error Headers: ${error.response?.headers}
   Future<T> get<T>(
     String url, {
     required T Function(dynamic) fromJson,
+    Map<String, dynamic>? queryParams, // Added query parameters
     Map<String, String>? headers,
     bool isJson = true,
   }) async {
@@ -75,7 +76,12 @@ Error Headers: ${error.response?.headers}
         contentType: isJson ? 'application/json' : 'application/octet-stream',
       );
 
-      Response response = await _dio.get(url, options: options);
+      Response response = await _dio.get(
+        url,
+        queryParameters: queryParams, // Pass query parameters here
+        options: options,
+      );
+
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
       _handleError(e);

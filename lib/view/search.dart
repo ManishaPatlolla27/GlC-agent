@@ -9,7 +9,7 @@ class Searchlands extends StatefulWidget {
 
 class _SearchLandState extends State<Searchlands> {
   // Open the Filter Drawer
-  void _openFilterDrawer() {
+  void openFilterDrawer() {
     Scaffold.of(context).openDrawer();
   }
 

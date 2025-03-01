@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
               _currentIndex = index;
             });
           },
-          selectedItemColor: Color(0xFF8280FF),
+          selectedItemColor: const Color(0xFF8280FF),
           unselectedItemColor: Colors.grey,
           showSelectedLabels: true,
           showUnselectedLabels: true,
@@ -77,7 +77,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  _currentIndex == 0 ? Color(0xFF8280FF) : Colors.grey,
+                  _currentIndex == 0 ? const Color(0xFF8280FF) : Colors.grey,
                   BlendMode.srcIn,
                 ),
                 child: Image.asset("assets/home.png", width: 24, height: 24),
@@ -87,7 +87,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  _currentIndex == 1 ? Color(0xFF8280FF) : Colors.grey,
+                  _currentIndex == 1 ? const Color(0xFF8280FF) : Colors.grey,
                   BlendMode.srcIn,
                 ),
                 child:
@@ -98,7 +98,7 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(
               icon: ColorFiltered(
                 colorFilter: ColorFilter.mode(
-                  _currentIndex == 2 ? Color(0xFF8280FF) : Colors.grey,
+                  _currentIndex == 2 ? const Color(0xFF8280FF) : Colors.grey,
                   BlendMode.srcIn,
                 ),
                 child: Image.asset("assets/profile.png", width: 24, height: 24),

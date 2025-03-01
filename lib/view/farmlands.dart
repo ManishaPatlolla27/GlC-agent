@@ -127,7 +127,7 @@ class _FarmLandState extends State<Farmlands> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) =>
-                                        PendingFarmlanddetailsScreen(),
+                                        const PendingFarmlanddetailsScreen(),
                                   ),
                                 );
                               },
@@ -189,7 +189,7 @@ class _FarmLandState extends State<Farmlands> {
                                 shape: BoxShape.circle,
                                 color: _currentIndex == index
                                     ? Colors.white
-                                    : Colors.white.withOpacity(0.5),
+                                    : Colors.white.withValues(alpha: 0.5),
                               ),
                             ),
                           ),
@@ -235,7 +235,7 @@ class _FarmLandState extends State<Farmlands> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) =>
-                                      PendingFarmlanddetailsScreen(),
+                                      const PendingFarmlanddetailsScreen(),
                                 ),
                               );
                             },
@@ -279,7 +279,7 @@ class _FarmLandState extends State<Farmlands> {
               ),
               ListView.builder(
                 shrinkWrap: true,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemCount: farmlandImages.length,
                 itemBuilder: (context, index) {
                   return Padding(
@@ -414,7 +414,8 @@ class _FarmLandState extends State<Farmlands> {
                           const SizedBox(height: 5),
                           const Text('GLCSOS 002',
                               style: TextStyle(fontWeight: FontWeight.bold)),
-                          Text('₹15L', style: TextStyle(color: Colors.black)),
+                          const Text('₹15L',
+                              style: TextStyle(color: Colors.black)),
                         ],
                       ),
                     );
