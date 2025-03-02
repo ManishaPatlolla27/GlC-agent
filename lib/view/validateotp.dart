@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 import '../page_routing/app_routes.dart';
+import '../res/validation_alert.dart';
 
 class ValidateOtpScreen extends StatefulWidget {
   const ValidateOtpScreen({super.key});
@@ -154,11 +156,20 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         onPressed: isButtonEnabled
                             ? () async {
                                 // Handle OTP validation
-                                // await forgotProvider
-                                //     .validateOtp(_otpController.text);
-
-                                Navigator.pushNamed(
-                                    context, AppRoutes.password);
+                                const storage = FlutterSecureStorage();
+                                final email = await storage.read(key: "email");
+                                await forgotProvider.validateOtp(
+                                    email!, _otpController.text);
+                                if (forgotProvider.otpSent) {
+                                  Future.delayed(
+                                      const Duration(milliseconds: 500), () {
+                                    if (!context.mounted) return;
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.password);
+                                  });
+                                } else {
+                                  _showErrorDialog("invalid otp", context);
+                                }
                               }
                             : null, // Disable button if OTP is not 5 digits
                         child: const Text(
@@ -181,5 +192,10 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
         ),
       ),
     );
+  }
+
+  void _showErrorDialog(String message, BuildContext context) {
+    ValidationIoSAlert().showAlert(context, description: message);
+    debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

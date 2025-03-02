@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:provider/provider.dart';
@@ -166,6 +167,8 @@ class _LoginScreenState extends State<ForgotPasswordScreen> {
                                 if (!context.mounted) return;
                                 Navigator.pushNamed(
                                     context, AppRoutes.validate);
+                                const storage = FlutterSecureStorage();
+                                storage.write(key: 'email', value: _emailController.text);
                               });
                             }
                           }

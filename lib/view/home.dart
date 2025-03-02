@@ -22,27 +22,34 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BottomViewModel>(context, listen: false).bottom(context);
+      if (mounted) setState(() {}); // Ensure the widget is still active
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final bottomProvider = Provider.of<BottomViewModel>(context);
-    final response = bottomProvider.bottomresponse;
+    var response = bottomProvider.bottomresponse;
+
+    if (response == null || response.isEmpty) {
+      return const Scaffold(
+        body: Center(child: Text("")),
+      );
+    }
 
     // if (bottomProvider.isLoading) {
     //   return const Center(child: CircularProgressIndicator());
     // }
 
-    if (response == null || response.isEmpty) {
-      return const Center(child: Text("No menu items available"));
-    }
+    // if (response == null || response.isEmpty) {
+    //   return const Center(child: Text("No menu items available"));
+    // }
 
     // **Generate Pages & Bottom Navigation Items Dynamically**
     List<Widget> pages = [];
     List<BottomNavigationBarItem> bottomItems = [];
 
-    for (var item in response) {
+    for (var item in response ??= []) {
       Widget page;
       switch (item.menuTitle?.toLowerCase()) {
         case 'home':
