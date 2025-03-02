@@ -5,7 +5,8 @@ class ApiConstants {
   static const String loginUrl = "/api/glc-auth/loginWithPassword";
   static const String forgotpassword =
       "/api/glc-auth/generateAndSendUserOTP?loginId=";
-  static const String validateotp = "/api/glc-auth/updateUserPasswordWithOTP";
+  static const String validateotp = "/api/glc-auth/verifyOTP";
+  static const String changepassword = "/api/glc-auth/changeUserPassword";
   static const String profile = "/lms-api/account/getUserDetails";
   static const String dashboard = "/lms-api/agent/getMyAnalytics";
   static const String bottom = "/lms-api/agent/getBottomBarMenu";

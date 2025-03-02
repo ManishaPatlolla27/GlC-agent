@@ -19,8 +19,10 @@ class ForgotRepository {
     }
   }
 
-  Future<bool> validateOtp({
+  Future<bool> updatePassword({
     required String loginId,
+    required String password,
+    required String oldPassword,
     required String verificationCode,
   }) async {
     try {
@@ -28,27 +30,9 @@ class ForgotRepository {
         ApiConstants.validateotp,
         {
           "loginId": loginId,
+          "password": password,
+          "oldPassword": oldPassword,
           "verificationCode": verificationCode,
-        },
-        fromJson: (data) => data as bool, // Convert response to boolean
-      );
-      return response;
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<bool> changepassword({
-    required String loginId,
-    required String password,
-  }) async {
-    try {
-      final response = await _apiClient.post<bool>(
-        ApiConstants.changepassword,
-        {
-          "loginId": loginId,
-          "currentPassCode": password,
-          "updatedPassCode": password,
         },
         fromJson: (data) => data as bool, // Convert response to boolean
       );

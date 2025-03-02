@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:nex2u/viewModel/login_view_model.dart';
+import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:provider/provider.dart';
+
+import '../page_routing/app_routes.dart';
+import '../res/validation_alert.dart';
 
 class PasswordUpdateScreen extends StatefulWidget {
   const PasswordUpdateScreen({super.key});
@@ -20,16 +24,13 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) async {
-        final loginProvider =
-            Provider.of<LoginViewModel>(context, listen: false);
-      },
+      (timeStamp) async {},
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    final loginProvider = Provider.of<LoginViewModel>(context);
+    final loginProvider = Provider.of<ForgotPasswordViewModel>(context);
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -202,8 +203,19 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                         ),
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
-                            await loginProvider.validateAndLogin(
-                                context, _emailController, _passwordController);
+                            const storage = FlutterSecureStorage();
+                            final email = await storage.read(key: "email");
+                            await loginProvider.validateOtp(
+                                email!, _emailController.text);
+                            if (loginProvider.otpSent) {
+                              Future.delayed(const Duration(milliseconds: 500),
+                                  () {
+                                if (!context.mounted) return;
+                                Navigator.pushNamed(context, AppRoutes.login);
+                              });
+                            } else {
+                              _showErrorDialog("invalid otp", context);
+                            }
                           }
                         },
                         child: const Text(
@@ -226,5 +238,10 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
         ),
       ),
     );
+  }
+
+  void _showErrorDialog(String message, BuildContext context) {
+    ValidationIoSAlert().showAlert(context, description: message);
+    debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

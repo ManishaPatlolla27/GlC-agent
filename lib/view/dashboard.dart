@@ -26,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     WidgetsBinding.instance?.addPostFrameCallback((_) {
       Provider.of<DashboardViewModel>(context, listen: false)
           .dashboard(context);
+      if (mounted) setState(() {}); // Ensures UI updates safely
     });
   }
 
@@ -72,13 +73,13 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text("Welcome Back,",
                 style: TextStyle(fontSize: 18, color: Colors.grey)),
-            Text(response!.firstName.toString(),
+            Text(response?.firstName?.toString() ?? "User",
                 style:
                     const TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
             const SizedBox(height: 16),
@@ -95,8 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Grid Items
             Expanded(
-              child: response?.farmlandAnalytics != null &&
-                      response!.farmlandAnalytics!.isNotEmpty
+              child: response?.farmlandAnalytics != null
                   ? GridView.builder(
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
@@ -105,14 +105,15 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisSpacing: 15,
                         childAspectRatio: 1,
                       ),
-                      itemCount: response!.farmlandAnalytics!.length,
+                      itemCount: response?.farmlandAnalytics?.length ?? 0,
                       itemBuilder: (context, index) {
-                        final item = response!.farmlandAnalytics![index];
+                        final item = response?.farmlandAnalytics?[index];
+                        if (item == null) return const SizedBox();
                         return gridItem(item.title.toString(),
                             item.count.toString(), item.icon.toString());
                       },
                     )
-                  : const Center(child: Text("No data available")),
+                  : const Center(child: Text("")),
             ),
           ],
         ),
@@ -167,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return infoCard(
       "Total Earnings",
       isAmountVisible
-          ? "₹ " + response!.totalEarnings.toString() + ".00"
+          ? "₹ ${response?.totalEarnings?.toString() ?? '0.00'}"
           : "₹ XXXXXXX.XX",
       Icons.currency_rupee,
       () => setState(() => isAmountVisible = !isAmountVisible),

@@ -19,4 +19,26 @@ class ForgotPasswordViewModel extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
+  Future<void> validateOtp(String loginId, String otp) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _otpSent = await _forgotPasswordRepository.validateOtp(
+        verificationCode: otp, loginId: loginId);
+
+    _isLoading = false;
+    notifyListeners();
+  }
+
+  Future<void> changepassword(String loginId, String otp) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _otpSent = await _forgotPasswordRepository.changepassword(
+        loginId: loginId, password: otp);
+
+    _isLoading = false;
+    notifyListeners();
+  }
 }
