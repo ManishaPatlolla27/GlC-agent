@@ -1,4 +1,3 @@
-import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
@@ -14,6 +13,7 @@ class OnboardingScreen extends StatefulWidget {
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentIndex = 0;
+  final PageController _pageController = PageController();
   List<WelcomeScreens> carouselImages = [];
 
   @override
@@ -22,15 +22,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<WelcomeViewModel>(context, listen: false);
       await provider.welcome(context);
-      carouselImages = provider.dashboardresponse?.welcomeScreens ?? [];
+      setState(() {
+        carouselImages = provider.dashboardresponse?.welcomeScreens ?? [];
+      });
     });
   }
 
   void _onNextPressed() {
     if (_currentIndex < carouselImages.length - 1) {
-      setState(() {
-        _currentIndex++;
-      });
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
     } else {
       Navigator.pushNamed(context, AppRoutes.login);
     }
@@ -38,55 +41,52 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final welcomeViewModel = Provider.of<WelcomeViewModel>(context);
-
-    // if (response == null || response.welcomeScreens == null) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Background Image Carousel
-          CarouselSlider.builder(
-            options: CarouselOptions(
-              height: MediaQuery.of(context).size.height,
-              viewportFraction: 1.0,
-              autoPlay: false,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _currentIndex = index;
-                });
-              },
-            ),
+          PageView.builder(
+            controller: _pageController,
             itemCount: carouselImages.length,
-            itemBuilder: (context, index, realIndex) {
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            itemBuilder: (context, index) {
               return Stack(
                 fit: StackFit.expand,
                 children: [
-                  // Background Image
                   Image.network(
                     carouselImages[index].imageUrl.toString(),
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Image.asset("assets/logo.png"),
+                    loadingBuilder: (context, child, loadingProgress) {
+                      if (loadingProgress == null) {
+                        return child; // Image fully loaded
+                      }
+                      // Show a specific local asset image based on index while loading
+                      return Image.asset(
+                        'assets/slider${index + 1}.png', // Adjust based on your naming convention
+                        fit: BoxFit.cover,
+                      );
+                    },
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/slider${index + 1}.png', // Show fallback asset image on error
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                  // Overlay Gradient
                   Container(
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.bottomCenter,
                         end: Alignment.center,
                         colors: [
-                          Colors.black.withOpacity(0.7), // ✅ Fixed
+                          Colors.black.withValues(alpha: 0.7),
                           Colors.transparent,
                         ],
                       ),
                     ),
                   ),
-                  // Title & Description
                   Positioned(
                     bottom: 200,
                     left: 24,
@@ -106,7 +106,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         Text(
                           carouselImages[index].description.toString(),
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.9), // ✅ Fixed
+                            color: Colors.white.withValues(alpha: 0.9),
                             fontSize: 16,
                           ),
                         ),
@@ -117,8 +117,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               );
             },
           ),
-
-          // Top Progress Indicators
           Positioned(
             top: 50,
             left: 24,
@@ -133,15 +131,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentIndex == index
                         ? Colors.white
-                        : Colors.white.withOpacity(0.4), // ✅ Fixed
+                        : Colors.white.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );
               }),
             ),
           ),
-
-          // Bottom Navigation
           Positioned(
             bottom: 50,
             left: 24,
@@ -149,7 +145,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                // Skip Button
                 TextButton(
                   onPressed: () {
                     Navigator.pushNamed(context, AppRoutes.login);
@@ -162,7 +157,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                   ),
                 ),
-                // Next Button
                 Container(
                   width: 56,
                   height: 56,

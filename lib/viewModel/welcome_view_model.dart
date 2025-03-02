@@ -28,8 +28,9 @@ class WelcomeViewModel with ChangeNotifier {
       );
 
       if (response.welcomeScreens != null &&
-          response.welcomeScreens!.length > 0) {
+          response.welcomeScreens!.isNotEmpty) {
         _dashboardresponse = response;
+        notifyListeners();
       } else {
         _errorMessage = 'No data found';
       }

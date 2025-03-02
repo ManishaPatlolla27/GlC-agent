@@ -4,7 +4,7 @@
             "outputFile": "com.glc.agent.glcagent.app-mergeDebugResources-29:/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/Users/nani/Desktop/GlC-agent/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/manisha/Desktop/GlC-agent/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",
