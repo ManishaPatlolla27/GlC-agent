@@ -47,8 +47,8 @@ class ForgotRepository {
         ApiConstants.changepassword,
         {
           "loginId": loginId,
-          "currentPassCode": password,
-          "updatedPassCode": password,
+          "password": password,
+          "verificationCode": "12345",
         },
         fromJson: (data) => data as bool, // Convert response to boolean
       );
