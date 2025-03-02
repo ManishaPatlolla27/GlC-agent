@@ -23,8 +23,14 @@ class BaseApiClient {
         String? authToken = await getToken();
         options.headers['Authorization'] = 'Bearer $authToken';
 
-        log("\n[API Request]\nURL: \${options.uri}\nMethod: \${options.method}\nHeaders: \${options.headers}\nQuery Parameters: \${options.queryParameters}\nBody: \${options.data}");
-
+        log("""
+[API Request]
+URL: ${options.uri}
+Method: ${options.method}
+Headers: ${options.headers}
+Query Parameters: ${options.queryParameters}
+Body: ${options.data}
+  """);
         return handler.next(options);
       },
       onResponse: (response, handler) {
