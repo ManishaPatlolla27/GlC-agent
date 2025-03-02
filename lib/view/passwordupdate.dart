@@ -205,7 +205,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                           if (_formKey.currentState!.validate()) {
                             const storage = FlutterSecureStorage();
                             final email = await storage.read(key: "email");
-                            await loginProvider.validateOtp(
+                            await loginProvider.changepassword(
                                 email!, _emailController.text);
                             if (loginProvider.otpSent) {
                               Future.delayed(const Duration(milliseconds: 500),
@@ -214,7 +214,8 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                                 Navigator.pushNamed(context, AppRoutes.login);
                               });
                             } else {
-                              _showErrorDialog("invalid otp", context);
+                              _showErrorDialog(
+                                  "password change failed", context);
                             }
                           }
                         },
