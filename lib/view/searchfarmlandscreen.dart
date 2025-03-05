@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-
 import '../models/farmlands/FarmLandResponse.dart';
 import '../page_routing/app_routes.dart';
 import '../viewModel/farm_land_view_model.dart';
@@ -17,7 +16,6 @@ class SearchFarmlandScreen extends StatefulWidget {
 class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   String? seeall = "";
   List<FarmLandList> farmlandSections = [];
-  final storage = FlutterSecureStorage();
   @override
   void initState() {
     super.initState();
@@ -172,10 +170,15 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
           height: 400, // Set a specific height to avoid constraints issues
           child: ListView.builder(
             shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
+            scrollDirection: Axis.horizontal,
             itemCount: farmlandSections.length,
             itemBuilder: (context, index) {
-              return farmlandCard(farmlandSections[index]);
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    child: farmlandCard(farmlandSections[index])),
+              );
             },
           ),
         ),
@@ -205,7 +208,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                 child: Image.network(
                   farmland.thumbnailImage ?? 'https://via.placeholder.com/150',
                   height: 150,
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -227,7 +230,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
           ),
           Container(
             padding: const EdgeInsets.all(8), // Adds space around the text
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white, // White background
               // borderRadius:
               //     BorderRadius.circular(8), // Optional: Adds rounded corners
@@ -235,10 +238,9 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Exclusive Property",
-                  style:
-                      const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -261,39 +263,39 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Crop",
+                    const Text("Crop",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Chip(
-                            label: Text(
+                            label: const Text(
                               "Corn",
                               style:
                                   TextStyle(fontSize: 10), // Reduce font size
                             ),
-                            backgroundColor: Color(0xFFCFCFF6),
+                            backgroundColor: const Color(0xFFCFCFF6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   20), // Adjust the radius as needed
                             ),
                           ),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Chip(
-                            label: Text(
+                            label: const Text(
                               "Potato",
                               style:
                                   TextStyle(fontSize: 10), // Reduce font size
                             ),
-                            backgroundColor: Color(0xFFCFCFF6),
+                            backgroundColor: const Color(0xFFCFCFF6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   20), // Adjust the radius as needed
@@ -302,7 +304,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                         ])
                   ],
                 ),
-                Divider(thickness: 1),
+                const Divider(thickness: 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -326,6 +328,8 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                       width: 135, // Adjust the width as needed
                       child: ElevatedButton(
                         onPressed: () async {
+                          const storage = FlutterSecureStorage();
+
                           await storage.write(
                               key: 'farmid',
                               value: farmland.farmlandId.toString());

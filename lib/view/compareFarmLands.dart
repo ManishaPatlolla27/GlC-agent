@@ -17,14 +17,14 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text("Compare Farmlands", style: TextStyle(fontSize: 16)),
+        title: const Text("Compare Farmlands", style: TextStyle(fontSize: 16)),
         leading: IconButton(
-          icon: Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.pop(context),
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -43,8 +43,8 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
                   ),
                 ),
                 Container(
-                  padding: EdgeInsets.all(4),
-                  decoration: BoxDecoration(
+                  padding: const EdgeInsets.all(4),
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                     boxShadow: [
@@ -56,7 +56,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
                       ),
                     ],
                   ),
-                  child: Text(
+                  child: const Text(
                     "VS",
                     style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                   ),
@@ -74,7 +74,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
                 ),
               ],
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             _buildExpandableSection("Key Feature", keyFeatureExpanded, () {
               setState(() => keyFeatureExpanded = !keyFeatureExpanded);
             }, [
@@ -125,21 +125,21 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
                 top: 4,
                 right: 4,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     shape: BoxShape.circle,
                     color: Colors.white,
                     boxShadow: [
                       BoxShadow(color: Colors.black26, blurRadius: 4)
                     ],
                   ),
-                  child: Icon(Icons.close, size: 16, color: Colors.black),
+                  child: const Icon(Icons.close, size: 16, color: Colors.black),
                 ),
               ),
             ],
           ),
-          SizedBox(height: 5),
-          Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(price, style: TextStyle(fontSize: 12, color: Colors.green)),
+          const SizedBox(height: 5),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+          Text(price, style: const TextStyle(fontSize: 12, color: Colors.green)),
         ],
       ),
     );
@@ -148,7 +148,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
   Widget _buildExpandableSection(String title, bool isExpanded,
       VoidCallback onTap, List<Widget> children) {
     return Card(
-      margin: EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.symmetric(vertical: 8),
       child: Container(
         decoration: BoxDecoration(
           color: Colors.grey[200], // Background color for the section
@@ -157,7 +157,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
         child: Column(
           children: [
             ListTile(
-              title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
               trailing: Container(
                 child: Image.asset(
                   isExpanded ? "assets/minus.png" : "assets/plus.png",
@@ -170,7 +170,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
             if (isExpanded)
               Container(
                 color: Colors.white, // Background color for expanded content
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: children),
               ),
           ],
@@ -181,13 +181,13 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
 
   Widget _buildComparisonRow(String feature, String value1, String value2) {
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 0, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 4),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Divider(thickness: 1),
-          Text(feature, style: TextStyle(fontSize: 12, color: Colors.grey)),
-          SizedBox(height: 4),
+          const Divider(thickness: 1),
+          Text(feature, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          const SizedBox(height: 4),
           Row(
             children: [
               Expanded(child: Text(value1, textAlign: TextAlign.start)),
