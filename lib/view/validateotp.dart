@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,7 +20,10 @@ class ValidateOtpScreen extends StatefulWidget {
 class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _otpController = TextEditingController();
-  bool isButtonEnabled = false; // Initially disabled
+  bool isButtonEnabled = false;
+  bool isResendDisabled = false;
+  int _resendCountdown = 60;
+  Timer? _timer;
 
   @override
   void initState() {
@@ -26,6 +31,23 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
     _otpController.addListener(() {
       setState(() {
         isButtonEnabled = _otpController.text.length == 5;
+      });
+    });
+  }
+
+  void _startResendCountdown() {
+    setState(() {
+      isResendDisabled = true;
+      _resendCountdown = 60;
+    });
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_resendCountdown > 0) {
+          _resendCountdown--;
+        } else {
+          isResendDisabled = false;
+          _timer?.cancel();
+        }
       });
     });
   }
@@ -38,7 +60,6 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Top Section: Login Frame with Logo
             Stack(
               alignment: Alignment.center,
               children: [
@@ -90,10 +111,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 30),
-
-            // Form Section
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
               child: Form(
@@ -111,8 +129,6 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-
-                    // OTP Field
                     PinCodeTextField(
                       appContext: context,
                       controller: _otpController,
@@ -122,9 +138,9 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
                         borderRadius: BorderRadius.circular(5),
-                        inactiveColor: const Color(0xFF7B69EE),
-                        activeColor: const Color(0xFF7B69EE),
-                        selectedColor: const Color(0xFF7B69EE),
+                        inactiveColor: const Color(0xFF857979),
+                        activeColor: const Color(0xFF857979),
+                        selectedColor: const Color(0xFF857979),
                         fieldWidth: 50,
                         fieldHeight: 50,
                       ),
@@ -137,17 +153,37 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         });
                       },
                     ),
-
-                    const SizedBox(height: 150),
-
-                    // Submit Button
+                    const SizedBox(height: 120),
+                    Align(
+                      alignment: Alignment.center,
+                      child: TextButton(
+                        onPressed: isResendDisabled
+                            ? null
+                            : () async {
+                                const storage = FlutterSecureStorage();
+                                String? email =
+                                    await storage.read(key: "email");
+                                _startResendCountdown();
+                                await forgotProvider.requestOtp(email!);
+                              },
+                        child: Text(
+                          isResendDisabled
+                              ? "Resend in $_resendCountdown sec"
+                              : "Resend Code",
+                          style: TextStyle(
+                              color:
+                                  isResendDisabled ? Colors.grey : Colors.blue),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           backgroundColor: isButtonEnabled
                               ? const Color(0xFF7B69EE)
-                              : Colors.grey, // Disabled color
+                              : Colors.grey,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
@@ -155,7 +191,6 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         ),
                         onPressed: isButtonEnabled
                             ? () async {
-                                // Handle OTP validation
                                 const storage = FlutterSecureStorage();
                                 final email = await storage.read(key: "email");
                                 await forgotProvider.validateOtp(
@@ -171,7 +206,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                                   _showErrorDialog("invalid otp", context);
                                 }
                               }
-                            : null, // Disable button if OTP is not 5 digits
+                            : null,
                         child: const Text(
                           "Submit",
                           style: TextStyle(
@@ -182,7 +217,6 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         ),
                       ),
                     ),
-
                     const SizedBox(height: 30),
                   ],
                 ),

@@ -1,7 +1,12 @@
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
-import 'package:nex2u/view/search.dart';
+import 'package:nex2u/viewModel/farm_details_view_model.dart';
+import 'package:provider/provider.dart';
+
+import '../models/farmlands/FarmDetailsResponse.dart';
+import 'campare_farmland.dart';
 
 class PendingFarmlanddetailsScreen extends StatefulWidget {
   const PendingFarmlanddetailsScreen({super.key});
@@ -10,14 +15,40 @@ class PendingFarmlanddetailsScreen extends StatefulWidget {
   FarmlandsScreenState createState() => FarmlandsScreenState();
 }
 
+String? farmid = "";
 int _currentIndex = 0;
-final List<String> _imageUrls = [
-  'assets/farmland.png',
-  'assets/farmland.png',
-  'assets/farmland.png',
-];
 
 class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
+  List<Features> farmlandSections = [];
+  FarmDetailsResponse? farmDetailsResponse;
+  late List<String> _imageUrls = [];
+  @override
+  void initState() {
+    super.initState();
+    loadFarmlands();
+  }
+
+  final FlutterSecureStorage storage =
+      FlutterSecureStorage(); // Initialize once
+
+  Future<void> loadFarmlands() async {
+    farmid = await storage.read(key: "farmid");
+    print(farmid);
+
+    if (farmid == null) return; // Ensure seeall is not null before proceeding
+
+    final provider = Provider.of<FarmDetailsViewModel>(context, listen: false);
+    await provider.getfarmdetails(context, farmid!);
+
+    if (!mounted) return; // Prevent calling setState on an unmounted widget
+
+    setState(() {
+      farmDetailsResponse = provider.trackFarmlandResponse!;
+      farmlandSections = provider.trackFarmlandResponse?.features ?? [];
+      _imageUrls = provider.trackFarmlandResponse?.farmlandImages ?? [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,12 +76,13 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 });
                               },
                             ),
-                            items: _imageUrls.map((imagePath) {
+                            items: _imageUrls.map((imageUrl) {
                               return Container(
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: AssetImage(imagePath),
+                                    image: NetworkImage(
+                                        imageUrl), // Changed from AssetImage to NetworkImage
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -69,7 +101,8 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 return Container(
                                   width: 8.0,
                                   height: 8.0,
-                                  margin: const EdgeInsets.symmetric(horizontal: 4.0),
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
                                   decoration: BoxDecoration(
                                     shape: BoxShape.circle,
                                     color: _currentIndex == entry.key
@@ -104,11 +137,31 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                           ),
 
                           // Favorite Icon
-                          const Positioned(
-                            top: 50,
-                            right: 16,
-                            child: Icon(Icons.favorite_border,
-                                color: Colors.white),
+                          Positioned(
+                            top: 60,
+                            right: 15,
+                            child: GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  farmDetailsResponse?.isFavorite =
+                                      !(farmDetailsResponse?.isFavorite ??
+                                          false);
+                                });
+                              },
+                              child: CircleAvatar(
+                                backgroundColor: Colors.white,
+                                radius: 14,
+                                child: Icon(
+                                  farmDetailsResponse?.isFavorite == true
+                                      ? Icons.favorite
+                                      : Icons.favorite_border,
+                                  color: farmDetailsResponse?.isFavorite == true
+                                      ? const Color(0xFF8280FF)
+                                      : Colors.grey,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -131,12 +184,13 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 mainAxisAlignment:
                                     MainAxisAlignment.spaceBetween,
                                 children: [
-                                  const Column(
+                                  Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        "GLCSOS 02",
+                                        farmDetailsResponse?.farmlandCode ??
+                                            "".toString(),
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
@@ -146,7 +200,9 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                           Icon(Icons.location_on,
                                               color: Colors.grey, size: 16),
                                           SizedBox(width: 4),
-                                          Text("East Godavari, AP",
+                                          Text(
+                                              farmDetailsResponse?.areaName ??
+                                                  "".toString(),
                                               style: TextStyle(
                                                   color: Colors.grey)),
                                         ],
@@ -158,14 +214,16 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => const Searchlands(),
+                                          builder: (context) =>
+                                              CompareFarmlandsScreen(),
                                         ),
                                       );
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: const Color(0xFF8280FF),
-                                      side:
-                                          const BorderSide(color: Color(0xFF8280FF)),
+                                      backgroundColor: Colors.white,
+                                      side: const BorderSide(
+                                          color: Color(0xFF8280FF)),
                                       shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(20)),
@@ -180,40 +238,21 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
 
                         const SizedBox(height: 16),
 
-                        // Key Features Section
-                        _buildCardSection("Key Feature:", [
-                          _buildInfoRow("Land Extend:", "150 Acres"),
-                          _buildDivider(),
-                          _buildInfoRow("Road Approach", "50 Meters"),
-                          _buildDivider(),
-                          _buildInfoRow("Electricity Connection", "3 Phase"),
-                          _buildDivider(),
-                          _buildInfoRow("Water Facility", "Bore (100 Meters)"),
-                        ]),
-
-                        // Facilities Section
-                        _buildCardSection("Facilities:", [
-                          _buildFacilityRow("Railway Facility", true),
-                          _buildDivider(),
-                          _buildFacilityRow("Airport Facility", true),
-                          _buildDivider(),
-                          _buildFacilityRow("Hospitals", true),
-                          _buildDivider(),
-                          _buildFacilityRow("Ground Water", false),
-                        ]),
-
-                        // Cultivation Section
-                        _buildCardSection("Cultivations:", [
-                          _buildInfoRow("Current Cultivation", "Rice"),
-                          _buildDivider(),
-                          _buildInfoRow(
-                              "Types of Crops can be Grown", "Rice, Cotton"),
-                          _buildDivider(),
-                          _buildInfoRow(
-                              "Future Crops Suggestions", "Sugar Cane"),
-                          _buildDivider(),
-                          _buildInfoRow("Soil Type", "Alfisol (Black Soil)"),
-                        ]),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // **Dynamic Sections**
+                              ...farmlandSections.map((feature) {
+                                return _buildCardSection(
+                                  feature.title ?? "Unknown",
+                                  feature.details ?? [],
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -234,28 +273,31 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Column(
+                  Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Cost:",
                           style: TextStyle(fontSize: 14, color: Colors.grey)),
                       Text(
-                        "₹2,50,00,000.00 / acre",
+                        "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
                         style: TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      await storage.write(
+                          key: 'farmid',
+                          value: farmDetailsResponse?.farmlandId.toString());
                       Navigator.pushNamed(context, AppRoutes.buyer);
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF8280FF),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20)),
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 24, vertical: 12),
                     ),
                     child: const Text("Send Leads",
                         style: TextStyle(color: Colors.white, fontSize: 16)),
@@ -276,9 +318,11 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
+          Text(title,
+              style: const TextStyle(fontSize: 14, color: Colors.black)),
           Text(value,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
         ],
       ),
     );
@@ -291,7 +335,8 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(title, style: const TextStyle(fontSize: 14, color: Colors.black)),
+          Text(title,
+              style: const TextStyle(fontSize: 14, color: Colors.black)),
           Icon(
             isAvailable ? Icons.check : Icons.close,
             color: isAvailable ? Colors.green : Colors.red,
@@ -303,7 +348,7 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
   }
 
   // Card Section for Key Features, Facilities, Cultivations
-  Widget _buildCardSection(String title, List<Widget> children) {
+  Widget _buildCardSection(String title, List<Details> details) {
     return Card(
       color: Colors.white,
       elevation: 4,
@@ -313,26 +358,38 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
-                const Icon(Icons.add),
-              ],
+            Text(
+              title,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-            Column(children: children),
+            Column(
+              children: details.asMap().entries.map((entry) {
+                int index = entry.key;
+                Details detail = entry.value;
+                Widget row;
+
+                if (detail.value == "true") {
+                  row = _buildFacilityRow(detail.title.toString(), true);
+                } else if (detail.value == "false") {
+                  row = _buildFacilityRow(detail.title.toString(), false);
+                } else {
+                  row = _buildInfoRow(
+                      detail.title.toString(), detail.value.toString());
+                }
+
+                return Column(
+                  children: [
+                    row,
+                    if (index != details.length - 1)
+                      const Divider(), // Add line except for the last item
+                  ],
+                );
+              }).toList(),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  // Divider Line
-  Widget _buildDivider() {
-    return Divider(color: Colors.grey[300], thickness: 1);
   }
 }

@@ -1,49 +1,31 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../viewModel/farm_land_view_model.dart';
 import 'farmlandstatus.dart';
 
 class ApprovedFarmlandsScreen extends StatefulWidget {
   const ApprovedFarmlandsScreen({super.key});
 
   @override
-  FarmlandsScreenState createState() => FarmlandsScreenState();
+  ApprovedFarmlandsScreenState createState() => ApprovedFarmlandsScreenState();
 }
 
-class FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
-  final formKey = GlobalKey<FormState>();
-  final List<Map<String, String>> farmlandList = [
-    {
-      'id': 'GLCSOS 02',
-      'location': 'East Godavari, AP',
-      'status': 'Live in website'
-    },
-    {
-      'id': 'GLCSOS 03',
-      'location': 'East Godavari, AP',
-      'status': 'Live in website'
-    },
-    {
-      'id': 'GLCSOS 04',
-      'location': 'East Godavari, AP',
-      'status': 'Live in website'
-    },
-    {
-      'id': 'GLCSOS 05',
-      'location': 'East Godavari, AP',
-      'status': 'Live in website'
-    },
-    {
-      'id': 'GLCSOS 06',
-      'location': 'East Godavari, AP',
-      'status': 'Live in website'
-    },
-  ];
+class ApprovedFarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FarmLandViewModel>(context, listen: false)
+          .getFarmLands(context, "Approved");
+    });
+  }
 
   Color getStatusColor(String status) {
     switch (status) {
       case 'Pending':
         return Colors.orange;
-      case 'Live in website':
+      case 'Approved':
         return Colors.green;
       case 'Rejected':
         return Colors.red;
@@ -60,13 +42,16 @@ class FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text("Approved Farmlands",
-            style: TextStyle(color: Colors.black)),
-        leading: const Icon(Icons.arrow_back, color: Colors.black),
+            style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
+        ),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16), // Added right padding
+            padding: const EdgeInsets.only(right: 16),
             child: Image.asset(
-              'assets/filter.png', // Use your custom asset for filter
+              'assets/filter.png',
               width: 24,
               height: 24,
             ),
@@ -87,91 +72,111 @@ class FarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                 borderRadius: BorderRadius.circular(20),
                 image: const DecorationImage(
                   image: AssetImage('assets/curvelyframe.png'),
-                  fit: BoxFit.cover, // Ensures the image covers the container
+                  fit: BoxFit.cover,
                 ),
               ),
-              child: const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "Showing Total List",
-                    style: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "28",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              child: Consumer<FarmLandViewModel>(
+                builder: (context, farmLandProvider, _) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        "Showing Total List",
+                        style: TextStyle(color: Colors.white, fontSize: 16),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "${farmLandProvider.farmlandresponse?.length}", // Dynamic count
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: farmlandList.length,
-                itemBuilder: (context, index) {
-                  final farmland = farmlandList[index];
-                  return Card(
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 0, vertical: 8), // Adjusted spacing
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    elevation: 4,
-                    color: Colors.white,
-                    child: ListTile(
-                      contentPadding: const EdgeInsets.all(8),
-                      leading: ClipRRect(
-                        borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          'assets/farmland.png',
-                          width: 70, // Reduced image size
-                          height: 70,
-                          fit: BoxFit.cover,
+              child: Consumer<FarmLandViewModel>(
+                builder: (context, farmLandProvider, _) {
+                  final farmlandList = farmLandProvider.farmlandresponse;
+
+                  if (farmlandList!.isEmpty) {
+                    return const Center(
+                        child: Text("No approved farmlands found"));
+                  }
+
+                  return ListView.builder(
+                    itemCount: farmlandList.length,
+                    itemBuilder: (context, index) {
+                      final farmland = farmlandList[index];
+
+                      return Card(
+                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                      ),
-                      title: Text(
-                        "ID: ${farmland['id']}",
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            farmland['location']!,
-                            style: const TextStyle(
-                                color: Colors.grey, fontSize: 12),
-                          ),
-                          Text(
-                            "Status: ${farmland['status']}",
-                            style: TextStyle(
-                              color: getStatusColor(farmland['status']!),
-                              fontSize: 12,
+                        elevation: 4,
+                        color: Colors.white,
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.all(8),
+                          leading: ClipRRect(
+                            borderRadius: BorderRadius.circular(10),
+                            child: Image.network(
+                              farmland.thumbnailImage ?? "",
+                              width: 70,
+                              height: 70,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  Image.asset("assets/logo.png"),
                             ),
                           ),
-                        ],
-                      ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.grey,
-                        size: 18,
-                      ),
-                      onTap: () {
-                        // Handle onTap, navigate to a new screen with details
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FarmlandStatusScreen(),
+                          title: Text(
+                            "ID: ${farmland.farmlandCode}",
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
                           ),
-                        );
-                      },
-                    ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                farmland.areaName! +
+                                    "," +
+                                    farmland.stateName.toString(),
+                                style: const TextStyle(
+                                    color: Colors.grey, fontSize: 12),
+                              ),
+                              Text(
+                                "Status: ${farmland.farmlandStatus}",
+                                style: TextStyle(
+                                  color: getStatusColor(
+                                      farmland.farmlandStatus ?? ""),
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            color: Colors.grey,
+                            size: 18,
+                          ),
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    FarmlandStatusScreen(farm: farmland),
+                              ),
+                            );
+                          },
+                        ),
+                      );
+                    },
                   );
                 },
               ),

@@ -31,7 +31,7 @@ class _SplashViewState extends State<SplashView> {
     if (!mounted) return;
 
     if (userExists == 'true') {
-      Navigator.pushNamed(context, AppRoutes.home);
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
     } else {
       Navigator.pushReplacementNamed(context, AppRoutes.onboard);
     }

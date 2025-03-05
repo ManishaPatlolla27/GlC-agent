@@ -1,4 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:provider/provider.dart';
+
+import '../models/farmlands/FarmLandResponse.dart';
+import '../viewModel/farm_land_view_model.dart';
 
 class SearchFarmlandScreen extends StatefulWidget {
   const SearchFarmlandScreen({super.key});
@@ -8,6 +13,27 @@ class SearchFarmlandScreen extends StatefulWidget {
 }
 
 class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
+  String? seeall = "";
+  List<FarmLandList> farmlandSections = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadFarmlands();
+  }
+
+  Future<void> loadFarmlands() async {
+    const storage = FlutterSecureStorage();
+    seeall = await storage.read(key: "seeall");
+
+    if (seeall == null) return;
+    final provider = Provider.of<FarmLandViewModel>(context, listen: false);
+    await provider.getseeall(context, seeall!);
+    setState(() {
+      farmlandSections = provider.farmlandresponse ?? [];
+    });
+  }
+
   String? selectedState;
   String? selectedDistrict;
   RangeValues budgetRange = const RangeValues(15, 80);
@@ -46,7 +72,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       elevation: 4,
-      color: Colors.white, // Ensuring the background is white
+      color: Colors.white,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -140,16 +166,26 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
           ],
         ),
         const SizedBox(height: 10),
-        buildFarmlandCard(),
+        SizedBox(
+          height: 400, // Set a specific height to avoid constraints issues
+          child: ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: farmlandSections.length,
+            itemBuilder: (context, index) {
+              return farmlandCard(farmlandSections[index]);
+            },
+          ),
+        ),
       ],
     );
   }
 
-  Widget buildFarmlandCard() {
+  Widget farmlandCard(FarmLandList farmland) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+      margin: const EdgeInsets.only(bottom: 16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
       elevation: 2,
-      color: Colors.white,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -157,10 +193,10 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
             children: [
               ClipRRect(
                 borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(10)),
-                child: Image.asset(
-                  "assets/farmland.png",
-                  height: 150,
+                    const BorderRadius.vertical(top: Radius.circular(15)),
+                child: Image.network(
+                  farmland.thumbnailImage ?? 'https://via.placeholder.com/150',
+                  height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
                 ),
@@ -173,12 +209,10 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                       const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: Colors.green,
-                    borderRadius: BorderRadius.circular(5),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    "New",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
+                  child: const Text("New",
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
                 ),
               ),
             ],
@@ -188,82 +222,97 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Exclusive Property",
-                  style: TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                const Text(
-                  "GLCSOS 01",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                Text(
+                  farmland.farmlandCode ?? "Unknown",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.location_on, size: 14, color: Colors.grey),
-                    SizedBox(width: 4),
-                    Text(
-                      "Tanuku, West Godavari, AP",
-                      style: TextStyle(color: Colors.grey),
-                    ),
+                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(farmland.areaName ?? "Unknown",
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Text(
-                  "Crop Type",
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 6),
                 Row(
-                  children: [
-                    buildTag("Corn"),
-                    const SizedBox(width: 8),
-                    buildTag("Potato"),
-                  ],
-                ),
-                const SizedBox(height: 12),
-                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
+                    Text("Crop",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black)),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Chip(
+                            label: Text("Corn"),
+                            backgroundColor: Color(0xFFCFCFF6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Adjust the radius as needed
+                            ),
+                          ),
+                          SizedBox(width: 6),
+                          Chip(
+                            label: Text("Potato"),
+                            backgroundColor: Color(0xFFCFCFF6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Adjust the radius as needed
+                            ),
+                          ),
+                        ])
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Min. Investment",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black)),
                     Text(
-                      "Min. Investment",
-                      style:
-                          TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-                    ),
-                    Text(
-                      "Rs. 100000.00",
-                      style: TextStyle(color: Colors.blueAccent, fontSize: 14),
+                      'Rs. ${farmland.landCost != null ? farmland.landCost!.toStringAsFixed(2) : '0.00'}',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8280FF)),
                     ),
                   ],
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 10),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    Expanded(
+                    SizedBox(
+                      width: 145, // Adjust the width as needed
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {},
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blueAccent,
+                          backgroundColor: const Color(0xFF8280FF),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25),
-                          ),
+                              borderRadius: BorderRadius.circular(20)),
                         ),
-                        child: const Text(
-                          "View Details",
-                          style: TextStyle(color: Colors.white),
-                        ),
+                        child: const Text("View Details",
+                            style: TextStyle(color: Colors.white)),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    OutlinedButton(
-                      onPressed: () {},
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.blueAccent),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(25),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: 145, // Adjust the width as needed
+                      child: ElevatedButton(
+                        onPressed: () async {},
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: const Color(0xFF8280FF),
+                          side: const BorderSide(color: Color(0xFF8280FF)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
                         ),
+                        child: const Text("Compare"),
                       ),
-                      child: const Text("Compare"),
-                    ),
+                    )
                   ],
                 ),
               ],
@@ -285,17 +334,6 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
           .map((e) => DropdownMenuItem(value: e, child: Text(e)))
           .toList(),
       onChanged: onChanged,
-    );
-  }
-
-  Widget buildTag(String text) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      decoration: BoxDecoration(
-        color: Colors.blueAccent.withValues(alpha: 0.2),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Text(text, style: const TextStyle(color: Colors.blueAccent)),
     );
   }
 }

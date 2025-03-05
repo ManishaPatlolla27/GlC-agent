@@ -1,148 +1,82 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/alerts/AlertResponse.dart';
 
-class AlertDetailsScreen extends StatefulWidget {
-  const AlertDetailsScreen({super.key});
-  @override
-  AlertDetailsScreenState createState() => AlertDetailsScreenState();
-}
-
-class AlertDetailsScreenState extends State<AlertDetailsScreen> {
-  final _formKey = GlobalKey<FormState>();
-
-  String? selectedReligion;
-  String? selectedGender;
+class AlertViewScreen extends StatelessWidget {
+  final AlertsList farm;
+  const AlertViewScreen({Key? key, required this.farm}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Alert ID: ALRTSOS 02',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.pop(context),
-          ),
-          backgroundColor: Colors.white,
-          elevation: 0,
-          foregroundColor: Colors.black,
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context),
         ),
-        body: Container(
-          color: Colors.white, // Set your desired background color
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Form(
-              key: _formKey,
-              child: ListView(
-                children: [
-                  const Text(
-                    "Land owner details.",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 16),
-                  buildTextField("First Name", "Enter First Name"),
-                  buildTextField("Last Name", "Enter Last Name"),
-                  buildTextField(
-                    "Phone Number",
-                    "Enter Phone Number",
-                    keyboardType: TextInputType.phone,
-                  ),
-                  buildTextField(
-                    "Email",
-                    "Enter Email",
-                    keyboardType: TextInputType.emailAddress,
-                  ),
-                  buildTextField(
-                    "Date of Birth",
-                    "DD/MM/YYYY",
-                    suffixIcon: Icons.calendar_today,
-                  ),
-                  buildDropdownField(
-                    "Religion",
-                    ["Hindu", "Muslim", "Christian", "Other"],
-                    (value) {
-                      setState(() => selectedReligion = value);
-                    },
-                  ),
-                  buildDropdownField("Gender", ["Male", "Female", "Other"], (
-                    value,
-                  ) {
-                    setState(() => selectedGender = value);
-                  }),
-                  buildTextField(
-                    "Cost",
-                    "Enter Cost of Land",
-                    keyboardType: TextInputType.number,
-                  ),
-                  const SizedBox(height: 20),
-                  const Text(
-                    "Google Location",
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: () {},
-                    icon: Image.asset(
-                      'assets/googlemap.png',
-                      height: 22,
-                    ),
-                    label: const Text(
-                      "123456.23, 456789.23",
-                      style: TextStyle(color: Color(0xFF8280FF)),
-                    ),
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF8280FF)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                ],
+        title: Text(
+          "Alert ID: " + farm.alertCode.toString(),
+          style: TextStyle(color: Colors.black, fontSize: 16),
+        ),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Land owner details.",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 12),
+            _buildTextField("First Name", farm.firstName.toString()),
+            _buildTextField("Last Name", farm.lastName.toString()),
+            _buildTextField("Phone Number", farm.contactNumber.toString()),
+            _buildTextField("Email", farm.contactEmail.toString()),
+            _buildTextField("Date of Birth", farm.dob.toString(),
+                icon: Icons.calendar_today),
+            _buildTextField("Religion", farm.religion.toString()),
+            _buildTextField("Gender", farm.gender.toString()),
+            _buildTextField("Cost", farm.landCost.toString()),
+            const SizedBox(height: 16),
+            const Text(
+              "Google Location",
+              style: TextStyle(fontSize: 14, color: Colors.black),
+            ),
+            const SizedBox(height: 6),
+            TextField(
+              readOnly: true,
+              decoration: InputDecoration(
+                prefixIcon: const Icon(Icons.location_pin, color: Colors.red),
+                hintText: farm.landLatitude.toString() +
+                    "," +
+                    farm.landLongitude.toString(),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
-          ),
-        ));
-  }
-
-  Widget buildTextField(
-    String label,
-    String hint, {
-    TextInputType keyboardType = TextInputType.text,
-    IconData? suffixIcon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: TextFormField(
-        keyboardType: keyboardType,
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-          suffixIcon: suffixIcon != null ? Icon(suffixIcon) : null,
+          ],
         ),
       ),
     );
   }
 
-  Widget buildDropdownField(
-    String label,
-    List<String> options,
-    Function(String?) onChanged,
-  ) {
+  Widget _buildTextField(String label, String value, {IconData? icon}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: DropdownButtonFormField<String>(
+      padding: const EdgeInsets.only(bottom: 12),
+      child: TextField(
+        readOnly: true,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          suffixIcon: icon != null ? Icon(icon) : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
-        items: options
-            .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-            .toList(),
-        onChanged: onChanged,
+        controller: TextEditingController(text: value),
       ),
     );
   }

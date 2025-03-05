@@ -27,7 +27,7 @@ class AlertRepository {
         headers: headers,
       );
 
-      return response.bottomlist;
+      return response.alertlist;
     } catch (e) {
       throw FetchProfileException('Failed to fetch profile: $e');
     }

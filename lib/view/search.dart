@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nex2u/models/farmlands/FarmLandResponse.dart';
+import 'package:nex2u/viewModel/farm_land_view_model.dart';
+import 'package:provider/provider.dart';
 
 class Searchlands extends StatefulWidget {
   const Searchlands({super.key});
@@ -8,69 +12,85 @@ class Searchlands extends StatefulWidget {
 }
 
 class _SearchLandState extends State<Searchlands> {
-  // Open the Filter Drawer
-  void openFilterDrawer() {
-    Scaffold.of(context).openDrawer();
+  List<FarmLandList> farmlandSections = [];
+  late String seeall = "Farmlands"; // Default value to prevent null errors
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  void initState() {
+    super.initState();
+    loadFarmlands();
+  }
+
+  Future<void> loadFarmlands() async {
+    const storage = FlutterSecureStorage();
+    String? storedValue = await storage.read(key: "seeall");
+
+    if (storedValue != null) {
+      setState(() {
+        seeall = storedValue;
+      });
+
+      final provider = Provider.of<FarmLandViewModel>(context, listen: false);
+      await provider.getseeall(context, seeall);
+      setState(() {
+        farmlandSections = provider.farmlandresponse ?? [];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const FilterDrawer(), // Left-side filter drawer
+      backgroundColor: Colors.white,
+      key: _scaffoldKey, // Assign Global Key
+      drawer: const FilterDrawer(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Builder(
-          builder: (context) {
-            return IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            );
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () {
+            Navigator.pop(context);
           },
         ),
-        title: const Text("Search", style: TextStyle(color: Colors.black)),
+        title: Text(seeall, style: const TextStyle(color: Colors.black)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "33 Farmlands Listing",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            Text(
+              "${farmlandSections.length} Farmlands Listing",
+              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.topRight,
-              child: Builder(
-                builder: (context) {
-                  return ElevatedButton.icon(
-                    onPressed: () {
-                      Scaffold.of(context)
-                          .openDrawer(); // Now correctly gets Scaffold context
-                    },
-                    icon: const Icon(Icons.filter_list, color: Colors.black),
-                    label: const Text("Filter",
-                        style: TextStyle(color: Colors.black)),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(color: Colors.black12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                  );
+              child: ElevatedButton.icon(
+                onPressed: () {
+                  _scaffoldKey.currentState?.openDrawer();
                 },
+                icon: const Icon(Icons.filter_list, color: Colors.black),
+                label:
+                    const Text("Filter", style: TextStyle(color: Colors.black)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  side: const BorderSide(color: Colors.black12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 10),
             Expanded(
               child: ListView.builder(
-                itemCount: 3, // Example items count
+                itemCount: farmlandSections.length,
                 itemBuilder: (context, index) {
-                  return farmlandCard();
+                  return farmlandCard(farmlandSections[index]);
                 },
               ),
             ),
@@ -80,7 +100,7 @@ class _SearchLandState extends State<Searchlands> {
     );
   }
 
-  Widget farmlandCard() {
+  Widget farmlandCard(FarmLandList farmland) {
     return Card(
       margin: const EdgeInsets.only(bottom: 16),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -93,8 +113,8 @@ class _SearchLandState extends State<Searchlands> {
               ClipRRect(
                 borderRadius:
                     const BorderRadius.vertical(top: Radius.circular(15)),
-                child: Image.asset(
-                  'assets/farmland.png', // Change with actual asset
+                child: Image.network(
+                  farmland.thumbnailImage ?? 'https://via.placeholder.com/150',
                   height: 160,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -110,10 +130,8 @@ class _SearchLandState extends State<Searchlands> {
                     color: Colors.green,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Text(
-                    "New",
-                    style: TextStyle(color: Colors.white, fontSize: 12),
-                  ),
+                  child: const Text("New",
+                      style: TextStyle(color: Colors.white, fontSize: 12)),
                 ),
               ),
             ],
@@ -123,81 +141,97 @@ class _SearchLandState extends State<Searchlands> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  "Exclusive Property",
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                Text(
+                  farmland.farmlandCode ?? "Unknown",
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  "GLCSOS 01",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                const Row(
+                Row(
                   children: [
-                    Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    SizedBox(width: 4),
-                    Text("Tanuku, West Godavari, AP",
-                        style: TextStyle(color: Colors.grey)),
+                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                    const SizedBox(width: 4),
+                    Text(farmland.areaName ?? "Unknown",
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
                 const SizedBox(height: 8),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const Text(
-                      'Crop ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
+                    Text("Crop",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.black)),
                     Row(
-                      children: [
-                        cropTypeChip("Corn"),
-                        const SizedBox(width: 8),
-                        cropTypeChip("Potato"),
-                      ],
-                    ),
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Chip(
+                            label: Text("Corn"),
+                            backgroundColor: Color(0xFFCFCFF6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Adjust the radius as needed
+                            ),
+                          ),
+                          SizedBox(width: 6),
+                          Chip(
+                            label: Text("Potato"),
+                            backgroundColor: Color(0xFFCFCFF6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                  20), // Adjust the radius as needed
+                            ),
+                          ),
+                        ])
                   ],
                 ),
                 const SizedBox(height: 8),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      'Min. Investment',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.black),
-                    ),
-                    Text('Rs. 100000.00',
+                    const Text("Min. Investment",
                         style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold)),
+                            fontWeight: FontWeight.bold, color: Colors.black)),
+                    Text(
+                      'Rs. ${farmland.landCost != null ? farmland.landCost!.toStringAsFixed(2) : '0.00'}',
+                      style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF8280FF)),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF8280FF),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20),
+                    SizedBox(
+                      width: 145, // Adjust the width as needed
+                      child: ElevatedButton(
+                        onPressed: () async {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF8280FF),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
                         ),
+                        child: const Text("View Details",
+                            style: TextStyle(color: Colors.white)),
                       ),
-                      child: const Text("View Details",
-                          style: TextStyle(color: Colors.white)),
                     ),
-                    ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                        foregroundColor: const Color(0xFF8280FF),
-                        side: const BorderSide(color: Color(0xFF8280FF)),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
+                    const SizedBox(height: 30),
+                    SizedBox(
+                      width: 145, // Adjust the width as needed
+                      child: ElevatedButton(
+                        onPressed: () async {},
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: const Color(0xFF8280FF),
+                          side: const BorderSide(color: Color(0xFF8280FF)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: const Text("Compare"),
                       ),
-                      child: const Text("Compare"),
-                    ),
+                    )
                   ],
                 ),
               ],
@@ -205,17 +239,6 @@ class _SearchLandState extends State<Searchlands> {
           ),
         ],
       ),
-    );
-  }
-
-  Widget cropTypeChip(String label) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-      decoration: BoxDecoration(
-        color: const Color(0xFFCFCFF6),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(label, style: const TextStyle(color: Colors.black)),
     );
   }
 }
@@ -243,8 +266,6 @@ class FilterDrawer extends StatelessWidget {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
-
-            // Search By State
             const Text("Search By State",
                 style: TextStyle(fontWeight: FontWeight.bold)),
             TextField(
@@ -256,17 +277,6 @@ class FilterDrawer extends StatelessWidget {
                 ),
               ),
             ),
-            CheckboxListTile(
-              title: const Text("Andhra Pradesh"),
-              value: true,
-              onChanged: (val) {},
-            ),
-            CheckboxListTile(
-              title: const Text("Telangana"),
-              value: false,
-              onChanged: (val) {},
-            ),
-
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),

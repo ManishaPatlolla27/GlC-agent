@@ -157,6 +157,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.pushNamed(context, AppRoutes.myshortlist);
                       } else if (menu.menuTitle == "Notifications") {
                         Navigator.pushNamed(context, AppRoutes.notifications);
+                      } else if (menu.menuTitle == "Total Farm Alerts") {
+                        Navigator.pushNamed(context, AppRoutes.allfarmland);
                       }
                     },
                   );

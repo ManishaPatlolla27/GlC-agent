@@ -4,6 +4,7 @@ import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/view/pendingfarmlands.dart';
 import 'package:provider/provider.dart';
 
+import '../viewModel/configuration_view_model.dart';
 import '../viewModel/dashboard_viewmodel.dart';
 import 'allfarmlands.dart';
 import 'approvedfarmland.dart';
@@ -33,7 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final dashboardViewModel = Provider.of<DashboardViewModel>(context);
-
+    final configService = Provider.of<ConfigurationViewModel>(context);
     final response = dashboardViewModel.dashboardresponse;
     return Scaffold(
       backgroundColor: Colors.white,
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: [
-          ElevatedButton.icon(
+          ElevatedButton(
             onPressed: () => Navigator.pushNamed(context, AppRoutes.alert),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFEB8801),
@@ -57,8 +58,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text("Alert", style: TextStyle(color: Colors.white)),
+            child: Row(
+              mainAxisSize:
+                  MainAxisSize.min, // Ensures the button wraps its content
+              children: const [
+                Text("Alert", style: TextStyle(color: Colors.white)),
+                SizedBox(width: 8), // Space between text and icon
+                Icon(Icons.add, color: Colors.white),
+              ],
+            ),
           ),
           const SizedBox(width: 10),
           GestureDetector(
@@ -142,13 +150,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   // Toggle Button
   Widget toggleButton(String title, bool isSelected, bool selectAmount) {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
     return GestureDetector(
       onTap: () => setState(() => isAmountSelected = selectAmount),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 52),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF8280FF) : Colors.transparent,
+          color: isSelected
+              ? configService.appConfig?.primaryColor
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Text(

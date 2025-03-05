@@ -55,7 +55,7 @@ class LoginViewModel with ChangeNotifier {
         await storage.write(key: 'auth_token', value: response.accessToken);
 
         if (!context.mounted) return;
-        Navigator.pushNamed(context, AppRoutes.home);
+        Navigator.pushReplacementNamed(context, AppRoutes.home);
         // You can also navigate to the next screen
         // Navigator.pushNamed(context, '/otpVerification');
       } else {
@@ -66,7 +66,7 @@ class LoginViewModel with ChangeNotifier {
     } catch (e) {
       // Handle any exceptions or network errors
       if (!context.mounted) return;
-      _showErrorDialog('Login failed: $e', context);
+      _showErrorDialog('Incorrect Username/Password', context);
     } finally {
       _setLoading(false);
     }

@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/notifications/NotificationResponse.dart';
+import 'package:nex2u/viewModel/notification_view_model.dart';
+import 'package:provider/provider.dart';
 
 class NotificationsScreen extends StatefulWidget {
   const NotificationsScreen({super.key});
@@ -8,48 +11,22 @@ class NotificationsScreen extends StatefulWidget {
 }
 
 class NotificationsScreenState extends State<NotificationsScreen> {
-  List<Map<String, dynamic>> notifications = [
-    {
-      'id': 'ALRTSOS 01',
-      'type': 'Alert',
-      'status': 'Approved',
-      'message':
-          'Congratulations, Your project has been successfully approved.',
-      'isUnread': true,
-    },
-    {
-      'id': 'ALRTSOS 01',
-      'type': 'Alert',
-      'status': 'Dismissed',
-      'message':
-          'Some documents regarding background verification are missing please check.',
-      'isUnread': false,
-    },
-    {
-      'id': 'GLCSOS 01',
-      'type': 'Project',
-      'status': 'Approved',
-      'message':
-          'Congratulations, Your project has been successfully approved, the amount will be credited within 24 Hrs.',
-      'isUnread': false,
-    },
-    {
-      'id': 'GLCSOS 01',
-      'type': 'Project',
-      'status': 'Rejected',
-      'message':
-          'Some documents regarding background verification are missing please check.',
-      'isUnread': false,
-    },
-    {
-      'id': 'GLCSOS 01',
-      'type': 'Project',
-      'status': 'Rejected',
-      'message':
-          'Some documents regarding background verification are missing please check.',
-      'isUnread': false,
-    },
-  ];
+  List<NotificationList> farmlandSections = [];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider =
+          Provider.of<NotificationViewModel>(context, listen: false);
+      await provider.getNotification(context);
+
+      setState(() {
+        farmlandSections =
+            provider.trackFarmlandResponse?.notificationlist ?? [];
+      });
+    });
+  }
 
   Color getStatusColor(String status) {
     switch (status) {
@@ -78,15 +55,15 @@ class NotificationsScreenState extends State<NotificationsScreen> {
           },
         ),
         title: Text(
-          "Notifications (${notifications.length})",
+          "Notifications (${farmlandSections.length})",
           style: const TextStyle(color: Colors.white),
         ),
       ),
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
-        itemCount: notifications.length,
+        itemCount: farmlandSections.length,
         itemBuilder: (context, index) {
-          final notification = notifications[index];
+          final notification = farmlandSections[index];
 
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
@@ -113,19 +90,6 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                    if (notification['isUnread'])
-                      Positioned(
-                        left: 0,
-                        top: 4,
-                        child: Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      ),
                   ],
                 ),
                 const SizedBox(width: 12),
@@ -141,15 +105,16 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                               color: Colors.black, fontSize: 14, height: 1.5),
                           children: [
                             TextSpan(
-                              text:
-                                  "${notification['type']} ID: ${notification['id']} ",
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              text: "${notification.notifiedOn} } ",
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const TextSpan(text: "has been "),
                             TextSpan(
-                              text: notification['status'],
+                              text: notification.title,
                               style: TextStyle(
-                                color: getStatusColor(notification['status']),
+                                color: getStatusColor(
+                                    notification.message.toString()),
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -158,7 +123,7 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        notification['message'],
+                        notification.message.toString(),
                         style: TextStyle(color: Colors.grey[600], fontSize: 12),
                       ),
                       const SizedBox(height: 10),
@@ -168,9 +133,7 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                         children: [
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                notifications[index]['isUnread'] = false;
-                              });
+                              setState(() {});
                             },
                             child: const Text(
                               "Mark as read",
@@ -183,9 +146,7 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                           const SizedBox(width: 16),
                           GestureDetector(
                             onTap: () {
-                              setState(() {
-                                notifications.removeAt(index);
-                              });
+                              setState(() {});
                             },
                             child: const Text(
                               "Clear",

@@ -242,7 +242,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
   }
 
   void _showErrorDialog(String message, BuildContext context) {
-    ValidationIoSAlert().showAlert(context, description: message);
+    ValidationIoSAlert().showAlert(context, description: message, flag: false);
     debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

@@ -9,6 +9,8 @@ class AppRoutes {
   static const String password = "/password";
   static const String onboard = "/onboard";
   static const String home = "/home";
+  static const String dashboard = "/dashboard";
+  static const String allfarmland = "/allfarmland";
   static const String alert = "/alert";
   static const String farmlands = "/farmlands";
   static const String editprofile = "/editprofile";

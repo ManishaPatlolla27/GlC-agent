@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
@@ -15,6 +17,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   int _currentIndex = 0;
   final PageController _pageController = PageController();
   List<WelcomeScreens> carouselImages = [];
+  Timer? _autoScrollTimer;
 
   @override
   void initState() {
@@ -25,9 +28,42 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       setState(() {
         carouselImages = provider.dashboardresponse?.welcomeScreens ?? [];
       });
+      _startAutoScroll();
     });
   }
 
+  /// Starts the auto-scroll timer
+  void _startAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _autoScrollTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (_pageController.hasClients) {
+        if (_currentIndex < carouselImages.length - 1) {
+          _pageController.nextPage(
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+          );
+        } else {
+          _pageController.jumpToPage(0); // Loop back to the first page
+        }
+      }
+    });
+  }
+
+  /// Handles page change
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+    _restartAutoScroll();
+  }
+
+  /// Restarts the auto-scroll when user interacts
+  void _restartAutoScroll() {
+    _autoScrollTimer?.cancel();
+    _startAutoScroll();
+  }
+
+  /// Moves to the next page or navigates to login
   void _onNextPressed() {
     if (_currentIndex < carouselImages.length - 1) {
       _pageController.nextPage(
@@ -40,6 +76,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   @override
+  void dispose() {
+    _autoScrollTimer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -48,11 +91,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           PageView.builder(
             controller: _pageController,
             itemCount: carouselImages.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
-            },
+            onPageChanged: _onPageChanged,
             itemBuilder: (context, index) {
               return Stack(
                 fit: StackFit.expand,
@@ -61,17 +100,14 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     carouselImages[index].imageUrl.toString(),
                     fit: BoxFit.cover,
                     loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) {
-                        return child; // Image fully loaded
-                      }
-                      // Show a specific local asset image based on index while loading
+                      if (loadingProgress == null) return child;
                       return Image.asset(
-                        'assets/slider${index + 1}.png', // Adjust based on your naming convention
+                        'assets/slider${(index % 3) + 1}.png', // Placeholder images
                         fit: BoxFit.cover,
                       );
                     },
                     errorBuilder: (context, error, stackTrace) => Image.asset(
-                      'assets/slider${index + 1}.png', // Show fallback asset image on error
+                      'assets/placeholder.png',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -81,7 +117,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         begin: Alignment.bottomCenter,
                         end: Alignment.center,
                         colors: [
-                          Colors.black.withValues(alpha: 0.7),
+                          Colors.black.withOpacity(0.7),
                           Colors.transparent,
                         ],
                       ),
@@ -95,7 +131,10 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          carouselImages[index].title.toString(),
+                          carouselImages[index]
+                              .title
+                              .toString()
+                              .replaceAll('\\n', '\n'),
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 38,
@@ -104,9 +143,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                         const SizedBox(height: 10),
                         Text(
-                          carouselImages[index].description.toString(),
+                          carouselImages[index]
+                              .description
+                              .toString()
+                              .replaceAll('\\n', '\n'),
                           style: TextStyle(
-                            color: Colors.white.withValues(alpha: 0.9),
+                            color: Colors.white.withOpacity(0.9),
                             fontSize: 16,
                           ),
                         ),
@@ -131,7 +173,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   decoration: BoxDecoration(
                     color: _currentIndex == index
                         ? Colors.white
-                        : Colors.white.withValues(alpha: 0.4),
+                        : Colors.white.withOpacity(0.4),
                     borderRadius: BorderRadius.circular(4),
                   ),
                 );
@@ -166,7 +208,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ),
                   child: IconButton(
                     onPressed: _onNextPressed,
-                    icon: const Icon(Icons.arrow_forward, color: Colors.white),
+                    icon: Image.asset(
+                      "assets/forward.png",
+                      width: 26,
+                      height: 26,
+                    ),
                   ),
                 ),
               ],

@@ -1,11 +1,11 @@
 class AlertsResponse {
-  final List<AlertsList> bottomlist;
+  final List<AlertsList> alertlist;
 
-  AlertsResponse({required this.bottomlist});
+  AlertsResponse({required this.alertlist});
 
   factory AlertsResponse.fromJson(List<dynamic> json) {
     return AlertsResponse(
-      bottomlist: json
+      alertlist: json
           .map((item) => AlertsList.fromJson(item as Map<String, dynamic>))
           .toList(),
     );
@@ -30,7 +30,10 @@ class AlertsList {
   String? regionName;
   String? areaName;
   String? agentName;
-  String? imageUrl;
+  String? createdOn;
+  Null? farmlandCode;
+  Null? farmlandCreatedOn;
+  String? thumbnailImage;
 
   AlertsList(
       {this.alertId,
@@ -50,7 +53,10 @@ class AlertsList {
       this.regionName,
       this.areaName,
       this.agentName,
-      this.imageUrl});
+      this.createdOn,
+      this.farmlandCode,
+      this.farmlandCreatedOn,
+      this.thumbnailImage});
 
   AlertsList.fromJson(Map<String, dynamic> json) {
     alertId = json['alertId'];
@@ -70,7 +76,10 @@ class AlertsList {
     regionName = json['regionName'];
     areaName = json['areaName'];
     agentName = json['agentName'];
-    imageUrl = json['image_url'];
+    createdOn = json['created_on'];
+    farmlandCode = json['farmlandCode'];
+    farmlandCreatedOn = json['farmlandCreatedOn'];
+    thumbnailImage = json['thumbnailImage'];
   }
 
   Map<String, dynamic> toJson() {
@@ -92,7 +101,10 @@ class AlertsList {
     data['regionName'] = this.regionName;
     data['areaName'] = this.areaName;
     data['agentName'] = this.agentName;
-    data['image_url'] = this.imageUrl;
+    data['created_on'] = this.createdOn;
+    data['farmlandCode'] = this.farmlandCode;
+    data['farmlandCreatedOn'] = this.farmlandCreatedOn;
+    data['thumbnailImage'] = this.thumbnailImage;
     return data;
   }
 }

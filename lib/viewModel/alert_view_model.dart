@@ -5,7 +5,7 @@ import 'package:nex2u/repo/alert_repository.dart';
 
 class AlertViewModel with ChangeNotifier {
   late BuildContext context;
-  List<AlertsList>? _bottomresponse = [];
+  List<AlertsList>? _alertresponse = [];
   final AlertRepository _profileRepository = AlertRepository();
   bool _isLoading = false;
   String _errorMessage = '';
@@ -15,7 +15,7 @@ class AlertViewModel with ChangeNotifier {
   // Getters
   bool get getLoadingStatus => _isLoading;
   String get getErrorMessage => _errorMessage;
-  List<AlertsList>? get bottomresponse => _bottomresponse;
+  List<AlertsList>? get alertresponse => _alertresponse;
 
   // Fetch profile details
   Future<void> alerts(BuildContext context) async {
@@ -26,7 +26,7 @@ class AlertViewModel with ChangeNotifier {
       List<AlertsList> response = await _profileRepository.getalerts();
 
       if (response.isNotEmpty) {
-        _bottomresponse = response;
+        _alertresponse = response;
       } else {
         _errorMessage = 'Invalid profile data received';
       }

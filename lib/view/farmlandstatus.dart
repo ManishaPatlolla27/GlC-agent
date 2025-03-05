@@ -1,15 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/farmlands/FarmLandResponse.dart';
+import 'package:nex2u/viewModel/trackfarmland_view_model.dart';
+import 'package:provider/provider.dart';
+
+import '../models/trackfarmland/TrackFarmLandResponse.dart';
 
 class FarmlandStatusScreen extends StatefulWidget {
-  const FarmlandStatusScreen({super.key});
+  final FarmLandList farm;
+  const FarmlandStatusScreen({Key? key, required this.farm}) : super(key: key);
 
   @override
-  State<FarmlandStatusScreen> createState() => _HomeScreenState();
+  State<FarmlandStatusScreen> createState() => _FarmlandStatusScreenState();
 }
 
-class _HomeScreenState extends State<FarmlandStatusScreen> {
+class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
+  late TrackfarmlandViewModel _viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _viewModel = Provider.of<TrackfarmlandViewModel>(context, listen: false);
+      _viewModel.getTrackFarm(context, widget.farm.farmlandId.toString());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final dashboardViewModel = Provider.of<TrackfarmlandViewModel>(context);
+    final response = dashboardViewModel.trackFarmlandResponse;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -17,205 +36,171 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          }, // Add navigation function
+          onPressed: () => Navigator.pop(context),
         ),
-        title: RichText(
-          text: const TextSpan(
-            children: [
-              TextSpan(
-                text: "GLCSOS 02, ",
-                style: TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                ),
-              ),
-              TextSpan(
-                text: "East Godavari",
-                style: TextStyle(color: Colors.grey, fontSize: 16),
-              ),
-            ],
-          ),
+        title: Text(
+          response!.farmlandCode.toString(),
+          style: TextStyle(
+              color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.info_outline, color: Colors.black),
-            onPressed: () {},
-          )
-        ],
       ),
-      body: Column(
-        children: [
-          // Top Farmland Image
-          Container(
-            width: double.infinity,
-            height: 180,
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                    'assets/farmland.png'), // Change this to actual image
-                fit: BoxFit.cover,
-              ),
-            ),
-          ),
+      body: Consumer<TrackfarmlandViewModel>(
+        builder: (context, viewModel, child) {
+          TrackFarmlandResponse? farmland = viewModel.trackFarmlandResponse;
+          if (farmland == null) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-          // Status Container
-          Expanded(
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: const [
-                          BoxShadow(
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  // Top Farmland Image
+                  Container(
+                    width: double.infinity,
+                    height: 180,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        image: farmland.thumbnailImage != null
+                            ? NetworkImage(farmland.thumbnailImage!)
+                            : const AssetImage('assets/farmland.png')
+                                as ImageProvider,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+
+                  // Status Timeline Container
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
                             color: Colors.black12,
                             blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Current Status
-                          const Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Current Status: ",
-                                  style: TextStyle(
+                            spreadRadius: 2),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Current Status
+                        Text.rich(
+                          TextSpan(
+                            children: [
+                              const TextSpan(
+                                text: "Current Status: ",
+                                style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                TextSpan(
-                                  text: "Pending from CCS",
-                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              TextSpan(
+                                text: farmland.farmlandStatus ?? "Unknown",
+                                style: const TextStyle(
                                     fontSize: 16,
                                     color: Colors.orange,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
+                                    fontWeight: FontWeight.bold),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Dynamic Timeline
+                        if (farmland.statusTrack != null &&
+                            farmland.statusTrack!.isNotEmpty)
+                          Column(
+                            children: List.generate(
+                                farmland.statusTrack!.length, (index) {
+                              StatusTrack step = farmland.statusTrack![index];
+                              bool isCompleted = step.status == "Completed";
+                              bool isLastStep =
+                                  index == farmland.statusTrack!.length - 1;
+
+                              return _buildTimelineStep(
+                                title: step.title ?? "Unknown Step",
+                                status: step.status ?? "Pending",
+                                isCompleted: isCompleted,
+                                isLastStep: isLastStep,
+                              );
+                            }),
+                          )
+                        else
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 20),
+                              child: Text(
+                                "No status updates available.",
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.grey),
+                              ),
                             ),
                           ),
-                          const SizedBox(height: 12),
-
-                          // Stepper Timeline
-                          _buildTimelineStep(
-                            title: "Field Officer Data Uploaded",
-                            status: "Completed",
-                            isCompleted: true,
-                          ),
-                          _buildTimelineStep(
-                            title: "CCS Team",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Regional Officer Data Uploads",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Local Intelligence Data Uploads",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Legality Officer",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Agriculture Certification Officer",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Land & Boundary Officer",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Valuation Officer",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Local Intelligence Officer",
-                            status: "Pending",
-                          ),
-                          _buildTimelineStep(
-                            title: "Super Admin",
-                            status: "Pending",
-                            isLastStep: true,
-                          ),
-                        ],
-                      ),
+                      ],
                     ),
+                  ),
+                  const SizedBox(height: 20),
 
-                    const SizedBox(height: 20),
-
-                    // "Live in Website" Button
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 14),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: const [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Live in Website",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Icon(Icons.arrow_forward_ios, color: Colors.black),
-                        ],
-                      ),
+                  // "Live in Website" Button
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 14),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 10,
+                          spreadRadius: 2,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 3, // Vertical bar
+                          height: 24,
+                          color: Color(
+                              0xFF8280FF), // Adjust to match the exact shade
+                        ),
+                        const SizedBox(width: 12),
+                        const Text(
+                          "Live in Website",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
+                            color: Color(
+                                0xFF8280FF), // Matches the text color in the image
+                          ),
+                        ),
+                        const Spacer(),
+                        if (response?.liveInWebSite ?? false)
+                          const Icon(
+                            Icons.check_circle,
+                            color: Colors.green,
+                            size: 24,
+                          )
+                        else
+                          Image.asset(
+                            "assets/unselect.png",
+                            width: 24,
+                            height: 24,
+                          ),
+                      ],
+                    ),
+                  )
+                ],
               ),
             ),
-          ),
-        ],
-      ),
-
-      // bottom Navigation Bar
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
-        selectedItemColor: Colors.deepPurple,
-        unselectedItemColor: Colors.grey,
-        showUnselectedLabels: true,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.landscape),
-            label: "Farmlands",
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: "Profile",
-          ),
-        ],
+          );
+        },
       ),
     );
   }
@@ -224,7 +209,7 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
     required String title,
     required String status,
     bool isCompleted = false,
-    bool isLastStep = false, // New parameter to check if this is the last step
+    bool isLastStep = false,
   }) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -239,8 +224,8 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
                   height: 24,
                   decoration: BoxDecoration(
                     color: isCompleted
-                        ? const Color(0xFF8280FF).withValues(alpha: 0.2)
-                        : Colors.grey.withValues(alpha: 0.2), // Glow effect
+                        ? const Color(0xFF8280FF).withOpacity(0.2)
+                        : Colors.grey.withOpacity(0.2),
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -255,20 +240,19 @@ class _HomeScreenState extends State<FarmlandStatusScreen> {
               ],
             ),
             if (!isLastStep) ...[
-              // Hide the vertical line for the last step
               const SizedBox(height: 5),
               Container(
                 width: 2,
                 height: 40,
                 color: isCompleted
                     ? const Color(0xFF8280FF)
-                    : Colors.grey.withValues(alpha: 0.5),
+                    : Colors.grey.withOpacity(0.5),
               ),
               const SizedBox(height: 5),
             ],
           ],
         ),
-        const SizedBox(width: 16), // Increased gap between pointer and text
+        const SizedBox(width: 16), // Space between dot and text
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

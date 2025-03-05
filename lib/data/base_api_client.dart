@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/data/api_urls.dart';
@@ -52,9 +53,6 @@ Status Code: ${error.response?.statusCode}
 Error Data: ${error.response?.data}
 Error Headers: ${error.response?.headers}
 """);
-        // if (error.response != null) {
-        //   log("Status Code: \${error.response?.statusCode}\nError Data: \${error.response?.data}\nError Headers: \${error.response?.headers}");
-        // }
         return handler.next(error);
       },
     ));
@@ -72,7 +70,7 @@ Error Headers: ${error.response?.headers}
   Future<T> get<T>(
     String url, {
     required T Function(dynamic) fromJson,
-    Map<String, dynamic>? queryParams, // Added query parameters
+    Map<String, dynamic>? queryParams,
     Map<String, String>? headers,
     bool isJson = true,
   }) async {
@@ -84,7 +82,7 @@ Error Headers: ${error.response?.headers}
 
       Response response = await _dio.get(
         url,
-        queryParameters: queryParams, // Pass query parameters here
+        queryParameters: queryParams,
         options: options,
       );
 
@@ -127,6 +125,44 @@ Error Headers: ${error.response?.headers}
     } on DioException catch (e) {
       _handleError(e);
       rethrow;
+    }
+  }
+
+  /// **New Method: postWithoutJson**
+  /// This method does not require a `fromJson` function. It returns the raw response.
+  Future<dynamic> postWithoutJson(
+    String url,
+    dynamic payload, {
+    Map<String, String>? headers,
+    bool isFormData = false,
+    bool isJson = true,
+    bool isMultipart = false,
+  }) async {
+    try {
+      final options = Options(
+        headers: headers ?? {},
+        contentType: isFormData
+            ? 'application/x-www-form-urlencoded'
+            : isJson
+                ? 'application/json'
+                : isMultipart
+                    ? 'multipart/form-data'
+                    : 'application/octet-stream',
+      );
+
+      Response response;
+      if (isMultipart) {
+        response = await _dio.post(url,
+            data: FormData.fromMap(payload), options: options);
+      } else {
+        response = await _dio.post(url, data: payload, options: options);
+      }
+
+      // Return the raw response data
+      return response.data;
+    } on DioException catch (e) {
+      _handleError(e);
+      return null; // Return null on error instead of throwing
     }
   }
 
