@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/discovery/DiscoveryResponse.dart';
+import 'package:nex2u/models/discovery/discovery_response.dart';
 import 'package:nex2u/repo/discovery_repository.dart';
 
 class DiscoveryViewModel with ChangeNotifier {

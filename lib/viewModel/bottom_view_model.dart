@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/bottom/BottomResponse.dart';
+import 'package:nex2u/models/bottom/bottom_response.dart';
 
 import '../repo/bottom_repository.dart';
 

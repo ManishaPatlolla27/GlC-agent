@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
@@ -5,6 +7,7 @@ import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,10 +17,56 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  File? _imageFile;
+
+  Future<void> _pickImage(ImageSource source) async {
+    final provider = Provider.of<ProfileViewModel>(context, listen: false);
+
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+      });
+      if (!mounted) return;
+      await provider.updateProfile(_imageFile ?? File(''), context);
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text("Select Profile Picture"),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.camera);
+            },
+            child: const Text("Capture from Camera"),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.gallery);
+            },
+            child: const Text("Upload from Gallery"),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ProfileViewModel>(context, listen: false).profile(context);
       Provider.of<DashboardViewModel>(context, listen: false)
           .dashboard(context);
@@ -39,11 +88,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.white, // Set background to white
       appBar: AppBar(
-        title: Text("My Profile", style: TextStyle(color: Colors.black)),
+        title: const Text("My Profile", style: TextStyle(color: Colors.black)),
         backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -52,62 +101,84 @@ class _ProfileScreenState extends State<ProfileScreen> {
       body: Column(
         children: [
           Padding(
-            padding: EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(16.0),
             child: Row(
               crossAxisAlignment:
                   CrossAxisAlignment.start, // Align content at the top
               children: [
-                CircleAvatar(
-                  radius: 40,
-                  backgroundImage: AssetImage('assets/logo.png'),
+                GestureDetector(
+                  onTap: _showImagePickerOptions,
+                  child: CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.grey.shade200,
+                    backgroundImage: _imageFile != null
+                        ? FileImage(
+                            _imageFile!) // If the user picked an image, show it
+                        : (profileViewModel.profileresponse?.profileImage !=
+                                    null &&
+                                (profileViewModel
+                                        .profileresponse?.profileImage)!
+                                    .isNotEmpty
+                            ? NetworkImage((profileViewModel
+                                    .profileresponse?.profileImage) ??
+                                "")
+                            : null),
+                    child: (_imageFile == null &&
+                            (profileViewModel.profileresponse?.profileImage ==
+                                null))
+                        ? const Icon(Icons.camera_alt,
+                            size: 40, color: Colors.white)
+                        : null,
+                  ),
                 ),
-                SizedBox(width: 16),
+                const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20),
+                    const SizedBox(height: 20),
                     Text(
                       "${response?.firstName ?? ''} ${response?.lastName ?? ''}",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text("ID: " + response!.userCode.toString() ?? '',
-                        style: TextStyle(color: Colors.grey)),
+                    Text("ID: ${response?.userCode}",
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: 8),
+                const SizedBox(height: 8),
                 Row(
                   children: [
-                    Icon(Icons.phone, color: Colors.grey, size: 16),
-                    SizedBox(width: 8),
-                    Text("+91-" + response!.mobileNumber.toString() ?? '',
-                        style: TextStyle(color: Colors.grey)),
+                    const Icon(Icons.phone, color: Colors.grey, size: 16),
+                    const SizedBox(width: 8),
+                    Text("+91-${response!.mobileNumber}",
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Row(
                   children: [
-                    Icon(Icons.email, color: Colors.grey, size: 16),
-                    SizedBox(width: 8),
-                    Text(response?.userEmail.toString() ?? '',
-                        style: TextStyle(color: Colors.grey)),
+                    const Icon(Icons.email, color: Colors.grey, size: 16),
+                    const SizedBox(width: 8),
+                    Text(response.userEmail.toString(),
+                        style: const TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
           ),
-          SizedBox(height: 10),
-          Divider(thickness: 1),
+          const SizedBox(height: 10),
+          const Divider(thickness: 1),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -115,10 +186,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       dashboardresponse?.totalEarnings.toString() ?? '0',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text("Amount", style: TextStyle(color: Colors.grey)),
+                    const Text("Amount", style: TextStyle(color: Colors.grey)),
                   ],
                 ),
                 Container(
@@ -129,16 +200,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Text(
                       dashboardresponse?.totalCredits.toString() ?? '0',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text("Credits", style: TextStyle(color: Colors.grey)),
+                    const Text("Credits", style: TextStyle(color: Colors.grey)),
                   ],
                 ),
               ],
             ),
           ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
           if (profilemenuresponse != null && profilemenuresponse.isNotEmpty)
             Expanded(
               child: ListView.builder(
@@ -165,10 +236,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
             ),
-          Divider(thickness: 1),
+          const Divider(thickness: 1),
           ListTile(
-            leading: Icon(Icons.logout, color: Colors.red),
-            title: Text("Log Out", style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.logout, color: Colors.red),
+            title: const Text("Log Out", style: TextStyle(color: Colors.red)),
             onTap: () {
               Navigator.pushReplacementNamed(context, AppRoutes.login);
               const storage = FlutterSecureStorage();

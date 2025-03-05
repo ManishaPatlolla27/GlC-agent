@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/dashboard/DashBoardResponse.dart';
+import 'package:nex2u/models/dashboard/dashboard_response.dart';
 import 'package:nex2u/repo/dashboard_repository.dart';
 
 class DashboardViewModel with ChangeNotifier {

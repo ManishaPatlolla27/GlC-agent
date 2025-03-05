@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
+import 'package:nex2u/models/welcomescreen/welcome_screen_response.dart';
 import 'package:nex2u/repo/welcome_repository.dart';
 
 class WelcomeViewModel with ChangeNotifier {

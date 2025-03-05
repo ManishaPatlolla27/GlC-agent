@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/trackfarmland/TrackFarmLandResponse.dart';
+import 'package:nex2u/models/trackfarmland/track_farm_land_response.dart';
 import 'package:provider/provider.dart';
 
 import '../data/api_urls.dart';

@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/notifications/NotificationResponse.dart';
+import 'package:nex2u/models/notifications/notification_response.dart';
 import 'package:provider/provider.dart';
 
 import '../data/base_api_client.dart';

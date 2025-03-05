@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/alerts/AlertResponse.dart';
+import 'package:nex2u/models/alerts/alert_response.dart';
 
 class AlertViewScreen extends StatelessWidget {
   final AlertsList farm;
-  const AlertViewScreen({Key? key, required this.farm}) : super(key: key);
+  const AlertViewScreen({super.key, required this.farm});
 
   @override
   Widget build(BuildContext context) {
@@ -17,8 +17,8 @@ class AlertViewScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Alert ID: " + farm.alertCode.toString(),
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          "Alert ID: ${farm.alertCode}",
+          style: const TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
       body: SingleChildScrollView(
@@ -50,9 +50,7 @@ class AlertViewScreen extends StatelessWidget {
               readOnly: true,
               decoration: InputDecoration(
                 prefixIcon: const Icon(Icons.location_pin, color: Colors.red),
-                hintText: farm.landLatitude.toString() +
-                    "," +
-                    farm.landLongitude.toString(),
+                hintText: "${farm.landLatitude},${farm.landLongitude}",
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),

@@ -29,6 +29,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Expanded(
@@ -42,23 +43,29 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black26,
-                        blurRadius: 6,
-                        spreadRadius: 2,
-                        offset: Offset(0, 3),
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Center(
+                    child: Container(
+                      padding: const EdgeInsets.all(4),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black26,
+                            blurRadius: 6,
+                            spreadRadius: 2,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: const Text(
-                    "VS",
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      child: const Text(
+                        "VS",
+                        style: TextStyle(
+                            fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -111,6 +118,7 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
     return Align(
       alignment: isLeftAligned ? Alignment.centerLeft : Alignment.centerRight,
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment:
             isLeftAligned ? CrossAxisAlignment.start : CrossAxisAlignment.end,
         children: [
@@ -139,7 +147,8 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
           ),
           const SizedBox(height: 5),
           Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
-          Text(price, style: const TextStyle(fontSize: 12, color: Colors.green)),
+          Text(price,
+              style: const TextStyle(fontSize: 12, color: Colors.green)),
         ],
       ),
     );
@@ -157,7 +166,8 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
         child: Column(
           children: [
             ListTile(
-              title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+              title: Text(title,
+                  style: const TextStyle(fontWeight: FontWeight.bold)),
               trailing: Container(
                 child: Image.asset(
                   isExpanded ? "assets/minus.png" : "assets/plus.png",
@@ -170,7 +180,8 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
             if (isExpanded)
               Container(
                 color: Colors.white, // Background color for expanded content
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
                 child: Column(children: children),
               ),
           ],
@@ -186,7 +197,8 @@ class _CompareFarmlandsState extends State<CompareFarmlands> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Divider(thickness: 1),
-          Text(feature, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(feature,
+              style: const TextStyle(fontSize: 12, color: Colors.grey)),
           const SizedBox(height: 4),
           Row(
             children: [

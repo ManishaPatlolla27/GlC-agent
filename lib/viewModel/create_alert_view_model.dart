@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/createAlert/CreateAlertRequest.dart';
+import 'package:nex2u/models/createAlert/create_alert_request.dart';
 import 'package:nex2u/repo/create_alert_repository.dart';
 
 class CreateAlertViewModel extends ChangeNotifier {

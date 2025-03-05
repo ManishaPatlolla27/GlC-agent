@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../models/farmlands/FramlandLeadsResponse.dart';
+import '../models/farmlands/farmland_leads_response.dart';
 
 class BuyerViewScreen extends StatelessWidget {
   final FarmLandLeadList farm;
-  const BuyerViewScreen({Key? key, required this.farm}) : super(key: key);
+  const BuyerViewScreen({super.key, required this.farm});
 
   @override
   Widget build(BuildContext context) {
@@ -18,8 +18,8 @@ class BuyerViewScreen extends StatelessWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          "Farmland ID: " + farm.farmlandId.toString(),
-          style: TextStyle(color: Colors.black, fontSize: 16),
+          "Farmland ID: ${farm.farmlandId}",
+          style: const TextStyle(color: Colors.black, fontSize: 16),
         ),
       ),
       body: SingleChildScrollView(

@@ -6,7 +6,6 @@ import 'package:nex2u/view/notification.dart';
 import 'package:nex2u/view/onboarding.dart';
 import 'package:nex2u/view/passwordupdate.dart';
 import 'package:nex2u/view/validateotp.dart';
-
 import '../view/allfarmlands.dart';
 import '../view/buyeralert.dart';
 import '../view/campare_farmland.dart';

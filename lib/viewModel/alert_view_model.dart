@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/alerts/AlertResponse.dart';
+import 'package:nex2u/models/alerts/alert_response.dart';
 import 'package:nex2u/repo/alert_repository.dart';
 
 class AlertViewModel with ChangeNotifier {

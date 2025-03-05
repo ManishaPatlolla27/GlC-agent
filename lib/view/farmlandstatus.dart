@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/farmlands/FarmLandResponse.dart';
+import 'package:nex2u/models/farmlands/farm_land_response.dart';
 import 'package:nex2u/viewModel/trackfarmland_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/trackfarmland/TrackFarmLandResponse.dart';
+import '../models/trackfarmland/track_farm_land_response.dart';
 
 class FarmlandStatusScreen extends StatefulWidget {
   final FarmLandList farm;

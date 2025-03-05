@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:nex2u/viewModel/create_alert_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/createAlert/CreateAlertRequest.dart';
+import '../models/createAlert/create_alert_request.dart';
 import '../page_routing/app_routes.dart';
 import '../res/validation_alert.dart';
 

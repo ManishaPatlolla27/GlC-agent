@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/notifications/NotificationResponse.dart';
+import 'package:nex2u/models/notifications/notification_response.dart';
 import 'package:nex2u/viewModel/notification_view_model.dart';
 import 'package:provider/provider.dart';
 

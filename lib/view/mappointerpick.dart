@@ -11,10 +11,10 @@ class HomeMap extends StatefulWidget {
   const HomeMap({super.key});
 
   @override
-  _HomeMapState createState() => _HomeMapState();
+  HomeMapState createState() => HomeMapState();
 }
 
-class _HomeMapState extends State<HomeMap> {
+class HomeMapState extends State<HomeMap> {
   late GoogleMapController _controller;
   final Location _location = Location();
   LatLng? _currentLocation;
@@ -136,7 +136,7 @@ class _HomeMapState extends State<HomeMap> {
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(10),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black26,
                     blurRadius: 5,

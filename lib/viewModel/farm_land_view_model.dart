@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/farmlands/FramlandLeadsResponse.dart';
-import 'package:nex2u/models/farmlands/SimilarRequest.dart';
+import 'package:nex2u/models/farmlands/farmland_leads_response.dart';
+import 'package:nex2u/models/farmlands/similar_request.dart';
 import 'package:nex2u/repo/farm_land_repository.dart';
 
-import '../models/farmlands/FarmLandResponse.dart';
+import '../models/farmlands/farm_land_response.dart';
 
 class FarmLandViewModel with ChangeNotifier {
   late BuildContext context;

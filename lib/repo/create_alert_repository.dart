@@ -4,7 +4,7 @@ import 'package:nex2u/data/api_urls.dart';
 import 'package:nex2u/data/base_api_client.dart';
 import 'package:provider/provider.dart';
 
-import '../models/createAlert/CreateAlertRequest.dart';
+import '../models/createAlert/create_alert_request.dart';
 import '../viewModel/configuration_view_model.dart';
 
 class CreateAlertRepository {
@@ -27,15 +27,15 @@ class CreateAlertRepository {
       // If response is not null or an empty string, consider it successful
       return response != null && response != false;
     } catch (e) {
-      print('createfarmland failed: $e');
+      debugPrint('createfarmland failed: $e');
       return false; // Return false on failure
     }
   }
 
   Future<bool> createbuyerAlert(
       CreateAlertRequest createAlertRequest, BuildContext context) async {
-    final configService =
-        Provider.of<ConfigurationViewModel>(context, listen: false);
+    // final configService =
+    //     Provider.of<ConfigurationViewModel>(context, listen: false);
 
     try {
       final response = await _apiClient.postWithoutJson(
@@ -47,7 +47,7 @@ class CreateAlertRepository {
       // If response is not null or an empty string, consider it successful
       return response != null && response != false;
     } catch (e) {
-      print('createfarmland failed: $e');
+      debugPrint('createfarmland failed: $e');
       return false; // Return false on failure
     }
   }

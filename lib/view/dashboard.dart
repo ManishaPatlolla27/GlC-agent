@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/dashboard/DashBoardResponse.dart';
+import 'package:nex2u/models/dashboard/dashboard_response.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/view/pendingfarmlands.dart';
 import 'package:provider/provider.dart';

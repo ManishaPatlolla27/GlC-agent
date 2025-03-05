@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nex2u/models/alerts/AlertResponse.dart';
+import 'package:nex2u/models/alerts/alert_response.dart';
 import 'package:nex2u/viewModel/alert_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -220,7 +220,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                               ),
                             ),
                             Text(
-                              "${alert.alertStatus ?? 'Unknown'}",
+                              alert.alertStatus ?? 'Unknown',
                               style: TextStyle(
                                 color: getStatusColor(alert.alertStatus ?? ""),
                                 fontSize: 12,
@@ -233,11 +233,11 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                   ),
                 ],
               ),
-              childrenPadding: EdgeInsets.only(left: 90, right: 16, bottom: 12),
+              childrenPadding: const EdgeInsets.only(left: 90, right: 16, bottom: 12),
               onExpansionChanged: (isExpanded) {
                 if (isExpanded) {
                   Future.delayed(
-                    Duration(milliseconds: 300), // Small delay for smooth UI
+                    const Duration(milliseconds: 300), // Small delay for smooth UI
                     () {
                       Navigator.push(
                         context,
@@ -265,7 +265,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                           ),
                         ),
                         Text(
-                          "${alert.farmlandCode ?? 'N/A'}",
+                          alert.farmlandCode ?? 'N/A',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 12,

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/profile/ProfileMenuResponse.dart';
+import 'package:nex2u/models/profile/profile_menu_response.dart';
 
 import '../repo/profile_menu_repository.dart';
 

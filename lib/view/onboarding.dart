@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
+import 'package:nex2u/models/welcomescreen/welcome_screen_response.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/viewModel/welcome_view_model.dart';
 import 'package:provider/provider.dart';

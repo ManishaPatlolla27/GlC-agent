@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/favourite/FavouriteResponse.dart';
+import 'package:nex2u/models/favourite/favourite_response.dart';
 import 'package:nex2u/repo/fav_repository.dart';
 
 class FavViewModel with ChangeNotifier {

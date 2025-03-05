@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
 
-import '../models/createAlert/CreateAlertRequest.dart';
+import '../models/createAlert/create_alert_request.dart';
 import '../res/validation_alert.dart';
 import '../viewModel/create_alert_view_model.dart';
 
@@ -15,8 +15,7 @@ class BuyerAlertScreen extends StatefulWidget {
 
 class BuyerAlertScreenState extends State<BuyerAlertScreen> {
   final _formKey = GlobalKey<FormState>();
-  final FlutterSecureStorage storage =
-      FlutterSecureStorage(); // Initialize once
+  FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize once
   String? farmid = "";
 
   // TextEditingControllers for each input field
@@ -81,34 +80,40 @@ class BuyerAlertScreenState extends State<BuyerAlertScreen> {
                 const SizedBox(height: 16),
                 buildTextField("First Name", "Enter First Name",
                     controller: _firstNameController, validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return "First Name is required";
+                  }
                   if (value.length < 2) return "Enter at least 2 characters";
                   return null;
                 }),
                 buildTextField("Last Name", "Enter Last Name",
                     controller: _lastNameController, validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return "Last Name is required";
+                  }
                   return null;
                 }),
                 buildTextField("Phone Number", "Enter Phone Number",
                     controller: _phoneController,
                     keyboardType: TextInputType.phone, validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return "Phone Number is required";
-                  if (!RegExp(r'^\d{10}$').hasMatch(value))
+                  }
+                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
                     return "Enter a valid 10-digit number";
+                  }
                   return null;
                 }),
                 buildTextField("Email", "Enter Email",
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return "Email is required";
-                  if (!EmailValidator.validate(value))
+                  }
+                  if (!EmailValidator.validate(value)) {
                     return "Enter a valid email";
+                  }
                   return null;
                 }),
                 buildDropdownField(
@@ -125,11 +130,12 @@ class BuyerAlertScreenState extends State<BuyerAlertScreen> {
                     controller: _costController,
                     keyboardType: TextInputType.number, validator: (value) {
                   if (value == null || value.isEmpty) return "Cost is required";
-                  if (double.tryParse(value) == null)
+                  if (double.tryParse(value) == null) {
                     return "Enter a valid amount";
+                  }
                   return null;
                 }),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 Row(
                   mainAxisAlignment:
                       MainAxisAlignment.center, // Center the button

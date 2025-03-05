@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/welcomescreen/WelcomeScreenResponse.dart';
+import 'package:nex2u/models/welcomescreen/welcome_screen_response.dart';
 
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';

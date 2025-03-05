@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:provider/provider.dart';
-import '../models/farmlands/FarmLandResponse.dart';
+import '../models/farmlands/farm_land_response.dart';
 import '../page_routing/app_routes.dart';
 import '../viewModel/farm_land_view_model.dart';
 import 'farmlanddetails.dart';

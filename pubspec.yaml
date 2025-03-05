@@ -58,6 +58,7 @@ dependencies:
   permission_handler: ^11.4.0
   email_validator: ^3.0.0
   google_places_flutter: ^2.1.0
+  image_picker: ^1.1.2
 
 dev_dependencies:
 

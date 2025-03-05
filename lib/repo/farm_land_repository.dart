@@ -1,12 +1,12 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/farmlands/FramlandLeadsResponse.dart';
+import 'package:nex2u/models/farmlands/farmland_leads_response.dart';
 import 'package:provider/provider.dart';
 
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
-import '../models/farmlands/FarmLandResponse.dart';
-import '../models/farmlands/SimilarRequest.dart';
+import '../models/farmlands/farm_land_response.dart';
+import '../models/farmlands/similar_request.dart';
 import '../viewModel/configuration_view_model.dart';
 
 class FarmLandRepository {
@@ -59,8 +59,7 @@ class FarmLandRepository {
       };
 
       final response = await _apiClient.get<FarmLandResponse>(
-        "${configService.enpoints!.gETMYFARMLANDS}/$status" ??
-            ApiConstants.createAlert, // API endpoint
+        "${configService.enpoints!.gETMYFARMLANDS}/$status", // API endpoint
         fromJson: (json) => FarmLandResponse.fromJson(json as List<dynamic>),
         headers: headers,
       );
@@ -73,8 +72,8 @@ class FarmLandRepository {
 
   Future<List<FarmLandList>> getseeall(
       BuildContext context, String status) async {
-    final configService =
-        Provider.of<ConfigurationViewModel>(context, listen: false);
+    // final configService =
+    //     Provider.of<ConfigurationViewModel>(context, listen: false);
     try {
       final String? token = await _storage.read(key: "auth_token");
 
@@ -88,8 +87,7 @@ class FarmLandRepository {
       };
 
       final response = await _apiClient.get<FarmLandResponse>(
-        "/lms-api/agent-farmland/seeAllFarmlands/$status" ??
-            ApiConstants.createAlert, // API endpoint
+        "/lms-api/agent-farmland/seeAllFarmlands/$status", // API endpoint
         fromJson: (json) => FarmLandResponse.fromJson(json as List<dynamic>),
         headers: headers,
       );
@@ -119,6 +117,7 @@ class FarmLandRepository {
         configService.enpoints?.sIMILARFARMLANDS ??
             ApiConstants.similar, // API endpoint
         similarRequest.toJson(), // Convert to JSON
+        headers: headers,
         fromJson: (json) => FarmLandResponse.fromJson(json), // Parse response
         isJson: true, // Content-Type: application/json
       );

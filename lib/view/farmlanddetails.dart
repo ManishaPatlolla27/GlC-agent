@@ -5,7 +5,7 @@ import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/viewModel/farm_details_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/farmlands/FarmDetailsResponse.dart';
+import '../models/farmlands/farm_details_response.dart';
 
 class PendingFarmlanddetailsScreen extends StatefulWidget {
   const PendingFarmlanddetailsScreen({super.key});
@@ -27,7 +27,7 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
     loadFarmlands();
   }
 
-  final FlutterSecureStorage storage =
+   FlutterSecureStorage storage =
       FlutterSecureStorage(); // Initialize once
 
   Future<void> loadFarmlands() async {
@@ -190,19 +190,19 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                       Text(
                                         farmDetailsResponse?.farmlandCode ??
                                             "".toString(),
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold),
                                       ),
                                       Row(
                                         children: [
-                                          Icon(Icons.location_on,
+                                          const Icon(Icons.location_on,
                                               color: Colors.grey, size: 16),
-                                          SizedBox(width: 4),
+                                          const SizedBox(width: 4),
                                           Text(
                                               farmDetailsResponse?.areaName ??
                                                   "".toString(),
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   color: Colors.grey)),
                                         ],
                                       ),
@@ -277,11 +277,11 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Cost:",
+                      const Text("Cost:",
                           style: TextStyle(fontSize: 14, color: Colors.grey)),
                       Text(
                         "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
-                        style: TextStyle(
+                        style: const TextStyle(
                             fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ],

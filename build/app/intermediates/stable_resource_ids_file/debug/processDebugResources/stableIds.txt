@@ -1,3 +1,4 @@
+com.glc.agent.glcagent:xml/flutter_image_picker_file_paths = 0x7f0e0000
 com.glc.agent.glcagent:styleable/SplitPairRule = 0x7f0d000e
 com.glc.agent.glcagent:styleable/SplitPairFilter = 0x7f0d000d
 com.glc.agent.glcagent:styleable/LoadingImageView = 0x7f0d000a

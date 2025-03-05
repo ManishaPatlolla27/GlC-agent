@@ -1,5 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/profile/ProfileMenuResponse.dart';
+import 'package:nex2u/models/profile/profile_menu_response.dart';
 
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';

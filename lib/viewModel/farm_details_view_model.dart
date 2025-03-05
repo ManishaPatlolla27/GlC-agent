@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/repo/farmdetails_repository.dart';
 
-import '../models/farmlands/FarmDetailsResponse.dart';
+import '../models/farmlands/farm_details_response.dart';
 
 class FarmDetailsViewModel with ChangeNotifier {
   late BuildContext context;

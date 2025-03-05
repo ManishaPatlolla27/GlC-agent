@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/favourite/FavouriteResponse.dart';
+import 'package:nex2u/models/favourite/favourite_response.dart';
 import 'package:nex2u/viewModel/fav_view_model.dart';
 import 'package:provider/provider.dart';
 

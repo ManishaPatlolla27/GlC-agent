@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/farmlands/FarmDetailsResponse.dart';
+import 'package:nex2u/models/farmlands/farm_details_response.dart';
 import 'package:provider/provider.dart';
-
-import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
 import '../viewModel/configuration_view_model.dart';
 
@@ -28,8 +26,7 @@ class FarmdetailsRepository {
       };
 
       final response = await _apiClient.get<FarmDetailsResponse>(
-        "${configService.enpoints!.gETGLCFARMLANDDETAILS}/$status" ??
-            ApiConstants.createAlert, // API endpoint
+        "${configService.enpoints!.gETGLCFARMLANDDETAILS}/$status", // API endpoint
         fromJson: (json) => FarmDetailsResponse.fromJson(json),
         headers: headers,
       );

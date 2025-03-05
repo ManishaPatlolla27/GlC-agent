@@ -5,7 +5,7 @@ import 'package:nex2u/view/search.dart';
 import 'package:nex2u/viewModel/discovery_view_model.dart';
 import 'package:provider/provider.dart';
 
-import '../models/discovery/DiscoveryResponse.dart';
+import '../models/discovery/discovery_response.dart';
 import '../page_routing/app_routes.dart';
 import 'farmlanddetails.dart';
 
@@ -157,7 +157,7 @@ class _FarmLandState extends State<Farmlands> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => Searchlands(),
+                  builder: (context) => const Searchlands(),
                 ),
               );
             }),
@@ -210,9 +210,8 @@ class _FarmLandState extends State<Farmlands> {
                   width: double.infinity,
                 ),
                 const SizedBox(height: 10),
-                Padding(
-                  padding:
-                      const EdgeInsets.all(10.0), // Adjust the value as needed
+                const Padding(
+                  padding: EdgeInsets.all(10.0), // Adjust the value as needed
                   child: Text(
                     "The Most Searched\nFarmland",
                     style: TextStyle(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:nex2u/models/farmlands/FarmLandResponse.dart';
+import 'package:nex2u/models/farmlands/farm_land_response.dart';
 import 'package:nex2u/viewModel/farm_land_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -147,7 +147,7 @@ class _SearchLandState extends State<Searchlands> {
           ),
           Container(
             padding: const EdgeInsets.all(8), // Adds space around the text
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white, // White background
               // borderRadius:
               //     BorderRadius.circular(8), // Optional: Adds rounded corners
@@ -155,10 +155,9 @@ class _SearchLandState extends State<Searchlands> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
+                const Text(
                   "Exclusive Property",
-                  style:
-                      const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -181,39 +180,39 @@ class _SearchLandState extends State<Searchlands> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Crop",
+                    const Text("Crop",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.black)),
                     Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Chip(
-                            label: Text(
+                            label: const Text(
                               "Corn",
                               style:
                                   TextStyle(fontSize: 10), // Reduce font size
                             ),
-                            backgroundColor: Color(0xFFCFCFF6),
+                            backgroundColor: const Color(0xFFCFCFF6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   20), // Adjust the radius as needed
                             ),
                           ),
-                          SizedBox(width: 6),
+                          const SizedBox(width: 6),
                           Chip(
-                            label: Text(
+                            label: const Text(
                               "Potato",
                               style:
                                   TextStyle(fontSize: 10), // Reduce font size
                             ),
-                            backgroundColor: Color(0xFFCFCFF6),
+                            backgroundColor: const Color(0xFFCFCFF6),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(
                                   20), // Adjust the radius as needed
@@ -222,7 +221,7 @@ class _SearchLandState extends State<Searchlands> {
                         ])
                   ],
                 ),
-                Divider(thickness: 1),
+                const Divider(thickness: 1),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
