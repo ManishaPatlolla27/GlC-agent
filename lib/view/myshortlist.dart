@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/favourite/FavouriteResponse.dart';
+import 'package:nex2u/viewModel/fav_view_model.dart';
+import 'package:provider/provider.dart';
 
 class MyShortlistsScreen extends StatefulWidget {
   const MyShortlistsScreen({super.key});
@@ -8,48 +11,24 @@ class MyShortlistsScreen extends StatefulWidget {
 }
 
 class MyShortlistsScreenState extends State<MyShortlistsScreen> {
-  List<Map<String, dynamic>> farmlands = [
-    {
-      "id": 1,
-      "name": "GLCSOS 002",
-      "location": "East Godavari, AP",
-      "price": "₹15L",
-      "rating": 5.0,
-      "image": "assets/farmland.png",
-      "isFavorite": true
-    },
-    {
-      "id": 2,
-      "name": "GLCSOS 002",
-      "location": "East Godavari, AP",
-      "price": "₹15L",
-      "rating": 5.0,
-      "image": "assets/farmland.png",
-      "isFavorite": true
-    },
-    {
-      "id": 3,
-      "name": "GLCSOS 002",
-      "location": "East Godavari, AP",
-      "price": "₹15L",
-      "rating": 5.0,
-      "image": "assets/farmland.png",
-      "isFavorite": true
-    },
-    {
-      "id": 4,
-      "name": "GLCSOS 002",
-      "location": "East Godavari, AP",
-      "price": "₹15L",
-      "rating": 5.0,
-      "image": "assets/farmland.png",
-      "isFavorite": true
-    },
-  ];
+  List<FavList> farmlands = [];
 
   void toggleWishlist(int index) {
     setState(() {
       farmlands.removeAt(index);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<FavViewModel>(context, listen: false);
+      await provider.getfav(context);
+
+      setState(() {
+        farmlands = provider.favResponse?.favlist ?? [];
+      });
     });
   }
 
@@ -95,8 +74,8 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
-                        child: Image.asset(
-                          item["image"],
+                        child: Image.network(
+                          item.thumbnailImage.toString(),
                           height: 220, // Increased height
                           width: double.infinity,
                           fit: BoxFit.cover,
@@ -122,15 +101,16 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(item["name"],
+                Text(item.farmlandCode.toString(),
                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(item["location"],
-                    style: const TextStyle(color: Colors.black54, fontSize: 12)),
-                const SizedBox(height: 4),
+                Text(item.regionName.toString(),
+                    style:
+                        const TextStyle(color: Colors.black54, fontSize: 12)),
+                // const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(item["price"],
+                    Text("₹ " + item.landCost.toString(),
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold)),
                   ],

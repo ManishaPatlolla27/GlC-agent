@@ -8,7 +8,7 @@ class ApiConstants {
   static const String validateotp = "/api/glc-auth/verifyOTP";
   static const String changepassword =
       "/api/glc-auth/updateUserPasswordWithOTP";
-  static const String profile = "/lms-api/account/getUserDetails";
+  static const String profile = "/lms-api/agent/getMyProfileDetails";
   static const String dashboard = "/lms-api/agent/getMyAnalytics";
   static const String bottom = "/lms-api/agent/getBottomBarMenu";
   static const String welcome = "/api/glc-utils/getWelcomeScreens";
@@ -18,6 +18,8 @@ class ApiConstants {
   static const String getEndPoints = "/api/glc-utils/getApiEndpoints";
   static const String createAlert =
       "/lms-api/agent-farmland/createFarmlandAlert";
+  static const String similar = "/lms-api/agent-farmland/similarFarmlands";
+  static const String fav = "/lms-api/agent-farmland/getMyFavoriteFarmlands";
 
   static const String createBuyerAlert =
       "lms-api/agent-farmland/sendFarmlandLeads";

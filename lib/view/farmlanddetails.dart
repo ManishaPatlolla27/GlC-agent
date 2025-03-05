@@ -6,7 +6,6 @@ import 'package:nex2u/viewModel/farm_details_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/farmlands/FarmDetailsResponse.dart';
-import 'campare_farmland.dart';
 
 class PendingFarmlanddetailsScreen extends StatefulWidget {
   const PendingFarmlanddetailsScreen({super.key});
@@ -211,13 +210,15 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CompareFarmlandsScreen(),
-                                        ),
-                                      );
+                                      // Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) =>
+                                      //         CompareFarmlandsScreen(),
+                                      //   ),
+                                      // );
+                                      Navigator.pushNamed(
+                                          context, AppRoutes.compare);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: const Color(0xFF8280FF),

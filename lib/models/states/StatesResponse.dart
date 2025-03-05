@@ -1,3 +1,17 @@
+class StatesResponse {
+  final List<StatesList> stateslist;
+
+  StatesResponse({required this.stateslist});
+
+  factory StatesResponse.fromJson(List<dynamic> json) {
+    return StatesResponse(
+      stateslist: json
+          .map((item) => StatesList.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
 class StatesList {
   String? id;
   String? label;

@@ -71,7 +71,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       style:
                           TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                    Text(response?.userId.toString() ?? '',
+                    Text("ID: " + response!.userCode.toString() ?? '',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),
@@ -88,7 +88,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   children: [
                     Icon(Icons.phone, color: Colors.grey, size: 16),
                     SizedBox(width: 8),
-                    Text(response?.mobileNumber.toString() ?? '',
+                    Text("+91-" + response!.mobileNumber.toString() ?? '',
                         style: TextStyle(color: Colors.grey)),
                   ],
                 ),

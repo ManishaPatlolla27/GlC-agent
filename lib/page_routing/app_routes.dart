@@ -20,4 +20,6 @@ class AppRoutes {
   static const String alertdetails = "/alertdetails";
   static const String notifications = "/notifications";
   static const String map = "/map";
+  static const String compare = "/compare";
+  static const String compareadd = "/compareadd";
 }

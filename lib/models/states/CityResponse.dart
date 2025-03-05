@@ -1,3 +1,17 @@
+class CityResponse {
+  final List<CityList> citylist;
+
+  CityResponse({required this.citylist});
+
+  factory CityResponse.fromJson(List<dynamic> json) {
+    return CityResponse(
+      citylist: json
+          .map((item) => CityList.fromJson(item as Map<String, dynamic>))
+          .toList(),
+    );
+  }
+}
+
 class CityList {
   String? regionName;
   String? regionStatus;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class CompareFarmlandsScreen extends StatelessWidget {
+  const CompareFarmlandsScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

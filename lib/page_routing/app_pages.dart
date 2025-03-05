@@ -9,6 +9,8 @@ import 'package:nex2u/view/validateotp.dart';
 
 import '../view/allfarmlands.dart';
 import '../view/buyeralert.dart';
+import '../view/campare_farmland.dart';
+import '../view/compareFarmLands.dart';
 import '../view/create_alert.dart';
 import '../view/dashboard.dart';
 import '../view/editprofile.dart';
@@ -38,6 +40,8 @@ class AppPages {
       AppRoutes.allfarmland: (context) => const FarmlandsScreen(),
       AppRoutes.notifications: (context) => const NotificationsScreen(),
       AppRoutes.map: (context) => const HomeMap(),
+      AppRoutes.compare: (context) => const CompareFarmlands(),
+      AppRoutes.compareadd: (context) => const CompareFarmlandsScreen(),
     };
   }
 }

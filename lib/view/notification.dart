@@ -45,18 +45,33 @@ class NotificationsScreenState extends State<NotificationsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF8280FF),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(
-          "Notifications (${farmlandSections.length})",
-          style: const TextStyle(color: Colors.white),
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.asset(
+                "assets/notificationbg.png", // Replace with your image path
+                fit: BoxFit.cover,
+              ),
+            ),
+            // AppBar Content
+            AppBar(
+              backgroundColor: Colors.transparent, // Make AppBar transparent
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              title: Text(
+                "Notifications (${farmlandSections.length})",
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
         ),
       ),
       body: ListView.builder(
@@ -83,8 +98,8 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(30),
-                      child: Image.asset(
-                        'assets/farmland.png', // Replace with actual image asset
+                      child: Image.network(
+                        notification.imageUrl.toString(),
                         width: 50,
                         height: 50,
                         fit: BoxFit.cover,
@@ -105,18 +120,9 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                               color: Colors.black, fontSize: 14, height: 1.5),
                           children: [
                             TextSpan(
-                              text: "${notification.notifiedOn} } ",
+                              text: "${notification.title}",
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                            const TextSpan(text: "has been "),
-                            TextSpan(
-                              text: notification.title,
-                              style: TextStyle(
-                                color: getStatusColor(
-                                    notification.message.toString()),
-                                fontWeight: FontWeight.bold,
-                              ),
                             ),
                           ],
                         ),

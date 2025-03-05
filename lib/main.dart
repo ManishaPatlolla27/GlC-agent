@@ -9,6 +9,7 @@ import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/discovery_view_model.dart';
 import 'package:nex2u/viewModel/farm_details_view_model.dart';
 import 'package:nex2u/viewModel/farm_land_view_model.dart';
+import 'package:nex2u/viewModel/fav_view_model.dart';
 import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:nex2u/viewModel/login_view_model.dart';
 import 'package:nex2u/viewModel/notification_view_model.dart';
@@ -82,6 +83,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => FarmDetailsViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => FavViewModel(),
         ),
       ],
       child: MaterialApp(

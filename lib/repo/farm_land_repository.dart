@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
 import '../models/farmlands/FarmLandResponse.dart';
+import '../models/farmlands/SimilarRequest.dart';
 import '../viewModel/configuration_view_model.dart';
 
 class FarmLandRepository {
@@ -96,6 +97,34 @@ class FarmLandRepository {
       return response.farmlandlist;
     } catch (e) {
       throw FetchProfileException('Failed to fetch profile: $e');
+    }
+  }
+
+  Future<FarmLandResponse> getsimilar(
+      BuildContext context, SimilarRequest similarRequest) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
+    try {
+      final String? token = await _storage.read(key: "auth_token");
+
+      if (token == null || token.isEmpty) {
+        throw AuthException("Authentication token is missing or invalid!");
+      }
+
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      };
+      final response = await _apiClient.post<FarmLandResponse>(
+        configService.enpoints?.sIMILARFARMLANDS ??
+            ApiConstants.similar, // API endpoint
+        similarRequest.toJson(), // Convert to JSON
+        fromJson: (json) => FarmLandResponse.fromJson(json), // Parse response
+        isJson: true, // Content-Type: application/json
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Login failed: $e');
     }
   }
 }
