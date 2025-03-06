@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/farmlands/farmland_leads_response.dart';
 import 'package:nex2u/models/farmlands/similar_request.dart';
+import 'package:nex2u/models/filter/filter_states_model.dart';
 import 'package:nex2u/repo/farm_land_repository.dart';
 
 import '../models/farmlands/farm_land_response.dart';
@@ -11,7 +12,7 @@ class FarmLandViewModel with ChangeNotifier {
   List<FarmLandLeadList>? _bottomresponse = [];
   List<FarmLandList>? _farmlandresponse = [];
   FarmLandResponse? _farmlandresponse2;
-  final FarmLandRepository _profileRepository = FarmLandRepository();
+  final FarmLandRepository farmRepository = FarmLandRepository();
   bool _isLoading = false;
   String _errorMessage = '';
 
@@ -30,7 +31,7 @@ class FarmLandViewModel with ChangeNotifier {
       _errorMessage = '';
 
       List<FarmLandLeadList> response =
-          await _profileRepository.getFarmLeads(context);
+          await farmRepository.getFarmLeads(context);
 
       if (response.isNotEmpty) {
         _bottomresponse = response;
@@ -50,7 +51,7 @@ class FarmLandViewModel with ChangeNotifier {
       _errorMessage = '';
 
       List<FarmLandList> response =
-          await _profileRepository.getFarmLands(context, status);
+          await farmRepository.getFarmLands(context, status);
 
       if (response.isNotEmpty) {
         _farmlandresponse = response;
@@ -70,7 +71,7 @@ class FarmLandViewModel with ChangeNotifier {
       _errorMessage = '';
 
       List<FarmLandList> response =
-          await _profileRepository.getseeall(context, status);
+          await farmRepository.getseeall(context, status);
 
       if (response.isNotEmpty) {
         _farmlandresponse = response;
@@ -91,7 +92,7 @@ class FarmLandViewModel with ChangeNotifier {
       _errorMessage = '';
 
       FarmLandResponse response =
-          await _profileRepository.getsimilar(context, similarrequest);
+          await farmRepository.getsimilar(context, similarrequest);
 
       if (response.farmlandlist.isNotEmpty) {
         _farmlandresponse2 = response;
@@ -111,15 +112,17 @@ class FarmLandViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getStateList(BuildContext context) async {
+  List<FilterStateModel>? get getStateList => stateList;
+  List<FilterStateModel>? stateList;
+  Future<void> getStateListApi(BuildContext context) async {
     try {
       _setLoading(true);
       _errorMessage = '';
 
-      final response = await _profileRepository.getStateList(context);
+      final response = await farmRepository.getStateListService(context);
 
       if ((response.stateList ?? []).isNotEmpty) {
-        // _farmlandresponse2 = response;
+        stateList = response.stateList;
       } else {
         _errorMessage = 'Invalid profile data received';
       }

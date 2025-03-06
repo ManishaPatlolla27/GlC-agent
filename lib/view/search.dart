@@ -26,8 +26,9 @@ class _SearchLandState extends State<Searchlands> {
     super.initState();
     loadFarmlands();
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        
+      (timeStamp) async {
+        final provider = Provider.of<FarmLandViewModel>(context, listen: false);
+        await provider.getStateListApi(context);
       },
     );
   }

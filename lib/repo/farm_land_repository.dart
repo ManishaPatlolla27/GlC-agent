@@ -128,7 +128,7 @@ class FarmLandRepository {
     }
   }
 
-  Future<FilterStateResponse> getStateList(BuildContext context) async {
+  Future<FilterStateResponse> getStateListService(BuildContext context) async {
     // final configService =
     //     Provider.of<ConfigurationViewModel>(context, listen: false);
     try {
@@ -143,7 +143,7 @@ class FarmLandRepository {
         "Authorization": "Bearer $token"
       };
       final response = await _apiClient.get<FilterStateResponse>(
-        ApiConstants.similar, // API endpoint
+        ApiConstants.filterStateApi, // API endpoint
         headers: headers,
         fromJson: (json) =>
             FilterStateResponse.fromJson(json), // Parse response
