@@ -89,17 +89,6 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyD2s1d-NbTMPxsKDems87TGyTLaJu3223g" />
 
-        <service
-            android:name="com.lyokone.location.FlutterLocationService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location" />
-        <service
-            android:name="com.baseflow.geolocator.GeolocatorLocationService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location" />
-
         <provider
             android:name="io.flutter.plugins.imagepicker.ImagePickerFileProvider"
             android:authorities="com.glc.agent.glcagent.flutter.image_provider"
@@ -120,7 +109,17 @@
             <meta-data
                 android:name="photopicker_activity:0:required"
                 android:value="" />
-        </service> <!-- Needs to be explicitly declared on P+ -->
+        </service>
+        <service
+            android:name="com.baseflow.geolocator.GeolocatorLocationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+        <service
+            android:name="com.lyokone.location.FlutterLocationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location" /> <!-- Needs to be explicitly declared on P+ -->
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />

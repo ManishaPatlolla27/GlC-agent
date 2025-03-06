@@ -15,7 +15,7 @@ class FarmLandViewModel with ChangeNotifier {
   bool _isLoading = false;
   String _errorMessage = '';
 
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   // Getters
   bool get getLoadingStatus => _isLoading;
@@ -109,5 +109,24 @@ class FarmLandViewModel with ChangeNotifier {
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
+  }
+
+  Future<void> getStateList(BuildContext context) async {
+    try {
+      _setLoading(true);
+      _errorMessage = '';
+
+      final response = await _profileRepository.getStateList(context);
+
+      if ((response.stateList ?? []).isNotEmpty) {
+        // _farmlandresponse2 = response;
+      } else {
+        _errorMessage = 'Invalid profile data received';
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to load profile: $e';
+    } finally {
+      _setLoading(false);
+    }
   }
 }

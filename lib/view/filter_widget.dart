@@ -47,64 +47,82 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Dialog(
+    return Drawer(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            /// Header
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text("Filter",
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () => Navigator.pop(context)),
-              ],
-            ),
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              /// Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text("Filter",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () => Navigator.pop(context)),
+                ],
+              ),
 
-            const SizedBox(height: 10),
+              const SizedBox(height: 10),
 
-            /// Search by State
-            _buildSearchSection(
-              title: "Search By State",
-              searchHint: "e.g. Andhra Pradesh",
-              searchQuery: stateSearchQuery,
-              onSearch: (query) => setState(() => stateSearchQuery = query),
-              items: states,
-              selectedItem: selectedState,
-              onSelect: (id) => setState(() => selectedState = id),
-            ),
+              /// Search by State
+              _buildSearchSection(
+                title: "Search By State",
+                searchHint: "e.g. Andhra Pradesh",
+                searchQuery: stateSearchQuery,
+                onSearch: (query) => setState(() => stateSearchQuery = query),
+                items: states,
+                selectedItem: selectedState,
+                onSelect: (id) => setState(() => selectedState = id),
+              ),
 
-            const SizedBox(height: 15),
+              const SizedBox(height: 15),
 
-            /// Search by Regions
-            _buildSearchSection(
-              title: "Search By Regions",
-              searchHint: "e.g. West Godavari",
-              searchQuery: regionSearchQuery,
-              onSearch: (query) => setState(() => regionSearchQuery = query),
-              items: regions,
-              selectedItem: selectedRegion,
-              onSelect: (id) => setState(() => selectedRegion = id),
-            ),
+              /// Search by Regions
+              if (selectedState != null)
+                _buildSearchSection(
+                  title: "Search By Regions",
+                  searchHint: "e.g. West Godavari",
+                  searchQuery: regionSearchQuery,
+                  onSearch: (query) =>
+                      setState(() => regionSearchQuery = query),
+                  items: regions,
+                  selectedItem: selectedRegion,
+                  onSelect: (id) => setState(() => selectedRegion = id),
+                ),
+              const SizedBox(height: 15),
 
-            const SizedBox(height: 20),
+              /// Search by Area
+              if (selectedRegion != null)
+                _buildSearchSection(
+                  title: "Search By Area",
+                  searchHint: "e.g. Tanuku",
+                  searchQuery: regionSearchQuery,
+                  onSearch: (query) =>
+                      setState(() => regionSearchQuery = query),
+                  items: regions,
+                  selectedItem: selectedRegion,
+                  onSelect: (id) => setState(() => selectedRegion = id),
+                ),
 
-            /// Apply Button
-            ElevatedButton(
-              onPressed: () {
-                print("Selected State: $selectedState");
-                print("Selected Region: $selectedRegion");
-                Navigator.pop(context);
-              },
-              child: const Text("Apply"),
-            )
-          ],
+              const SizedBox(height: 20),
+
+              /// Apply Button
+              ElevatedButton(
+                onPressed: () {
+                  debugPrint("Selected State: $selectedState");
+                  debugPrint("Selected Region: $selectedRegion");
+                  Navigator.pop(context);
+                },
+                child: const Text("Apply"),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -120,56 +138,76 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
     required String? selectedItem,
     required Function(String) onSelect,
   }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 5),
+    return Card(
+      borderOnForeground: true,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 5),
 
-        /// Search Bar
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: TextField(
-            onChanged: onSearch,
-            decoration: InputDecoration(
-              hintText: searchHint,
-              border: InputBorder.none,
-              prefixIcon: const Icon(Icons.search),
+            /// Search Bar
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Icon(Icons.search),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      onChanged: onSearch,
+                      decoration: InputDecoration(
+                        hintText: searchHint,
+                        border: InputBorder.none,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
+            /// Checkbox List with Scrollbar
+            SizedBox(
+              height: 300, // Scrollable height
+              child: Scrollbar(
+                thumbVisibility: true, // Ensures visibility
+                child: ListView(
+                  shrinkWrap: true,
+                  children: items
+                      .where((item) => item.label
+                          .toLowerCase()
+                          .contains(searchQuery.toLowerCase()))
+                      .map((item) {
+                    return CheckboxListTile(
+                      visualDensity:
+                          const VisualDensity(horizontal: -4, vertical: -4),
+                      value: selectedItem == item.id,
+                      onChanged: (bool? value) {
+                        if (value == true) {
+                          onSelect(item.id);
+                        }
+                      },
+                      title: Text(item.label),
+                      controlAffinity: ListTileControlAffinity.leading,
+                      activeColor: Colors.blueAccent,
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ],
         ),
-
-        const SizedBox(height: 10),
-
-        /// Checkbox List
-        SizedBox(
-          height: 150, // Scrollable height
-          child: ListView(
-            children: items
-                .where((item) => item.label
-                    .toLowerCase()
-                    .contains(searchQuery.toLowerCase()))
-                .map((item) {
-              return CheckboxListTile(
-                value: selectedItem == item.id,
-                onChanged: (bool? value) {
-                  if (value == true) {
-                    onSelect(item.id);
-                  }
-                },
-                title: Text(item.label), // Accessing model property
-                controlAffinity: ListTileControlAffinity.leading,
-                activeColor: Colors.blueAccent,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

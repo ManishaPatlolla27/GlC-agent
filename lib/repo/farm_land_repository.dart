@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/farmlands/farmland_leads_response.dart';
+import 'package:nex2u/models/filter/filter_states_model.dart';
 import 'package:provider/provider.dart';
 
 import '../data/api_urls.dart';
@@ -119,6 +120,33 @@ class FarmLandRepository {
         similarRequest.toJson(), // Convert to JSON
         headers: headers,
         fromJson: (json) => FarmLandResponse.fromJson(json), // Parse response
+        isJson: true, // Content-Type: application/json
+      );
+      return response;
+    } catch (e) {
+      throw Exception('Login failed: $e');
+    }
+  }
+
+  Future<FilterStateResponse> getStateList(BuildContext context) async {
+    // final configService =
+    //     Provider.of<ConfigurationViewModel>(context, listen: false);
+    try {
+      final String? token = await _storage.read(key: "auth_token");
+
+      if (token == null || token.isEmpty) {
+        throw AuthException("Authentication token is missing or invalid!");
+      }
+
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      };
+      final response = await _apiClient.get<FilterStateResponse>(
+        ApiConstants.similar, // API endpoint
+        headers: headers,
+        fromJson: (json) =>
+            FilterStateResponse.fromJson(json), // Parse response
         isJson: true, // Content-Type: application/json
       );
       return response;

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/farmlands/farm_land_response.dart';
+import 'package:nex2u/view/filter_widget.dart';
 import 'package:nex2u/viewModel/farm_land_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,11 +20,16 @@ class _SearchLandState extends State<Searchlands> {
   late String seeall = "Farmlands"; // Default value to prevent null errors
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final storage = FlutterSecureStorage();
+  final storage = const FlutterSecureStorage();
   @override
   void initState() {
     super.initState();
     loadFarmlands();
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        
+      },
+    );
   }
 
   Future<void> loadFarmlands() async {
@@ -60,6 +66,7 @@ class _SearchLandState extends State<Searchlands> {
         ),
         title: Text(seeall, style: const TextStyle(color: Colors.black)),
       ),
+      endDrawer: const FilterSelectionWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
