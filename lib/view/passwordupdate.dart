@@ -19,6 +19,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _obscurePassword1 = true;
 
   @override
   void initState() {
@@ -37,8 +38,8 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
           children: [
             // Top Section: Login Frame with Logo
             Stack(
-              alignment: Alignment.center,
               children: [
+                // Background gradient and image
                 Container(
                   width: double.infinity,
                   height: 420,
@@ -47,52 +48,54 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                       colors: [
                         Color(0xFF8280FF),
                         Color(0xFF8280FF),
-                      ], // Replace with your desired colors
+                      ],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
                   ),
                   child: SvgPicture.asset(
-                    'assets/loginbg.svg', // Replace with your SVG file path
+                    'assets/loginbg.svg',
                     width: double.infinity,
                     height: 300,
                     fit: BoxFit.cover,
                   ),
                 ),
+
+                // Back Arrow positioned at the top-left corner
+                Positioned(
+                  top: 40, // Adjust this value as needed
+                  left: 16, // Adjust this value as needed
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+
+                // Centered Content
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-                    Image.asset(
-                      'assets/logo.png',
-                      height: 90,
-                    ), // Logo overlaid on the login frame
+                    const SizedBox(height: 100),
+                    Image.asset('assets/logo.png', height: 90),
                     const SizedBox(height: 20),
                     const Text(
                       "Welcome to Green Land Capital",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
-                    const SizedBox(height: 80),
-
-                    // Moved "Sign in to your Account" Below "Welcome"
+                    const SizedBox(height: 120),
                     Container(
-                      width: double.infinity, // Makes it span the full width
+                      width: double.infinity,
                       padding: const EdgeInsets.symmetric(horizontal: 24),
-                      alignment:
-                          Alignment.centerLeft, // Aligns text to the left
-                      child: const Column(
-                        crossAxisAlignment:
-                            CrossAxisAlignment.start, // Left-align text
-                        children: [
-                          Text(
-                            "Change Password",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 22,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                      alignment: Alignment.centerLeft,
+                      child: const Text(
+                        "Validate OTP",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -155,10 +158,10 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
 
                     const SizedBox(height: 30),
 
-                    // Password Field with Show/Hide Toggle
+// Confirm Password Field with Validation
                     TextFormField(
                       controller: _passwordController,
-                      obscureText: _obscurePassword,
+                      obscureText: _obscurePassword1,
                       decoration: InputDecoration(
                         labelText: "Re-Enter Password",
                         border: OutlineInputBorder(
@@ -166,23 +169,26 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                         ),
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _obscurePassword
+                            _obscurePassword1
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
                           onPressed: () {
                             setState(() {
-                              _obscurePassword = !_obscurePassword;
+                              _obscurePassword1 = !_obscurePassword1;
                             });
                           },
                         ),
                       ),
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "Please re enter your password";
+                          return "Please re-enter your password";
                         }
                         if (value.length < 6) {
                           return "Password must be at least 6 characters";
+                        }
+                        if (value != _emailController.text) {
+                          return "Passwords do not match";
                         }
                         return null;
                       },
@@ -190,7 +196,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
 
                     const SizedBox(height: 50),
 
-                    // Login Button
+// Change Password Button
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
@@ -215,7 +221,7 @@ class _PasswordUpdateScreenState extends State<PasswordUpdateScreen> {
                               });
                             } else {
                               _showErrorDialog(
-                                  "password change failed", context);
+                                  "Password change failed", context);
                             }
                           }
                         },

@@ -293,31 +293,54 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(25),
-          boxShadow: const [
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
             BoxShadow(
-                color: Colors.black12,
-                blurRadius: 15,
-                spreadRadius: 2,
-                offset: Offset(0, 4))
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              spreadRadius: 2,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(iconPath ?? "",
-                errorBuilder: (context, error, stackTrace) =>
-                    Image.asset("assets/logo.png"),
-                width: 52,
-                height: 52),
+            // Icon at the top
+            Image.network(
+              iconPath,
+              errorBuilder: (context, error, stackTrace) =>
+                  Image.asset("assets/logo.png"),
+              width: 55,
+              height: 55,
+            ),
+            const SizedBox(height: 8),
+
+            // Title text
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 12,
+                color: Colors.black87,
+              ),
+            ),
             const SizedBox(height: 10),
-            Text(title,
-                style: const TextStyle(fontSize: 12, color: Colors.black54)),
-            const SizedBox(height: 10),
-            Text(count,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+
+            // Count and Arrow in Row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  count,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Icon(Icons.chevron_right, color: Colors.black54),
+              ],
+            ),
           ],
         ),
       ),

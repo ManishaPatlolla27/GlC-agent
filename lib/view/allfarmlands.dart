@@ -184,7 +184,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                     borderRadius: BorderRadius.circular(10),
                     child: Image.network(
                       alert!.thumbnailImage ?? "",
-                      width: 70,
+                      width: 85,
                       height: 70,
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) =>
@@ -233,11 +233,13 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                   ),
                 ],
               ),
-              childrenPadding: const EdgeInsets.only(left: 90, right: 16, bottom: 12),
+              childrenPadding:
+                  const EdgeInsets.only(left: 90, right: 16, bottom: 12),
               onExpansionChanged: (isExpanded) {
                 if (isExpanded) {
                   Future.delayed(
-                    const Duration(milliseconds: 300), // Small delay for smooth UI
+                    const Duration(
+                        milliseconds: 300), // Small delay for smooth UI
                     () {
                       Navigator.push(
                         context,
@@ -341,7 +343,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Image.network(
                     farm.thumbnailImage ?? "",
-                    width: 70,
+                    width: 85,
                     height: 70,
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) =>

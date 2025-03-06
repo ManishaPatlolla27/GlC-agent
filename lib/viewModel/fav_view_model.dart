@@ -16,6 +16,8 @@ class FavViewModel with ChangeNotifier {
   bool get getLoadingStatus => _isLoading;
   String get getErrorMessage => _errorMessage;
   FavouriteResponse? get favResponse => _favResponse;
+  bool _favSent = false;
+  bool get favSent => _favSent;
 
   // Fetch profile details
   Future<void> getfav(BuildContext context) async {
@@ -35,6 +37,18 @@ class FavViewModel with ChangeNotifier {
     } finally {
       _setLoading(false);
     }
+  }
+
+  Future<void> togglefav(
+      int farmlandId, bool isFavorite, BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    _favSent = await _profileRepository.toggleFavoriteFarmland(
+        farmlandId: farmlandId, isFavorite: isFavorite, context: context);
+
+    _isLoading = false;
+    notifyListeners();
   }
 
   // Helper to update loading state

@@ -128,8 +128,33 @@ Error Headers: ${error.response?.headers}
     }
   }
 
-  /// **New Method: postWithoutJson**
-  /// This method does not require a `fromJson` function. It returns the raw response.
+  /// **New PUT Method**
+  Future<T> put<T>(
+    String url, {
+    dynamic payload,
+    required T Function(dynamic) fromJson,
+    Map<String, String>? headers,
+    bool isJson = true,
+  }) async {
+    try {
+      final options = Options(
+        headers: headers ?? {},
+        contentType: isJson ? 'application/json' : 'application/octet-stream',
+      );
+
+      Response response = await _dio.put(
+        url,
+        data: payload,
+        options: options,
+      );
+
+      return _handleResponse(response, fromJson);
+    } on DioException catch (e) {
+      _handleError(e);
+      rethrow;
+    }
+  }
+
   Future<dynamic> postWithoutJson(
     String url,
     dynamic payload, {
@@ -158,11 +183,10 @@ Error Headers: ${error.response?.headers}
         response = await _dio.post(url, data: payload, options: options);
       }
 
-      // Return the raw response data
       return response.data;
     } on DioException catch (e) {
       _handleError(e);
-      return null; // Return null on error instead of throwing
+      return null;
     }
   }
 
@@ -179,7 +203,7 @@ Error Headers: ${error.response?.headers}
       final int statusCode = error.response?.statusCode ?? 0;
       switch (statusCode) {
         case 400:
-          throw Exception('Bad Request: \${error.response?.data}');
+          throw Exception('Bad Request: ${error.response?.data}');
         case 401:
           throw Exception('Unauthorized');
         case 500:

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nex2u/models/favourite/favourite_response.dart';
 import 'package:nex2u/viewModel/fav_view_model.dart';
@@ -14,9 +15,39 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
   List<FavList> farmlands = [];
 
   void toggleWishlist(int index) {
-    setState(() {
-      farmlands.removeAt(index);
-    });
+    showCupertinoDialog(
+      context: context,
+      builder: (context) => CupertinoAlertDialog(
+        title: const Text("Remove from Shortlist"),
+        content:
+            const Text("Do you want to remove this item from the shortlist?"),
+        actions: [
+          CupertinoDialogAction(
+            child: const Text("Cancel"),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          CupertinoDialogAction(
+            isDestructiveAction: true,
+            child: const Text("Yes"),
+            onPressed: () async {
+              final favProvider =
+                  Provider.of<FavViewModel>(context, listen: false);
+              final item = farmlands[index];
+
+              await favProvider.togglefav(item.farmlandId!, false, context);
+              if (favProvider.favSent == true) {
+                setState(() {
+                  farmlands.removeAt(index);
+                  Navigator.pop(context);
+                });
+              } else {}
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -61,7 +92,7 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
             crossAxisCount: 2,
             crossAxisSpacing: 10,
             mainAxisSpacing: 10,
-            childAspectRatio: 0.7, // Adjusted for proper spacing
+            childAspectRatio: 0.7,
           ),
           itemBuilder: (context, index) {
             final item = farmlands[index];
@@ -69,16 +100,17 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  // ✅ Fixes the overflow issue
                   child: Stack(
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: Image.network(
                           item.thumbnailImage.toString(),
-                          height: 220, // Increased height
+                          height: 220,
                           width: double.infinity,
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              const Icon(Icons.image_not_supported),
                         ),
                       ),
                       Positioned(
@@ -101,16 +133,15 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Text(item.farmlandCode.toString(),
+                Text(item.farmlandCode ?? "",
                     style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text(item.regionName.toString(),
+                Text(item.regionName ?? "",
                     style:
                         const TextStyle(color: Colors.black54, fontSize: 12)),
-                // const SizedBox(height: 4),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("₹ " + item.landCost.toString(),
+                    Text("₹ ${item.landCost ?? ''}",
                         style: const TextStyle(
                             fontSize: 14, fontWeight: FontWeight.bold)),
                   ],

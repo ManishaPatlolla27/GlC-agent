@@ -36,6 +36,25 @@ class FavRepository {
       throw FetchProfileException('Failed to fetch profile: $e');
     }
   }
+
+  Future<bool> toggleFavoriteFarmland({
+    required int farmlandId,
+    required bool isFavorite,
+    required BuildContext context,
+  }) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
+
+    try {
+      final response = await _apiClient.put<bool>(
+        "${configService.enpoints?.fAVORITEORUNFAVORITEFARMLAND}/$farmlandId/$isFavorite",
+        fromJson: (data) => data as bool, // Convert API response to boolean
+      );
+      return response;
+    } catch (e) {
+      rethrow;
+    }
+  }
 }
 
 // Custom Exception for Authentication Issues

@@ -8,7 +8,6 @@ import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:provider/provider.dart';
 
 import '../page_routing/app_routes.dart';
-import '../res/validation_alert.dart';
 
 class ValidateOtpScreen extends StatefulWidget {
   const ValidateOtpScreen({super.key});
@@ -22,6 +21,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
   final TextEditingController _otpController = TextEditingController();
   bool isButtonEnabled = false;
   bool isResendDisabled = false;
+  bool isInvalidOtp = false; // Flag to track invalid OTP state
   int _resendCountdown = 60;
   Timer? _timer;
 
@@ -31,6 +31,9 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
     _otpController.addListener(() {
       setState(() {
         isButtonEnabled = _otpController.text.length == 5;
+        if (isInvalidOtp) {
+          isInvalidOtp = false; // Reset error state when user types again
+        }
       });
     });
   }
@@ -61,8 +64,8 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
         child: Column(
           children: [
             Stack(
-              alignment: Alignment.center,
               children: [
+                // Background gradient and image
                 Container(
                   width: double.infinity,
                   height: 420,
@@ -83,10 +86,24 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                     fit: BoxFit.cover,
                   ),
                 ),
+
+                // Back Arrow positioned at the top-left corner
+                Positioned(
+                  top: 40, // Adjust this value as needed
+                  left: 16, // Adjust this value as needed
+                  child: IconButton(
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                  ),
+                ),
+
+                // Centered Content
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
+                    const SizedBox(height: 100),
                     Image.asset('assets/logo.png', height: 90),
                     const SizedBox(height: 20),
                     const Text(
@@ -117,7 +134,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
               child: Form(
                 key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     const SizedBox(height: 10),
                     const Text(
@@ -127,6 +144,7 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 20),
                     PinCodeTextField(
@@ -138,9 +156,12 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       pinTheme: PinTheme(
                         shape: PinCodeFieldShape.box,
                         borderRadius: BorderRadius.circular(5),
-                        inactiveColor: const Color(0xFF857979),
-                        activeColor: const Color(0xFF857979),
-                        selectedColor: const Color(0xFF857979),
+                        inactiveColor:
+                            isInvalidOtp ? Colors.red : const Color(0xFF857979),
+                        activeColor:
+                            isInvalidOtp ? Colors.red : const Color(0xFF857979),
+                        selectedColor:
+                            isInvalidOtp ? Colors.red : const Color(0xFF857979),
                         fieldWidth: 50,
                         fieldHeight: 50,
                       ),
@@ -150,10 +171,35 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                       onChanged: (value) {
                         setState(() {
                           isButtonEnabled = value.length == 5;
+                          if (isInvalidOtp) {
+                            isInvalidOtp = false; // Reset error on typing
+                          }
                         });
                       },
                     ),
-                    const SizedBox(height: 120),
+                    if (isInvalidOtp)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0),
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              color: Colors.red.shade100,
+                              child: const Text(
+                                'Invalid Code',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    const SizedBox(height: 50),
                     Align(
                       alignment: Alignment.center,
                       child: TextButton(
@@ -203,7 +249,9 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
                                         context, AppRoutes.password);
                                   });
                                 } else {
-                                  _showErrorDialog("invalid otp", context);
+                                  setState(() {
+                                    isInvalidOtp = true;
+                                  });
                                 }
                               }
                             : null,
@@ -226,10 +274,5 @@ class _ValidateOtpScreenState extends State<ValidateOtpScreen> {
         ),
       ),
     );
-  }
-
-  void _showErrorDialog(String message, BuildContext context) {
-    ValidationIoSAlert().showAlert(context, description: message);
-    debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

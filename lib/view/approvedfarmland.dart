@@ -126,7 +126,7 @@ class ApprovedFarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                             borderRadius: BorderRadius.circular(10),
                             child: Image.network(
                               farmland.thumbnailImage ?? "",
-                              width: 70,
+                              width: 85,
                               height: 70,
                               fit: BoxFit.cover,
                               errorBuilder: (context, error, stackTrace) =>
