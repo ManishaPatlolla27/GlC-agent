@@ -24,6 +24,9 @@ class FarmLandList {
   String? regionName;
   String? areaName;
   String? agentName;
+  bool? isFavorite;
+  List<String>? cropTypes;
+  String? promotionLabel;
   String? thumbnailImage;
 
   FarmLandList(
@@ -38,6 +41,9 @@ class FarmLandList {
       this.regionName,
       this.areaName,
       this.agentName,
+      this.isFavorite,
+      this.cropTypes,
+      this.promotionLabel,
       this.thumbnailImage});
 
   FarmLandList.fromJson(Map<String, dynamic> json) {
@@ -52,23 +58,29 @@ class FarmLandList {
     regionName = json['regionName'];
     areaName = json['areaName'];
     agentName = json['agentName'];
+    isFavorite = json['isFavorite'];
+    cropTypes = json['cropTypes'].cast<String>();
+    promotionLabel = json['promotionLabel'];
     thumbnailImage = json['thumbnailImage'];
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = <String, dynamic>{};
-    data['farmlandId'] = farmlandId;
-    data['farmlandCode'] = farmlandCode;
-    data['farmlandStatus'] = farmlandStatus;
-    data['createdOn'] = createdOn;
-    data['landCost'] = landCost;
-    data['landLatitude'] = landLatitude;
-    data['landLongitude'] = landLongitude;
-    data['stateName'] = stateName;
-    data['regionName'] = regionName;
-    data['areaName'] = areaName;
-    data['agentName'] = agentName;
-    data['thumbnailImage'] = thumbnailImage;
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    data['farmlandId'] = this.farmlandId;
+    data['farmlandCode'] = this.farmlandCode;
+    data['farmlandStatus'] = this.farmlandStatus;
+    data['createdOn'] = this.createdOn;
+    data['landCost'] = this.landCost;
+    data['landLatitude'] = this.landLatitude;
+    data['landLongitude'] = this.landLongitude;
+    data['stateName'] = this.stateName;
+    data['regionName'] = this.regionName;
+    data['areaName'] = this.areaName;
+    data['agentName'] = this.agentName;
+    data['isFavorite'] = this.isFavorite;
+    data['cropTypes'] = this.cropTypes;
+    data['promotionLabel'] = this.promotionLabel;
+    data['thumbnailImage'] = this.thumbnailImage;
     return data;
   }
 }

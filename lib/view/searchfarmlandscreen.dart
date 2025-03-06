@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nex2u/models/states/states_response.dart';
+import 'package:nex2u/viewModel/state_view_model.dart';
 import 'package:provider/provider.dart';
+
 import '../models/farmlands/farm_land_response.dart';
 import '../page_routing/app_routes.dart';
 import '../viewModel/farm_land_view_model.dart';
@@ -16,6 +19,13 @@ class SearchFarmlandScreen extends StatefulWidget {
 class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   String? seeall = "";
   List<FarmLandList> farmlandSections = [];
+  String? selectedStateName;
+  String? selectedStateId;
+  String? selectedDistId;
+  String? selectedDistrict;
+  List<StatesList> statelist = [];
+  List<StatesList> districtList = [];
+  RangeValues budgetRange = const RangeValues(15, 80);
   @override
   void initState() {
     super.initState();
@@ -29,14 +39,23 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
     if (seeall == null) return;
     final provider = Provider.of<FarmLandViewModel>(context, listen: false);
     await provider.getseeall(context, seeall!);
+    final stateprovider = Provider.of<StateViewModel>(context, listen: false);
+    await stateprovider.getstates(context);
+
     setState(() {
       farmlandSections = provider.farmlandresponse ?? [];
+      statelist = stateprovider.stateResponse?.stateslist ?? [];
     });
   }
 
-  String? selectedState;
-  String? selectedDistrict;
-  RangeValues budgetRange = const RangeValues(15, 80);
+  Future<void> loadStates() async {
+    final stateProvider = Provider.of<StateViewModel>(context, listen: false);
+    await stateProvider.getregion(context, selectedStateId.toString());
+
+    setState(() {
+      districtList = stateProvider.stateResponse?.stateslist ?? [];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -83,19 +102,52 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
-            buildDropdownField("Select State", ["State 1", "State 2"], (value) {
-              setState(() => selectedState = value);
-            }),
-            const SizedBox(height: 12),
-            buildDropdownField("Select District", ["District 1", "District 2"],
-                (value) {
-              setState(() => selectedDistrict = value);
-            }),
-            const SizedBox(height: 20),
-            const Text(
-              "Budget",
-              style: TextStyle(fontWeight: FontWeight.bold),
+
+            // State Dropdown
+            buildDropdownField(
+              "Select State",
+              statelist.map((state) => state.label ?? "").toList(),
+              (value) {
+                final selectedState = statelist.firstWhere(
+                  (state) => state.label == value,
+                );
+
+                setState(() {
+                  selectedStateName = selectedState.label;
+                  selectedStateId = selectedState.id;
+                  selectedDistrict = null;
+                  loadStates();
+                  // districtList = selectedState.districts ?? [];
+                });
+
+                debugPrint(
+                    "Selected State: $selectedStateName, ID: $selectedStateId");
+              },
             ),
+
+            const SizedBox(height: 12),
+
+            // District Dropdown
+            buildDropdownField(
+              "Select District",
+              districtList.map((district) => district.label ?? "").toList(),
+              (value) {
+                final selecteDistrict = districtList.firstWhere(
+                  (state) => state.label == value,
+                );
+                setState(() {
+                  selectedDistrict = selecteDistrict.label;
+                  selectedDistId = selecteDistrict.id;
+                });
+
+                debugPrint("Selected District: $selectedDistrict");
+              },
+            ),
+
+            const SizedBox(height: 20),
+
+            // Budget Range
+            const Text("Budget", style: TextStyle(fontWeight: FontWeight.bold)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -124,11 +176,17 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                     style: TextStyle(color: Colors.black54, fontSize: 12)),
               ],
             ),
+
             const SizedBox(height: 12),
+
+            // Search Button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  debugPrint(
+                      "Searching with State ID: $selectedStateId, District: $selectedDistrict");
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8280FF),
                   shape: RoundedRectangleBorder(
@@ -167,7 +225,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
         ),
         const SizedBox(height: 10),
         SizedBox(
-          height: 410, // Set a specific height to avoid constraints issues
+          height: 430, // Set a specific height to avoid constraints issues
           child: ListView.builder(
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
@@ -236,13 +294,8 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
               child: Column(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.all(8), // Adds space around the text
-                    decoration: const BoxDecoration(
-                      color: Colors.white, // White background
-                      // borderRadius:
-                      //     BorderRadius.circular(8), // Optional: Adds rounded corners
-                    ),
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(color: Colors.white),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -273,7 +326,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                     ),
                   ),
                   Container(
-                    color:Color(0xFFF2F4F5),
+                    color: const Color(0xFFF2F4F5),
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Column(
@@ -287,35 +340,33 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                                       fontWeight: FontWeight.bold,
                                       color: Colors.black)),
                               Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Chip(
-                                      label: const Text(
-                                        "Corn",
-                                        style: TextStyle(
-                                            fontSize: 10), // Reduce font size
-                                      ),
-                                      backgroundColor: const Color(0xFFCFCFF6),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            20), // Adjust the radius as needed
-                                      ),
-                                    ),
-                                    const SizedBox(width: 6),
-                                    Chip(
-                                      label: const Text(
-                                        "Potato",
-                                        style: TextStyle(
-                                            fontSize: 10), // Reduce font size
-                                      ),
-                                      backgroundColor: const Color(0xFFCFCFF6),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                            20), // Adjust the radius as needed
-                                      ),
-                                    ),
-                                  ])
+                                children: farmland.cropTypes != null &&
+                                        farmland.cropTypes!.isNotEmpty
+                                    ? farmland.cropTypes!.map((crop) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 6.0),
+                                          child: Chip(
+                                            label: Text(
+                                              crop,
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            backgroundColor:
+                                                const Color(0xFFCFCFF6),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList()
+                                    : [
+                                        const Text("No crops available",
+                                            style:
+                                                TextStyle(color: Colors.grey))
+                                      ],
+                              ),
                             ],
                           ),
                           const Divider(thickness: 1),
@@ -340,11 +391,10 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
                               SizedBox(
-                                width: 135, // Adjust the width as needed
+                                width: 135,
                                 child: ElevatedButton(
                                   onPressed: () async {
                                     const storage = FlutterSecureStorage();
-
                                     await storage.write(
                                         key: 'farmid',
                                         value: farmland.farmlandId.toString());
@@ -368,9 +418,9 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                               ),
                               const SizedBox(height: 30),
                               SizedBox(
-                                width: 135, // Adjust the width as needed
+                                width: 135,
                                 child: ElevatedButton(
-                                  onPressed: () async {
+                                  onPressed: () {
                                     Navigator.pushNamed(
                                         context, AppRoutes.compareadd);
                                   },
@@ -408,6 +458,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
         labelText: label,
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
+      value: options.contains(selectedStateName) ? selectedStateName : null,
       items: options
           .map((e) => DropdownMenuItem(value: e, child: Text(e)))
           .toList(),

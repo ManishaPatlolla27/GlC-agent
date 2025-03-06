@@ -15,6 +15,7 @@ import 'package:nex2u/viewModel/login_view_model.dart';
 import 'package:nex2u/viewModel/notification_view_model.dart';
 import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
+import 'package:nex2u/viewModel/state_view_model.dart';
 import 'package:nex2u/viewModel/trackfarmland_view_model.dart';
 import 'package:nex2u/viewModel/welcome_view_model.dart';
 import 'package:provider/provider.dart';
@@ -86,6 +87,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => FavViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => StateViewModel(),
         ),
       ],
       child: MaterialApp(

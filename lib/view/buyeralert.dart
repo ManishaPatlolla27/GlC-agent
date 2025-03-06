@@ -158,7 +158,8 @@ class BuyerAlertScreenState extends State<BuyerAlertScreen> {
                                 gender: genderInitial,
                                 landCost: _costController.text);
 
-                            await createProvider.createAlert(request, context);
+                            await createProvider.createBuyerAlert(
+                                request, context);
                             if (createProvider.otpSent) {
                               Future.delayed(const Duration(milliseconds: 500),
                                   () {

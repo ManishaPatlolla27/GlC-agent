@@ -5,6 +5,7 @@ import 'package:nex2u/viewModel/forgot_password_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../page_routing/app_routes.dart';
+import '../res/validation_alert.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -168,8 +169,11 @@ class _LoginScreenState extends State<ForgotPasswordScreen> {
                                 Navigator.pushNamed(
                                     context, AppRoutes.validate);
                                 const storage = FlutterSecureStorage();
-                                storage.write(key: 'email', value: _emailController.text);
+                                storage.write(
+                                    key: 'email', value: _emailController.text);
                               });
+                            } else {
+                              _showErrorDialog("Enter valid Email ID", context);
                             }
                           }
                         },
@@ -193,5 +197,10 @@ class _LoginScreenState extends State<ForgotPasswordScreen> {
         ),
       ),
     );
+  }
+
+  void _showErrorDialog(String message, BuildContext context) {
+    ValidationIoSAlert().showAlert(context, description: message);
+    debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

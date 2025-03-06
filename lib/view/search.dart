@@ -76,9 +76,9 @@ class _SearchLandState extends State<Searchlands> {
                 onPressed: () {
                   _scaffoldKey.currentState?.openDrawer();
                 },
-                icon: const Icon(Icons.filter_list, color: Colors.black),
                 label:
                     const Text("Filter", style: TextStyle(color: Colors.black)),
+                icon: const Icon(Icons.filter_list, color: Colors.black),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   side: const BorderSide(color: Colors.black12),
@@ -125,7 +125,7 @@ class _SearchLandState extends State<Searchlands> {
                 child: Image.network(
                   farmland.thumbnailImage ?? 'https://via.placeholder.com/150',
                   height: 150,
-                  width: double.infinity,
+                  width: MediaQuery.of(context).size.width * 0.9,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -145,146 +145,169 @@ class _SearchLandState extends State<Searchlands> {
               ),
             ],
           ),
-          Container(
-            padding: const EdgeInsets.all(8), // Adds space around the text
-            decoration: const BoxDecoration(
-              color: Colors.white, // White background
-              // borderRadius:
-              //     BorderRadius.circular(8), // Optional: Adds rounded corners
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  "Exclusive Property",
-                  style: TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  farmland.farmlandCode ?? "Unknown",
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.location_on, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    Text(
-                      farmland.areaName ?? "Unknown",
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Crop",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            padding: const EdgeInsets.only(
+                bottom: 8.0, left: 8.0, right: 8.0, top: 8.0),
+            child: Card(
+              color: const Color(0xFFDFDFDF),
+              child: Column(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.all(8), // Adds space around the text
+                    decoration: const BoxDecoration(
+                      color: Colors.white, // White background
+                      // borderRadius:
+                      //     BorderRadius.circular(8), // Optional: Adds rounded corners
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          "Exclusive Property",
+                          style: TextStyle(
+                              fontSize: 8, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          farmland.farmlandCode ?? "Unknown",
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 4),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on,
+                                size: 16, color: Colors.grey),
+                            const SizedBox(width: 4),
+                            Text(
+                              farmland.areaName ?? "Unknown",
+                              style: const TextStyle(color: Colors.grey),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    color: const Color(0xFFF2F4F5),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Chip(
-                            label: const Text(
-                              "Corn",
-                              style:
-                                  TextStyle(fontSize: 10), // Reduce font size
-                            ),
-                            backgroundColor: const Color(0xFFCFCFF6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20), // Adjust the radius as needed
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Crop",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black)),
+                              Row(
+                                children: farmland.cropTypes != null &&
+                                        farmland.cropTypes!.isNotEmpty
+                                    ? farmland.cropTypes!.map((crop) {
+                                        return Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 6.0),
+                                          child: Chip(
+                                            label: Text(
+                                              crop,
+                                              style:
+                                                  const TextStyle(fontSize: 10),
+                                            ),
+                                            backgroundColor:
+                                                const Color(0xFFCFCFF6),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                          ),
+                                        );
+                                      }).toList()
+                                    : [
+                                        const Text("No crops available",
+                                            style:
+                                                TextStyle(color: Colors.grey))
+                                      ],
+                              ),
+                            ],
                           ),
-                          const SizedBox(width: 6),
-                          Chip(
-                            label: const Text(
-                              "Potato",
-                              style:
-                                  TextStyle(fontSize: 10), // Reduce font size
-                            ),
-                            backgroundColor: const Color(0xFFCFCFF6),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  20), // Adjust the radius as needed
-                            ),
+                          const Divider(thickness: 1),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              const Text("Min. Investment",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black)),
+                              Text(
+                                'Rs. ${farmland.landCost != null ? farmland.landCost!.toStringAsFixed(2) : '0.00'}',
+                                style: const TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xFF8280FF)),
+                              ),
+                            ],
                           ),
-                        ])
-                  ],
-                ),
-                const Divider(thickness: 1),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text("Min. Investment",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.black)),
-                    Text(
-                      'Rs. ${farmland.landCost != null ? farmland.landCost!.toStringAsFixed(2) : '0.00'}',
-                      style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF8280FF)),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    SizedBox(
-                      width: 135, // Adjust the width as needed
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          await storage.write(
-                              key: 'farmid',
-                              value: farmland.farmlandId.toString());
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const PendingFarmlanddetailsScreen(),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF8280FF),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: const Text("View Details",
-                            style: TextStyle(color: Colors.white)),
+                          const SizedBox(height: 6),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 135,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    const storage = FlutterSecureStorage();
+                                    await storage.write(
+                                        key: 'farmid',
+                                        value: farmland.farmlandId.toString());
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            const PendingFarmlanddetailsScreen(),
+                                      ),
+                                    );
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: const Color(0xFF8280FF),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                  ),
+                                  child: const Text("View Details",
+                                      style: TextStyle(color: Colors.white)),
+                                ),
+                              ),
+                              const SizedBox(height: 30),
+                              SizedBox(
+                                width: 135,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.compareadd);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: const Color(0xFF8280FF),
+                                    side: const BorderSide(
+                                        color: Color(0xFF8280FF)),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(20)),
+                                  ),
+                                  child: const Text("Compare"),
+                                ),
+                              )
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 30),
-                    SizedBox(
-                      width: 135, // Adjust the width as needed
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          Navigator.pushNamed(context, AppRoutes.compareadd);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          foregroundColor: const Color(0xFF8280FF),
-                          side: const BorderSide(color: Color(0xFF8280FF)),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                        ),
-                        child: const Text("Compare"),
-                      ),
-                    )
-                  ],
-                ),
-                const SizedBox(height: 30),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ],

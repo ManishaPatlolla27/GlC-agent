@@ -13,42 +13,23 @@ class CityResponse {
 }
 
 class CityList {
-  String? regionName;
-  String? regionStatus;
-  String? subRegionTags;
-  int? stateId;
-  int? regionId;
-  String? createdOn;
-  String? stateName;
+  String? id;
+  String? label;
+  String? code;
 
-  CityList(
-      {this.regionName,
-      this.regionStatus,
-      this.subRegionTags,
-      this.stateId,
-      this.regionId,
-      this.createdOn,
-      this.stateName});
+  CityList({this.id, this.label, this.code});
 
   CityList.fromJson(Map<String, dynamic> json) {
-    regionName = json['region_name'];
-    regionStatus = json['region_status'];
-    subRegionTags = json['sub_region_tags'];
-    stateId = json['state_id'];
-    regionId = json['region_id'];
-    createdOn = json['created_on'];
-    stateName = json['state_name'];
+    id = json['id'];
+    label = json['label'];
+    code = json['code'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
-    data['region_name'] = regionName;
-    data['region_status'] = regionStatus;
-    data['sub_region_tags'] = subRegionTags;
-    data['state_id'] = stateId;
-    data['region_id'] = regionId;
-    data['created_on'] = createdOn;
-    data['state_name'] = stateName;
+    data['id'] = id;
+    data['label'] = label;
+    data['code'] = code;
     return data;
   }
 }
