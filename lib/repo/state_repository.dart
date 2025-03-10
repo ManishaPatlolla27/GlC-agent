@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nex2u/models/states/filter_response.dart';
 import 'package:nex2u/models/states/states_response.dart';
 import 'package:provider/provider.dart';
 
@@ -57,6 +58,62 @@ class StateRepository {
             "/" +
             region, // API endpoint
         fromJson: (json) => StatesResponse.fromJson(json),
+        headers: headers,
+      );
+
+      return response;
+    } catch (e) {
+      throw FetchProfileException('Failed to fetch profile: $e');
+    }
+  }
+
+  Future<StatesResponse> getarea(BuildContext context, String region) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
+    try {
+      final String? token = await _storage.read(key: "auth_token");
+
+      if (token == null || token.isEmpty) {
+        throw AuthException("Authentication token is missing or invalid!");
+      }
+
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      };
+
+      final response = await _apiClient.get<StatesResponse>(
+        configService.enpoints!.gETREGIONAREAS.toString() +
+            "/" +
+            region, // API endpoint
+        fromJson: (json) => StatesResponse.fromJson(json),
+        headers: headers,
+      );
+
+      return response;
+    } catch (e) {
+      throw FetchProfileException('Failed to fetch profile: $e');
+    }
+  }
+
+  Future<FilterResponse> getfilter(BuildContext context) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
+    try {
+      final String? token = await _storage.read(key: "auth_token");
+
+      if (token == null || token.isEmpty) {
+        throw AuthException("Authentication token is missing or invalid!");
+      }
+
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token"
+      };
+
+      final response = await _apiClient.get<FilterResponse>(
+        configService.enpoints!.sEARCHFILTERS.toString(),
+        fromJson: (json) => FilterResponse.fromJson(json),
         headers: headers,
       );
 

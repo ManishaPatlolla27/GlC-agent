@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nex2u/models/states/filter_response.dart';
+import 'package:nex2u/models/states/states_response.dart';
+import 'package:provider/provider.dart';
 
-/// Model Class for State and Region
-class StateModel {
-  final String id;
-  final String label;
-
-  StateModel({required this.id, required this.label});
-}
+import '../viewModel/state_view_model.dart';
 
 class FilterSelectionWidget extends StatefulWidget {
   const FilterSelectionWidget({super.key});
@@ -17,29 +14,23 @@ class FilterSelectionWidget extends StatefulWidget {
 
 class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
   /// List of States
-  List<StateModel> states = [
-    StateModel(id: "1", label: "Andaman and Nicobar Islands"),
-    StateModel(id: "2", label: "Andhra Pradesh"),
-    StateModel(id: "3", label: "Telangana"),
-    StateModel(id: "4", label: "Karnataka"),
-    StateModel(id: "5", label: "Tamil Nadu"),
-    StateModel(id: "6", label: "Orissa"),
-    StateModel(id: "7", label: "Maharashtra"),
-  ];
+  List<StatesList> states = [];
 
   /// List of Regions
-  List<StateModel> regions = [
-    StateModel(id: "1", label: "West Godavari"),
-    StateModel(id: "2", label: "East Godavari"),
-    StateModel(id: "3", label: "Krishna"),
-    StateModel(id: "4", label: "Kurnool"),
-    StateModel(id: "5", label: "Guntur"),
-    StateModel(id: "6", label: "Srikakulam"),
-  ];
+  List<StatesList> regions = [];
+
+  List<StatesList> area = [];
+
+  List<SoilType> soiltype = [];
+
+  List<CropType> croptype = [];
+
+  List<Facility> facilities = [];
 
   /// Selected Values
   String? selectedState;
   String? selectedRegion;
+  String? selectedArea;
 
   Set<String> selectedSoilTypes = {};
   Set<String> selectedCropTypes = {};
@@ -50,6 +41,55 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
   /// Search Queries
   String stateSearchQuery = '';
   String regionSearchQuery = '';
+  String areaSearchQuery = '';
+
+  String soilSearchQuery = '';
+  String cropSearchQuery = '';
+  String facilitiesSearchQuery = '';
+
+  @override
+  void initState() {
+    super.initState();
+    loadStates();
+  }
+
+  Future<void> loadStates() async {
+    final stateprovider = Provider.of<StateViewModel>(context, listen: false);
+    await stateprovider.getstates(context);
+    debugPrint("Received state response: ${stateprovider.stateResponse}");
+
+    setState(() {
+      states = stateprovider.stateResponse?.stateslist ?? [];
+    });
+
+    await stateprovider.getfilter(context);
+
+    setState(() {
+      croptype = stateprovider.filterResponse?.cropTypes ?? [];
+      soiltype = stateprovider.filterResponse?.soilTypes ?? [];
+      facilities = stateprovider.filterResponse?.facilities ?? [];
+    });
+  }
+
+  Future<void> loadCities() async {
+    final stateProvider = Provider.of<StateViewModel>(context, listen: false);
+    await stateProvider.getregion(context, selectedState.toString());
+    debugPrint("Received district response: ${stateProvider.stateResponse}");
+
+    setState(() {
+      regions = stateProvider.stateResponse?.stateslist ?? [];
+    });
+  }
+
+  Future<void> loadAreas() async {
+    final stateProvider = Provider.of<StateViewModel>(context, listen: false);
+    await stateProvider.getarea(context, selectedRegion.toString());
+    debugPrint("Received area response: ${stateProvider.stateResponse}");
+
+    setState(() {
+      area = stateProvider.stateResponse?.stateslist ?? [];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +98,7 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
       child: Column(
         children: [
           /// Header
-          SizedBox(height: 30), // Spacing between text and icon
+          const SizedBox(height: 30), // Spacing between text and icon
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
@@ -98,38 +138,56 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                             setState(() => stateSearchQuery = query),
                         items: states,
                         selectedItem: selectedState,
-                        onSelect: (id) => setState(() => selectedState = id),
+                        onSelect: (id) {
+                          setState(() {
+                            selectedState = id;
+                            selectedRegion =
+                                null; // Reset selected region when state changes
+                            regions.clear(); // Clear previous region data
+                            area.clear(); // Clear previous region data
+                          });
+                          loadCities(); // Fetch cities for the newly selected state
+                        },
                       ),
 
                       const SizedBox(height: 15),
 
                       /// Search by Regions (Only if a state is selected)
-                      if (selectedState != null)
-                        _buildSearchSection(
-                          title: "Search By Regions",
-                          searchHint: "e.g. West Godavari",
-                          searchQuery: regionSearchQuery,
-                          onSearch: (query) =>
-                              setState(() => regionSearchQuery = query),
-                          items: regions,
-                          selectedItem: selectedRegion,
-                          onSelect: (id) => setState(() => selectedRegion = id),
-                        ),
+                      //if (selectedState != null)
+                      _buildSearchSection(
+                        title: "Search By Regions",
+                        searchHint: "e.g. West Godavari",
+                        searchQuery: regionSearchQuery,
+                        onSearch: (query) =>
+                            setState(() => regionSearchQuery = query),
+                        items: regions,
+                        selectedItem: selectedRegion,
+                        onSelect: (id) {
+                          setState(() {
+                            selectedRegion = id;
+                            selectedArea =
+                                null; // Reset selected region when state changes
+                            area.clear(); // Clear previous region data
+                          });
+                          loadAreas(); // Fetch cities for the newly selected state
+                        },
+                      ),
 
                       const SizedBox(height: 15),
 
                       /// Search by Area (Only if a region is selected)
-                      if (selectedRegion != null)
-                        _buildSearchSection(
-                          title: "Search By Area",
-                          searchHint: "e.g. Tanuku",
-                          searchQuery: regionSearchQuery,
-                          onSearch: (query) =>
-                              setState(() => regionSearchQuery = query),
-                          items: regions,
-                          selectedItem: selectedRegion,
-                          onSelect: (id) => setState(() => selectedRegion = id),
-                        ),
+                      // if (selectedRegion != null)
+
+                      _buildSearchSection(
+                        title: "Search By Area",
+                        searchHint: "e.g. Tanuku",
+                        searchQuery: areaSearchQuery,
+                        onSearch: (query) =>
+                            setState(() => areaSearchQuery = query),
+                        items: area,
+                        selectedItem: selectedArea,
+                        onSelect: (id) => setState(() => selectedArea = id),
+                      ),
 
                       /// Budget Range Section with Black Border
                       Container(
@@ -142,9 +200,9 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
+                            const Text(
                               "Search By Budget",
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(height: 5),
@@ -160,8 +218,8 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
 
                             /// Range Slider Matching Row Width
                             SizedBox(
-                              width: double
-                                  .infinity, // Ensures full width inside the container
+                              width: double.infinity,
+                              // Ensures full width inside the container
                               child: RangeSlider(
                                 values: budgetRange,
                                 min: 5,
@@ -192,63 +250,61 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      _buildMultiSearchSection(
+
+                      _buildMultiSelectSection(
                         title: "Soil Type",
                         searchHint: "e.g. Irrigation",
-                        searchQuery: regionSearchQuery,
+                        searchQuery: soilSearchQuery,
                         onSearch: (query) =>
-                            setState(() => regionSearchQuery = query),
-                        items: regions, // Replace with actual facility data
-                        selectedItems: selectedFacilities,
+                            setState(() => soilSearchQuery = query),
+                        items: soiltype,
+                        selectedItems: selectedSoilTypes,
+                        getItemId: (item) => item.id,
+                        getItemLabel: (item) => item.label,
                         onSelect: (id) => setState(() {
-                          if (selectedFacilities.contains(id)) {
-                            selectedFacilities.remove(id);
-                          } else {
-                            selectedFacilities.add(id);
-                          }
+                          selectedSoilTypes.contains(id)
+                              ? selectedSoilTypes.remove(id)
+                              : selectedSoilTypes.add(id);
                         }),
-                        isMultiSelect: true,
                       ),
 
                       const SizedBox(height: 15),
 
-                      _buildMultiSearchSection(
+                      _buildMultiSelectSection(
                         title: "Crop Type",
                         searchHint: "e.g. Irrigation",
-                        searchQuery: regionSearchQuery,
+                        searchQuery: cropSearchQuery,
                         onSearch: (query) =>
-                            setState(() => regionSearchQuery = query),
-                        items: regions, // Replace with actual facility data
-                        selectedItems: selectedFacilities,
+                            setState(() => cropSearchQuery = query),
+                        items: croptype,
+                        selectedItems: selectedCropTypes,
+                        getItemId: (item) => item.id,
+                        getItemLabel: (item) => item.label,
                         onSelect: (id) => setState(() {
-                          if (selectedFacilities.contains(id)) {
-                            selectedFacilities.remove(id);
-                          } else {
-                            selectedFacilities.add(id);
-                          }
+                          selectedCropTypes.contains(id)
+                              ? selectedCropTypes.remove(id)
+                              : selectedCropTypes.add(id);
                         }),
-                        isMultiSelect: true,
                       ),
 
                       const SizedBox(height: 15),
-
-                      _buildMultiSearchSection(
+                      _buildMultiSelectSection(
                         title: "Available Facilities",
                         searchHint: "e.g. Irrigation",
-                        searchQuery: regionSearchQuery,
+                        searchQuery: facilitiesSearchQuery,
                         onSearch: (query) =>
-                            setState(() => regionSearchQuery = query),
-                        items: regions, // Replace with actual facility data
+                            setState(() => facilitiesSearchQuery = query),
+                        items: facilities,
                         selectedItems: selectedFacilities,
+                        getItemId: (item) => item.id,
+                        getItemLabel: (item) => item.label,
                         onSelect: (id) => setState(() {
-                          if (selectedFacilities.contains(id)) {
-                            selectedFacilities.remove(id);
-                          } else {
-                            selectedFacilities.add(id);
-                          }
+                          selectedFacilities.contains(id)
+                              ? selectedFacilities.remove(id)
+                              : selectedFacilities.add(id);
                         }),
-                        isMultiSelect: true,
                       ),
+
                       const SizedBox(height: 15),
                       SizedBox(
                         width: 250,
@@ -256,6 +312,16 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                           onPressed: () {
                             debugPrint("Selected State: $selectedState");
                             debugPrint("Selected Region: $selectedRegion");
+                            debugPrint("Selected Region: $selectedArea");
+                            List<String> soilTypesList =
+                                selectedSoilTypes.toList();
+                            List<String> cropTypesList =
+                                selectedCropTypes.toList();
+                            List<String> facilitiesTypesList =
+                                selectedFacilities.toList();
+                            debugPrint("Selected Region: $soilTypesList");
+                            debugPrint("Selected Region: $cropTypesList");
+                            debugPrint("Selected Region: $facilitiesTypesList");
                             Navigator.pop(context);
                           },
                           style: ElevatedButton.styleFrom(
@@ -288,7 +354,7 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
     required String searchHint,
     required String searchQuery,
     required Function(String) onSearch,
-    required List<StateModel> items,
+    required List<StatesList> items,
     required String? selectedItem,
     required Function(String) onSelect,
   }) {
@@ -340,6 +406,7 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
           Column(
             children: items
                 .where((item) => item.label
+                    .toString()
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()))
                 .map((item) {
@@ -349,12 +416,12 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                 value: selectedItem == item.id,
                 onChanged: (bool? value) {
                   if (value == true) {
-                    onSelect(item.id);
+                    onSelect(item.id.toString());
                   }
                 },
-                title: Text(item.label),
-                controlAffinity:
-                    ListTileControlAffinity.leading, // Checkbox left
+                title: Text(item.label.toString()),
+                controlAffinity: ListTileControlAffinity.leading,
+                // Checkbox left
                 activeColor: Colors.blueAccent,
               );
             }).toList(),
@@ -364,33 +431,31 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
     );
   }
 
-  Widget _buildMultiSearchSection({
+  Widget _buildMultiSelectSection<T>({
     required String title,
     required String searchHint,
     required String searchQuery,
     required Function(String) onSearch,
-    required List<StateModel> items,
-    required Set<String?> selectedItems,
+    required List<T> items,
+    required Set<String> selectedItems,
+    required String Function(T) getItemId,
+    required String Function(T) getItemLabel,
     required Function(String) onSelect,
-    required bool isMultiSelect,
   }) {
     return Container(
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.black), // Black border
+        border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(8),
       ),
       padding: const EdgeInsets.all(8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// Title
           Text(
             title,
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 5),
-
-          /// Search Bar
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10),
             decoration: BoxDecoration(
@@ -415,31 +480,29 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
               ],
             ),
           ),
-
           const SizedBox(height: 10),
-
-          /// Dynamic Checkbox List (Multi-Select Supported)
           Column(
             children: items
-                .where((item) => item.label
+                .where((item) => getItemLabel(item)
                     .toLowerCase()
                     .contains(searchQuery.toLowerCase()))
                 .map((item) {
+              String id = getItemId(item);
               return CheckboxListTile(
                 visualDensity:
                     const VisualDensity(horizontal: -4, vertical: -4),
-                value: selectedItems.contains(item.id),
+                value: selectedItems.contains(id),
                 onChanged: (bool? value) {
-                  if (value == true) {
-                    selectedItems.add(item.id);
-                  } else {
-                    selectedItems.remove(item.id);
-                  }
-                  onSelect(item.id);
+                  setState(() {
+                    if (selectedItems.contains(id)) {
+                      selectedItems.remove(id);
+                    } else {
+                      selectedItems.add(id);
+                    }
+                  });
                 },
-                title: Text(item.label),
-                controlAffinity:
-                    ListTileControlAffinity.leading, // Checkbox left
+                title: Text(getItemLabel(item)),
+                controlAffinity: ListTileControlAffinity.leading,
                 activeColor: Colors.blueAccent,
               );
             }).toList(),
