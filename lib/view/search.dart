@@ -20,7 +20,10 @@ class _SearchLandState extends State<Searchlands> {
   late String seeall = "Farmlands"; // Default value to prevent null errors
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final storage = const FlutterSecureStorage();
+
+//  final storage = const FlutterSecureStorage();
+
+  FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize once
   @override
   void initState() {
     super.initState();
@@ -54,11 +57,13 @@ class _SearchLandState extends State<Searchlands> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      key: _scaffoldKey, // Assign Global Key
-      drawer: const FilterDrawer(),
+      key: _scaffoldKey,
+      // Assign Global Key
+      endDrawer: const FilterSelectionWidget(),
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        automaticallyImplyLeading: false, // Prevents the default drawer icon
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
@@ -67,7 +72,6 @@ class _SearchLandState extends State<Searchlands> {
         ),
         title: Text(seeall, style: const TextStyle(color: Colors.black)),
       ),
-      endDrawer: const FilterSelectionWidget(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -80,19 +84,31 @@ class _SearchLandState extends State<Searchlands> {
             const SizedBox(height: 10),
             Align(
               alignment: Alignment.topRight,
-              child: ElevatedButton.icon(
+              child: ElevatedButton(
                 onPressed: () {
-                  _scaffoldKey.currentState?.openDrawer();
+                  _scaffoldKey.currentState?.openEndDrawer();
                 },
-                label:
-                    const Text("Filter", style: TextStyle(color: Colors.black)),
-                icon: const Icon(Icons.filter_list, color: Colors.black),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
-                  side: const BorderSide(color: Colors.black12),
+                  side: const BorderSide(
+                      color: Colors.black, width: 1), // Black border
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                    borderRadius: BorderRadius.circular(
+                        8), // Slightly smaller border radius
                   ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 10, vertical: 8), // Reduced width
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min, // Keeps the button compact
+                  children: const [
+                    Text("Filter",
+                        style: TextStyle(
+                            color: Colors.black)), // Text on the right
+                    SizedBox(width: 5), // Spacing between text and icon
+                    Icon(Icons.filter_list,
+                        color: Colors.black), // Icon on the left
+                  ],
                 ),
               ),
             ),
@@ -292,9 +308,66 @@ class _SearchLandState extends State<Searchlands> {
                               SizedBox(
                                 width: 135,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, AppRoutes.compareadd);
+                                  onPressed: () async {
+                                    if (storage.read(key: "code") == "") {
+                                      await storage.write(
+                                          key: 'farmid',
+                                          value:
+                                              farmland.farmlandId.toString());
+                                      await storage.write(
+                                          key: 'code',
+                                          value:
+                                              farmland.farmlandCode.toString());
+                                      await storage.write(
+                                          key: 'area',
+                                          value: farmland.areaName.toString());
+                                      await storage.write(
+                                        key: 'cost',
+                                        value:
+                                            "₹${farmland.landCost?.toString() ?? 'N/A'} / acre",
+                                      );
+                                      await storage.write(
+                                          key: 'image',
+                                          value: farmland.thumbnailImage!
+                                              .toString());
+                                      if (storage.read(key: "code") != "" &&
+                                          storage.read(key: "code1") != "") {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareboth);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareadd);
+                                      }
+                                    } else {
+                                      await storage.write(
+                                          key: 'farmid1',
+                                          value:
+                                              farmland.farmlandId.toString());
+                                      await storage.write(
+                                          key: 'code1',
+                                          value:
+                                              farmland.farmlandCode.toString());
+                                      await storage.write(
+                                          key: 'area1',
+                                          value: farmland.areaName.toString());
+                                      await storage.write(
+                                        key: 'cost1',
+                                        value:
+                                            "₹${farmland.landCost?.toString() ?? 'N/A'} / acre",
+                                      );
+                                      await storage.write(
+                                          key: 'image1',
+                                          value: farmland.thumbnailImage!
+                                              .toString());
+                                      if (storage.read(key: "code") != "" &&
+                                          storage.read(key: "code1") != "") {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareboth);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareadd);
+                                      }
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: const Color(0xFF8280FF),
@@ -319,60 +392,6 @@ class _SearchLandState extends State<Searchlands> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class FilterDrawer extends StatelessWidget {
-  const FilterDrawer({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      width: MediaQuery.of(context).size.width * 0.8, // 80% width
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: IconButton(
-                icon: const Icon(Icons.close),
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            const Text(
-              "Filter",
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 16),
-            const Text("Search By State",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            TextField(
-              decoration: InputDecoration(
-                hintText: "e.g. Andhra Pradesh",
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueAccent,
-                minimumSize: const Size(double.infinity, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: const Text("Search",
-                  style: TextStyle(color: Colors.white, fontSize: 16)),
-            ),
-          ],
-        ),
       ),
     );
   }

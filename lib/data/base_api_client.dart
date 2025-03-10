@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/data/api_urls.dart';
 
@@ -85,7 +86,7 @@ Error Headers: ${error.response?.headers}
         queryParameters: queryParams,
         options: options,
       );
-
+      debugPrint("Response Data: ${response.data}");
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
       _handleError(e);
@@ -114,6 +115,10 @@ Error Headers: ${error.response?.headers}
                     : 'application/octet-stream',
       );
 
+      debugPrint("POST Request to: $url");
+      debugPrint("Headers: ${options.headers}");
+      debugPrint("Payload: $payload");
+
       Response response;
       if (isMultipart) {
         response = await _dio.post(url,
@@ -121,8 +126,14 @@ Error Headers: ${error.response?.headers}
       } else {
         response = await _dio.post(url, data: payload, options: options);
       }
+
+      debugPrint("Response Status Code: ${response.statusCode}");
+      debugPrint("Response Data: ${response.data}");
+
       return _handleResponse(response, fromJson);
     } on DioException catch (e) {
+      debugPrint("DioException: ${e.message}");
+      debugPrint("DioException Details: ${e.response?.data}");
       _handleError(e);
       rethrow;
     }
@@ -192,6 +203,8 @@ Error Headers: ${error.response?.headers}
 
   T _handleResponse<T>(Response response, T Function(dynamic) fromJson) {
     if (response.statusCode == 200) {
+      return fromJson(response.data);
+    } else if (response.statusCode == 201) {
       return fromJson(response.data);
     } else {
       throw Exception('Failed to load data: ${response.statusCode}');

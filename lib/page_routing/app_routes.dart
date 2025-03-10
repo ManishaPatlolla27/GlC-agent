@@ -22,4 +22,5 @@ class AppRoutes {
   static const String map = "/map";
   static const String compare = "/compare";
   static const String compareadd = "/compareadd";
+  static const String compareboth = "/compareboth";
 }

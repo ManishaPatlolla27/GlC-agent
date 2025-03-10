@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
+import 'package:nex2u/view/comparebothfarmland.dart';
 import 'package:nex2u/view/mappointerpick.dart';
 import 'package:nex2u/view/myshortlist.dart';
 import 'package:nex2u/view/notification.dart';
 import 'package:nex2u/view/onboarding.dart';
 import 'package:nex2u/view/passwordupdate.dart';
 import 'package:nex2u/view/validateotp.dart';
+
 import '../view/allfarmlands.dart';
 import '../view/buyeralert.dart';
 import '../view/campare_farmland.dart';
@@ -41,6 +43,7 @@ class AppPages {
       AppRoutes.map: (context) => const HomeMap(),
       AppRoutes.compare: (context) => const CompareFarmlands(),
       AppRoutes.compareadd: (context) => const CompareFarmlandsScreen(),
+      AppRoutes.compareboth: (context) => const CompareBothFarmlandsScreen(),
     };
   }
 }

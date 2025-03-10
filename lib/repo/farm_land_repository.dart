@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
 import '../models/farmlands/farm_land_response.dart';
+import '../models/farmlands/farmland_home_response.dart';
 import '../models/farmlands/similar_request.dart';
 import '../viewModel/configuration_view_model.dart';
 
@@ -43,7 +44,7 @@ class FarmLandRepository {
     }
   }
 
-  Future<List<FarmLandList>> getFarmLands(
+  Future<List<FarmLandHomeList>> getFarmLands(
       BuildContext context, String status) async {
     final configService =
         Provider.of<ConfigurationViewModel>(context, listen: false);
@@ -59,9 +60,10 @@ class FarmLandRepository {
         "Authorization": "Bearer $token"
       };
 
-      final response = await _apiClient.get<FarmLandResponse>(
+      final response = await _apiClient.get<FarmLandHomeResponse>(
         "${configService.enpoints!.gETMYFARMLANDS}/$status", // API endpoint
-        fromJson: (json) => FarmLandResponse.fromJson(json as List<dynamic>),
+        fromJson: (json) =>
+            FarmLandHomeResponse.fromJson(json as List<dynamic>),
         headers: headers,
       );
 
@@ -103,6 +105,7 @@ class FarmLandRepository {
       BuildContext context, SimilarRequest similarRequest) async {
     final configService =
         Provider.of<ConfigurationViewModel>(context, listen: false);
+
     try {
       final String? token = await _storage.read(key: "auth_token");
 
@@ -114,15 +117,21 @@ class FarmLandRepository {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token"
       };
+
+      final String endpoint =
+          configService.enpoints?.sIMILARFARMLANDS ?? ApiConstants.similar;
+
       final response = await _apiClient.post<FarmLandResponse>(
-        configService.enpoints?.sIMILARFARMLANDS ??
-            ApiConstants.similar, // API endpoint
+        endpoint, // API endpoint
         similarRequest.toJson(), // Convert to JSON
         headers: headers,
         fromJson: (json) => FarmLandResponse.fromJson(json), // Parse response
         isJson: true, // Content-Type: application/json
       );
+
       return response;
+    } on AuthException catch (e) {
+      throw AuthException("Authentication error: ${e.message}");
     } catch (e) {
       throw Exception('Login failed: $e');
     }

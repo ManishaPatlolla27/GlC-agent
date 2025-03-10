@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nex2u/models/farmlands/farmland_home_response.dart';
 import 'package:nex2u/models/farmlands/farmland_leads_response.dart';
 import 'package:nex2u/models/farmlands/similar_request.dart';
 import 'package:nex2u/models/filter/filter_states_model.dart';
@@ -8,10 +9,12 @@ import 'package:nex2u/repo/farm_land_repository.dart';
 import '../models/farmlands/farm_land_response.dart';
 
 class FarmLandViewModel with ChangeNotifier {
-  late BuildContext context;
   List<FarmLandLeadList>? _bottomresponse = [];
   List<FarmLandList>? _farmlandresponse = [];
+  List<FarmLandHomeList>? _farmlandhomeresponse = [];
   FarmLandResponse? _farmlandresponse2;
+  List<FilterStateModel>? stateList;
+
   final FarmLandRepository farmRepository = FarmLandRepository();
   bool _isLoading = false;
   String _errorMessage = '';
@@ -23,84 +26,110 @@ class FarmLandViewModel with ChangeNotifier {
   String get getErrorMessage => _errorMessage;
   List<FarmLandLeadList>? get bottomresponse => _bottomresponse;
   List<FarmLandList>? get farmlandresponse => _farmlandresponse;
+  List<FarmLandHomeList>? get farmlandhomeresponse => _farmlandhomeresponse;
   FarmLandResponse? get farmlandresponse2 => _farmlandresponse2;
-  // Fetch profile details
+  List<FilterStateModel>? get getStateList => stateList;
+
+  // Fetch farmland leads
   Future<void> getFarmLeads(BuildContext context) async {
     try {
       _setLoading(true);
       _errorMessage = '';
 
-      List<FarmLandLeadList> response =
+      List<FarmLandLeadList>? response =
           await farmRepository.getFarmLeads(context);
 
-      if (response.isNotEmpty) {
+      if (response != null && response.isNotEmpty) {
         _bottomresponse = response;
       } else {
-        _errorMessage = 'Invalid profile data received';
+        _errorMessage = 'No farm leads found';
       }
     } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
+      _errorMessage = 'Failed to load farm leads: $e';
     } finally {
       _setLoading(false);
     }
   }
 
+  // Fetch farmland data based on status
   Future<void> getFarmLands(BuildContext context, String status) async {
     try {
       _setLoading(true);
       _errorMessage = '';
 
-      List<FarmLandList> response =
+      List<FarmLandHomeList>? response =
           await farmRepository.getFarmLands(context, status);
 
-      if (response.isNotEmpty) {
-        _farmlandresponse = response;
+      if (response != null) {
+        _farmlandhomeresponse = response;
       } else {
-        _errorMessage = 'Invalid profile data received';
+        _errorMessage = 'No farmlands found';
       }
     } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
+      _errorMessage = 'Failed to load farmlands: $e';
     } finally {
       _setLoading(false);
     }
   }
 
+  // Fetch 'See All' farmlands
   Future<void> getseeall(BuildContext context, String status) async {
     try {
       _setLoading(true);
       _errorMessage = '';
 
-      List<FarmLandList> response =
+      List<FarmLandList>? response =
           await farmRepository.getseeall(context, status);
 
-      if (response.isNotEmpty) {
+      if (response != null && response.isNotEmpty) {
         _farmlandresponse = response;
       } else {
-        _errorMessage = 'Invalid profile data received';
+        _errorMessage = 'No data found';
       }
     } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
+      _errorMessage = 'Failed to load data: $e';
     } finally {
       _setLoading(false);
     }
   }
 
+  // Fetch similar farmlands
   Future<void> getsimilar(
-      BuildContext context, SimilarRequest similarrequest) async {
+      BuildContext context, SimilarRequest similarRequest) async {
     try {
       _setLoading(true);
       _errorMessage = '';
 
-      FarmLandResponse response =
-          await farmRepository.getsimilar(context, similarrequest);
+      FarmLandResponse? response =
+          await farmRepository.getsimilar(context, similarRequest);
 
-      if (response.farmlandlist.isNotEmpty) {
+      if (response != null) {
         _farmlandresponse2 = response;
       } else {
-        _errorMessage = 'Invalid profile data received';
+        _errorMessage = 'No similar farmland found';
       }
     } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
+      _errorMessage = 'Failed to load similar farmlands: $e';
+    } finally {
+      _setLoading(false);
+    }
+  }
+
+  // Fetch states list
+  Future<void> getStateListApi(BuildContext context) async {
+    try {
+      _setLoading(true);
+      _errorMessage = '';
+
+      final response = await farmRepository.getStateListService(context);
+
+      if (response.stateList != null && response.stateList!.isNotEmpty) {
+        stateList = response.stateList;
+      } else {
+        _errorMessage = 'No states found';
+      }
+    } catch (e) {
+      _errorMessage = 'Failed to load states: $e';
     } finally {
       _setLoading(false);
     }
@@ -110,26 +139,5 @@ class FarmLandViewModel with ChangeNotifier {
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
-  }
-
-  List<FilterStateModel>? get getStateList => stateList;
-  List<FilterStateModel>? stateList;
-  Future<void> getStateListApi(BuildContext context) async {
-    try {
-      _setLoading(true);
-      _errorMessage = '';
-
-      final response = await farmRepository.getStateListService(context);
-
-      if ((response.stateList ?? []).isNotEmpty) {
-        stateList = response.stateList;
-      } else {
-        _errorMessage = 'Invalid profile data received';
-      }
-    } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
-    } finally {
-      _setLoading(false);
-    }
   }
 }

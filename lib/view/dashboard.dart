@@ -32,6 +32,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    Provider.of<DashboardViewModel>(context, listen: false).dashboard(context);
+    if (mounted) setState(() {}); // Ensure UI updates safely
+  }
+
+  @override
   Widget build(BuildContext context) {
     final dashboardViewModel = Provider.of<DashboardViewModel>(context);
     final configService = Provider.of<ConfigurationViewModel>(context);

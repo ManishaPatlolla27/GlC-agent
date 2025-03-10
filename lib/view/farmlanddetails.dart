@@ -6,6 +6,7 @@ import 'package:nex2u/viewModel/farm_details_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/farmlands/farm_details_response.dart';
+import '../viewModel/fav_view_model.dart';
 
 class PendingFarmlanddetailsScreen extends StatefulWidget {
   const PendingFarmlanddetailsScreen({super.key});
@@ -21,14 +22,22 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
   List<Features> farmlandSections = [];
   FarmDetailsResponse? farmDetailsResponse;
   late List<String> _imageUrls = [];
+
   @override
   void initState() {
     super.initState();
     loadFarmlands();
   }
 
-   FlutterSecureStorage storage =
-      FlutterSecureStorage(); // Initialize once
+  void toggleWishlist(bool value) async {
+    final favProvider = Provider.of<FavViewModel>(context, listen: false);
+    setState(() {
+      favProvider.togglefav(
+          farmDetailsResponse!.farmlandId!.toInt(), value, context);
+    });
+  }
+
+  FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize once
 
   Future<void> loadFarmlands() async {
     farmid = await storage.read(key: "farmid");
@@ -80,8 +89,8 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                 width: double.infinity,
                                 decoration: BoxDecoration(
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                        imageUrl), // Changed from AssetImage to NetworkImage
+                                    image: NetworkImage(imageUrl),
+                                    // Changed from AssetImage to NetworkImage
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -142,6 +151,9 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                             child: GestureDetector(
                               onTap: () {
                                 setState(() {
+                                  toggleWishlist(
+                                      !(farmDetailsResponse?.isFavorite ??
+                                          false));
                                   farmDetailsResponse?.isFavorite =
                                       !(farmDetailsResponse?.isFavorite ??
                                           false);
@@ -150,15 +162,8 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                               child: CircleAvatar(
                                 backgroundColor: Colors.white,
                                 radius: 14,
-                                child: Icon(
-                                  farmDetailsResponse?.isFavorite == true
-                                      ? Icons.favorite
-                                      : Icons.favorite_border,
-                                  color: farmDetailsResponse?.isFavorite == true
-                                      ? const Color(0xFF8280FF)
-                                      : Colors.grey,
-                                  size: 16,
-                                ),
+                                child:
+                                    getFavoriteIcon(), // Using the function here
                               ),
                             ),
                           ),
@@ -209,16 +214,74 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                     ],
                                   ),
                                   ElevatedButton(
-                                    onPressed: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) =>
-                                      //         CompareFarmlandsScreen(),
-                                      //   ),
-                                      // );
-                                      Navigator.pushNamed(
-                                          context, AppRoutes.compare);
+                                    onPressed: () async {
+                                      if (storage.read(key: "compare") == "") {
+                                        await storage.write(
+                                            key: 'farmid',
+                                            value: farmDetailsResponse
+                                                ?.farmlandId
+                                                .toString());
+                                        await storage.write(
+                                            key: 'code',
+                                            value: farmDetailsResponse
+                                                ?.farmlandCode
+                                                .toString());
+                                        await storage.write(
+                                            key: 'area',
+                                            value: farmDetailsResponse?.areaName
+                                                .toString());
+                                        await storage.write(
+                                          key: 'cost',
+                                          value:
+                                              "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
+                                        );
+                                        await storage.write(
+                                            key: 'image',
+                                            value: farmDetailsResponse!
+                                                .farmlandImages![0]
+                                                .toString());
+                                        if (storage.read(key: "code") != "" &&
+                                            storage.read(key: "code1") != "") {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.compareboth);
+                                        } else {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.compareadd);
+                                        }
+                                      } else {
+                                        await storage.write(
+                                            key: 'farmid1',
+                                            value: farmDetailsResponse
+                                                ?.farmlandId
+                                                .toString());
+                                        await storage.write(
+                                            key: 'code1',
+                                            value: farmDetailsResponse
+                                                ?.farmlandCode
+                                                .toString());
+                                        await storage.write(
+                                            key: 'area1',
+                                            value: farmDetailsResponse?.areaName
+                                                .toString());
+                                        await storage.write(
+                                          key: 'cost1',
+                                          value:
+                                              "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
+                                        );
+                                        await storage.write(
+                                            key: 'image1',
+                                            value: farmDetailsResponse!
+                                                .farmlandImages![0]
+                                                .toString());
+                                        if (storage.read(key: "code") != "" &&
+                                            storage.read(key: "code1") != "") {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.compareboth);
+                                        } else {
+                                          Navigator.pushNamed(
+                                              context, AppRoutes.compareadd);
+                                        }
+                                      }
                                     },
                                     style: ElevatedButton.styleFrom(
                                       foregroundColor: const Color(0xFF8280FF),
@@ -392,5 +455,20 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
         ),
       ),
     );
+  }
+
+  Widget getFavoriteIcon() {
+    if (farmDetailsResponse?.isFavorite == true) {
+      return const Icon(
+        Icons.favorite,
+        color: Color(0xFF8280FF),
+        size: 16,
+      );
+    } else {
+      return const Icon(
+        Icons.favorite_border,
+        size: 16,
+      );
+    }
   }
 }

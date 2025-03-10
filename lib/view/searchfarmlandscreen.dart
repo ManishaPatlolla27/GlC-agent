@@ -5,6 +5,7 @@ import 'package:nex2u/viewModel/state_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/farmlands/farm_land_response.dart';
+import '../models/farmlands/similar_request.dart';
 import '../page_routing/app_routes.dart';
 import '../viewModel/farm_land_view_model.dart';
 import 'farmlanddetails.dart';
@@ -17,7 +18,7 @@ class SearchFarmlandScreen extends StatefulWidget {
 }
 
 class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
-  String? seeall = "";
+  String? farmid = "";
   List<FarmLandList> farmlandSections = [];
   String? selectedStateName;
   String? selectedStateId;
@@ -26,6 +27,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   List<StatesList> statelist = [];
   List<StatesList> districtList = [];
   RangeValues budgetRange = const RangeValues(15, 80);
+  FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize once
   @override
   void initState() {
     super.initState();
@@ -34,16 +36,31 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
 
   Future<void> loadFarmlands() async {
     const storage = FlutterSecureStorage();
-    seeall = await storage.read(key: "seeall");
+    farmid = await storage.read(key: "farmid");
+    debugPrint("Fetched farmid: $farmid");
+    if (farmid == null) return;
 
-    if (seeall == null) return;
-    final provider = Provider.of<FarmLandViewModel>(context, listen: false);
-    await provider.getseeall(context, seeall!);
-    final stateprovider = Provider.of<StateViewModel>(context, listen: false);
-    await stateprovider.getstates(context);
+    var farmviewprov = Provider.of<FarmLandViewModel>(context, listen: false);
+    SimilarRequest similarRequest = SimilarRequest(
+        farmlandId: farmid,
+        regionId: selectedStateId,
+        areaId: selectedDistId,
+        priceRangeFrom: "0",
+        priceRangeTo: "0");
+
+    await farmviewprov.getsimilar(context, similarRequest);
+    debugPrint(
+        "Received farmland response: ${farmviewprov.farmlandresponse2?.farmlandlist}");
 
     setState(() {
-      farmlandSections = provider.farmlandresponse ?? [];
+      farmlandSections = farmviewprov.farmlandresponse2?.farmlandlist ?? [];
+    });
+
+    final stateprovider = Provider.of<StateViewModel>(context, listen: false);
+    await stateprovider.getstates(context);
+    debugPrint("Received state response: ${stateprovider.stateResponse}");
+
+    setState(() {
       statelist = stateprovider.stateResponse?.stateslist ?? [];
     });
   }
@@ -51,6 +68,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   Future<void> loadStates() async {
     final stateProvider = Provider.of<StateViewModel>(context, listen: false);
     await stateProvider.getregion(context, selectedStateId.toString());
+    debugPrint("Received district response: ${stateProvider.stateResponse}");
 
     setState(() {
       districtList = stateProvider.stateResponse?.stateslist ?? [];
@@ -183,9 +201,43 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  debugPrint(
-                      "Searching with State ID: $selectedStateId, District: $selectedDistrict");
+                onPressed: () async {
+                  if (selectedStateId == null || selectedStateId!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please select a state."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  if (selectedDistId == null || selectedDistId!.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Please select a district."),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                    return;
+                  }
+
+                  double minBudget = budgetRange.start;
+                  double maxBudget = budgetRange.end;
+                  SimilarRequest similarRequest = SimilarRequest(
+                    farmlandId: farmid,
+                    regionId: selectedStateId,
+                    areaId: selectedDistId,
+                    priceRangeFrom: minBudget.toString(),
+                    priceRangeTo: maxBudget.toString(),
+                  );
+                  var farmviewprov =
+                      Provider.of<FarmLandViewModel>(context, listen: false);
+                  await farmviewprov.getsimilar(context, similarRequest);
+                  setState(() {
+                    farmlandSections =
+                        farmviewprov.farmlandresponse2?.farmlandlist ?? [];
+                  });
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF8280FF),
@@ -420,9 +472,66 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                               SizedBox(
                                 width: 135,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    Navigator.pushNamed(
-                                        context, AppRoutes.compareadd);
+                                  onPressed: () async {
+                                    if (storage.read(key: "code") == "") {
+                                      await storage.write(
+                                          key: 'farmid',
+                                          value:
+                                              farmland.farmlandId.toString());
+                                      await storage.write(
+                                          key: 'code',
+                                          value:
+                                              farmland.farmlandCode.toString());
+                                      await storage.write(
+                                          key: 'area',
+                                          value: farmland.areaName.toString());
+                                      await storage.write(
+                                        key: 'cost',
+                                        value:
+                                            "₹${farmland.landCost?.toString() ?? 'N/A'} / acre",
+                                      );
+                                      await storage.write(
+                                          key: 'image',
+                                          value: farmland.thumbnailImage!
+                                              .toString());
+                                      if (storage.read(key: "code") != "" &&
+                                          storage.read(key: "code1") != "") {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareboth);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareadd);
+                                      }
+                                    } else {
+                                      await storage.write(
+                                          key: 'farmid1',
+                                          value:
+                                              farmland.farmlandId.toString());
+                                      await storage.write(
+                                          key: 'code1',
+                                          value:
+                                              farmland.farmlandCode.toString());
+                                      await storage.write(
+                                          key: 'area1',
+                                          value: farmland.areaName.toString());
+                                      await storage.write(
+                                        key: 'cost1',
+                                        value:
+                                            "₹${farmland.landCost?.toString() ?? 'N/A'} / acre",
+                                      );
+                                      await storage.write(
+                                          key: 'image1',
+                                          value: farmland.thumbnailImage!
+                                              .toString());
+                                      if (storage.read(key: "code") != "" &&
+                                          storage.read(key: "code1") != "") {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareboth);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareadd);
+                                      }
+                                    }
                                   },
                                   style: ElevatedButton.styleFrom(
                                     foregroundColor: const Color(0xFF8280FF),

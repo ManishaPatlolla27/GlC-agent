@@ -86,7 +86,7 @@ class ApprovedFarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        "${farmLandProvider.farmlandresponse?.length}", // Dynamic count
+                        "${farmLandProvider.farmlandhomeresponse?.length}", // Dynamic count
                         style: const TextStyle(
                           color: Colors.white,
                           fontSize: 24,
@@ -101,7 +101,7 @@ class ApprovedFarmlandsScreenState extends State<ApprovedFarmlandsScreen> {
             Expanded(
               child: Consumer<FarmLandViewModel>(
                 builder: (context, farmLandProvider, _) {
-                  final farmlandList = farmLandProvider.farmlandresponse;
+                  final farmlandList = farmLandProvider.farmlandhomeresponse;
 
                   if (farmlandList!.isEmpty) {
                     return const Center(

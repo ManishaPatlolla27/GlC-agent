@@ -99,8 +99,8 @@ class BuyerAlertScreenState extends State<BuyerAlertScreen> {
                   if (value == null || value.isEmpty) {
                     return "Phone Number is required";
                   }
-                  if (!RegExp(r'^\d{10}$').hasMatch(value)) {
-                    return "Enter a valid 10-digit number";
+                  if (!RegExp(r'^[6-9]\d{9}$').hasMatch(value)) {
+                    return "Enter a valid Mobile number";
                   }
                   return null;
                 }),

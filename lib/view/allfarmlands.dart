@@ -117,7 +117,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
       builder: (context, farmLandProvider, alertProvider, _) {
         final count = isAlertSelected
             ? alertProvider.alertresponse?.length ?? 0
-            : farmLandProvider.farmlandresponse?.length ?? 0;
+            : farmLandProvider.farmlandhomeresponse?.length ?? 0;
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.all(20),
@@ -163,7 +163,9 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
       itemCount: alerts?.length,
       itemBuilder: (context, index) {
         final alert = alerts?[index];
-
+        if (alerts!.isEmpty) {
+          return const Center(child: Text("No Alerts available"));
+        }
         return Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: Card(
@@ -321,7 +323,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
   Widget _buildFarmlandList() {
     return Consumer<FarmLandViewModel>(
       builder: (context, farmLandProvider, _) {
-        final farmlands = farmLandProvider.farmlandresponse ?? [];
+        final farmlands = farmLandProvider.farmlandhomeresponse ?? [];
         if (farmlands.isEmpty) {
           return const Center(child: Text("No farmlands available"));
         }

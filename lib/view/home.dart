@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:nex2u/view/profilescreen.dart';
 import 'package:nex2u/viewModel/bottom_view_model.dart';
@@ -15,15 +16,34 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  List<Widget> _pages = [];
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<BottomViewModel>(context, listen: false).bottom(context);
-      if (mounted) setState(() {}); // Ensure the widget is still active
     });
+  }
+
+  Future<bool> _onWillPop() async {
+    return await showCupertinoDialog(
+          context: context,
+          builder: (context) => CupertinoAlertDialog(
+            title: const Text("Exit App"),
+            content: const Text("Do you want to exit the app?"),
+            actions: <Widget>[
+              CupertinoDialogAction(
+                child: const Text("No"),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              CupertinoDialogAction(
+                child: const Text("Yes"),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+        ) ??
+        false;
   }
 
   @override
@@ -33,33 +53,26 @@ class _HomePageState extends State<HomePage> {
 
     if (response == null || response.isEmpty) {
       return const Scaffold(
-        body: Center(child: Text("")),
+        body: Center(
+          child: CircularProgressIndicator(),
+        ),
       );
     }
 
-    // if (bottomProvider.isLoading) {
-    //   return const Center(child: CircularProgressIndicator());
-    // }
-
-    // if (response == null || response.isEmpty) {
-    //   return const Center(child: Text("No menu items available"));
-    // }
-
-    // **Generate Pages & Bottom Navigation Items Dynamically**
     List<Widget> pages = [];
     List<BottomNavigationBarItem> bottomItems = [];
 
-    for (var item in response ??= []) {
+    for (var item in response) {
       Widget page;
       switch (item.menuTitle?.toLowerCase()) {
         case 'home':
-          page = const HomeScreen();
+          page = const HomeScreen(key: ValueKey('home'));
           break;
         case 'profile':
-          page = const ProfileScreen();
+          page = const ProfileScreen(key: ValueKey('profile'));
           break;
         case 'farmlands':
-          page = const Farmlands();
+          page = const Farmlands(key: ValueKey('farmlands'));
           break;
         default:
           page = const Center(child: Text("Page Not Found"));
@@ -75,7 +88,7 @@ class _HomePageState extends State<HomePage> {
           activeIcon: item.selectedIcon != null &&
                   item.selectedIcon!.startsWith("http")
               ? Image.network(item.selectedIcon!,
-                  width: 24, height: 24, color: Color(0xFF8280FF))
+                  width: 24, height: 24, color: const Color(0xFF8280FF))
               : Image.asset(item.selectedIcon ?? "assets/default_selected.png",
                   width: 24, height: 24),
           label: item.menuTitle ?? "",
@@ -83,30 +96,36 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    _pages = pages;
-
-    return Scaffold(
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        selectedItemColor: const Color(0xFF8280FF),
-        unselectedItemColor: Colors.grey,
-        showSelectedLabels: true,
-        showUnselectedLabels: true,
-        iconSize: 20,
-        selectedFontSize: 12,
-        unselectedFontSize: 10,
-        items: bottomItems,
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: pages[_currentIndex], // Use direct widget instead of IndexedStack
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: Colors.white,
+          currentIndex: _currentIndex,
+          onTap: (index) {
+            if (_currentIndex == index) {
+              // Reload the current page by pushing it again
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => pages[index]),
+              );
+            } else {
+              setState(() {
+                _currentIndex = index;
+              });
+            }
+          },
+          selectedItemColor: const Color(0xFF8280FF),
+          unselectedItemColor: Colors.grey,
+          showSelectedLabels: true,
+          showUnselectedLabels: true,
+          iconSize: 20,
+          selectedFontSize: 12,
+          unselectedFontSize: 10,
+          items: bottomItems,
+        ),
       ),
     );
   }

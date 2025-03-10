@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../models/discovery/discovery_response.dart';
 import '../page_routing/app_routes.dart';
+import '../viewModel/fav_view_model.dart';
 import 'farmlanddetails.dart';
 
 class Farmlands extends StatefulWidget {
@@ -19,12 +20,31 @@ class Farmlands extends StatefulWidget {
 class _FarmLandState extends State<Farmlands> {
   int _currentIndex = 0;
   Set<int> wishlist = {};
-  final storage = FlutterSecureStorage();
+  FlutterSecureStorage storage = FlutterSecureStorage(); //
   List<DiscoveryList> farmlandSections = [];
 
-  void toggleWishlist(int index) {
+  void toggleWishlist(int index) async {
+    final favProvider = Provider.of<FavViewModel>(context, listen: false);
     setState(() {
-      wishlist.contains(index) ? wishlist.remove(index) : wishlist.add(index);
+      if (wishlist.contains(index)) {
+        wishlist.remove(index);
+        favProvider.togglefav(
+            farmlandSections
+                .expand((e) => e.farmlands ?? [])
+                .toList()[index]
+                .farmlandId!,
+            false,
+            context);
+      } else {
+        wishlist.add(index);
+        favProvider.togglefav(
+            farmlandSections
+                .expand((e) => e.farmlands ?? [])
+                .toList()[index]
+                .farmlandId!,
+            true,
+            context);
+      }
     });
   }
 
@@ -36,8 +56,14 @@ class _FarmLandState extends State<Farmlands> {
       await provider.getDiscovery(context);
       setState(() {
         farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
+        loaddata();
       });
     });
+  }
+
+  Future<void> loaddata() async {
+    await storage.write(key: 'code', value: '');
+    await storage.write(key: 'code1', value: '');
   }
 
   @override
@@ -116,7 +142,8 @@ class _FarmLandState extends State<Farmlands> {
           children: [
             IconButton(
               icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                  context, AppRoutes.home, (route) => false),
             ),
             const SizedBox(width: 8),
             const Text(
@@ -144,8 +171,10 @@ class _FarmLandState extends State<Farmlands> {
     return Column(
       children: List.generate(farmlandSections.length, (index) {
         var section = farmlandSections[index];
+        var itemCount = section.farmlands?.length ?? 0;
 
-        if (index == 0) return const SizedBox(); // Carousel is already built
+        if (index == 0)
+          return const SizedBox(); // Skip as carousel is already built
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -160,13 +189,13 @@ class _FarmLandState extends State<Farmlands> {
                   builder: (context) => const Searchlands(),
                 ),
               );
-            }),
+            }, itemCount),
             if (index == 1)
-              _buildHorizontalList(farmlandSections[1].farmlands ?? [])
+              _buildHorizontalList(section.farmlands ?? [])
             else if (index == 2)
-              _buildVerticalList(farmlandSections[2].farmlands ?? [])
+              _buildVerticalList(section.farmlands ?? [])
             else if (index == 3)
-              _buildHorizontalList(farmlandSections[3].farmlands ?? []),
+              _buildHorizontalList(section.farmlands ?? []),
           ],
         );
       }),
@@ -251,7 +280,8 @@ class _FarmLandState extends State<Farmlands> {
     );
   }
 
-  Widget _buildSectionTitle(String title, VoidCallback onSeeAllPressed) {
+  Widget _buildSectionTitle(
+      String title, VoidCallback onSeeAllPressed, int itemCount) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: Row(
@@ -261,13 +291,14 @@ class _FarmLandState extends State<Farmlands> {
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          GestureDetector(
-            onTap: onSeeAllPressed,
-            child: const Text(
-              'See All',
-              style: TextStyle(fontSize: 14, color: Colors.black),
+          if (itemCount > 0) // Hide "See All" if there's only one item
+            GestureDetector(
+              onTap: onSeeAllPressed,
+              child: const Text(
+                'See All',
+                style: TextStyle(fontSize: 14, color: Colors.black),
+              ),
             ),
-          ),
         ],
       ),
     );
@@ -321,10 +352,14 @@ class _FarmLandState extends State<Farmlands> {
     );
   }
 
+  int? selectedIndex; // Declare selected index
+
   Widget _buildVerticalList(List<FarmlandsList2> farmlands) {
     return Column(
       children: farmlands.map((farmland) {
         int index = farmlands.indexOf(farmland);
+        bool isSelected = selectedIndex == index;
+
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
@@ -332,6 +367,10 @@ class _FarmLandState extends State<Farmlands> {
             children: [
               GestureDetector(
                 onTap: () async {
+                  setState(() {
+                    selectedIndex = index; // Update selected index
+                  });
+
                   await storage.write(
                       key: 'farmid', value: farmland.farmlandId.toString());
                   Navigator.push(
@@ -346,33 +385,31 @@ class _FarmLandState extends State<Farmlands> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: Image.network(
-                        farmland.thumbnailImage.toString(),
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                        height: 160,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: Image.network(
+                          farmland.thumbnailImage.toString(),
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                          height: 160,
+                        ),
                       ),
                     ),
                     Positioned(
                       top: 10,
-                      right: 10,
+                      right: 15,
                       child: GestureDetector(
-                        onTap: () => toggleWishlist(index),
+                        onTap: () {
+                          setState(() {
+                            toggleWishlist(index);
+                          });
+                        },
                         child: CircleAvatar(
-                          backgroundColor: Colors.white,
-                          radius: 14,
-                          child: Icon(
-                            wishlist.contains(index) ||
-                                    farmland.isFavorite == true
-                                ? Icons.favorite
-                                : Icons.favorite_border,
-                            color: wishlist.contains(index) ||
-                                    farmland.isFavorite == false
-                                ? const Color(0xFF8280FF)
-                                : Colors.grey,
-                            size: 16,
-                          ),
-                        ),
+                            backgroundColor: Colors.white,
+                            radius: 14,
+                            child: getFavoriteIcon(farmland.isFavorite)),
                       ),
                     ),
                   ],
@@ -396,5 +433,20 @@ class _FarmLandState extends State<Farmlands> {
         );
       }).toList(),
     );
+  }
+
+  Widget getFavoriteIcon(bool? isFavorite) {
+    if (isFavorite == true) {
+      return const Icon(
+        Icons.favorite,
+        color: Color(0xFF8280FF),
+        size: 16,
+      );
+    } else {
+      return const Icon(
+        Icons.favorite_border,
+        size: 16,
+      );
+    }
   }
 }

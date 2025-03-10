@@ -1,13 +1,14 @@
 import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
 import 'package:provider/provider.dart';
-import 'package:image_picker/image_picker.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -32,6 +33,66 @@ class _ProfileScreenState extends State<ProfileScreen> {
       if (!mounted) return;
       await provider.updateProfile(_imageFile ?? File(''), context);
     }
+  }
+
+  void showDeleteAccountDialog(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: Column(
+            children: [
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/warning.png', // Replace with your warning icon
+                height: 60,
+              ),
+              const SizedBox(height: 10),
+              const Text(
+                'Account Deletion',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          content: const Column(
+            children: [
+              SizedBox(height: 10),
+              Text(
+                'Are you sure you want to delete your account?',
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Your account will be deleted within\n5-7 working days from the date of\nrequest for deletion of account.',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 12, color: Colors.grey),
+              ),
+            ],
+          ),
+          actions: [
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pushReplacementNamed(context, AppRoutes.login);
+              },
+              child: const Text(
+                'Delete Account',
+                style: TextStyle(color: Colors.redAccent),
+              ),
+              isDestructiveAction: true,
+            ),
+            CupertinoDialogAction(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text(
+                "Don't Delete",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showImagePickerOptions() {
@@ -94,7 +155,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushNamedAndRemoveUntil(
+                context, AppRoutes.home, (route) => false);
+            ;
           },
         ),
       ),
@@ -107,30 +170,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   CrossAxisAlignment.start, // Align content at the top
               children: [
                 GestureDetector(
-                  onTap: _showImagePickerOptions,
-                  child: CircleAvatar(
-                    radius: 50,
-                    backgroundColor: Colors.grey.shade200,
-                    backgroundImage: _imageFile != null
-                        ? FileImage(
-                            _imageFile!) // If the user picked an image, show it
-                        : (profileViewModel.profileresponse?.profileImage !=
-                                    null &&
-                                (profileViewModel
-                                        .profileresponse?.profileImage)!
-                                    .isNotEmpty
-                            ? NetworkImage((profileViewModel
-                                    .profileresponse?.profileImage) ??
-                                "")
-                            : null),
-                    child: (_imageFile == null &&
-                            (profileViewModel.profileresponse?.profileImage ==
-                                null))
-                        ? const Icon(Icons.camera_alt,
-                            size: 40, color: Colors.white)
-                        : null,
-                  ),
-                ),
+                    onTap: _showImagePickerOptions,
+                    child: Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 50,
+                          backgroundColor: Colors.grey.shade200,
+                          backgroundImage: _imageFile != null
+                              ? FileImage(_imageFile!)
+                              : (profileViewModel
+                                              .profileresponse?.profileImage !=
+                                          null &&
+                                      profileViewModel.profileresponse!
+                                          .profileImage!.isNotEmpty
+                                  ? NetworkImage(profileViewModel
+                                      .profileresponse!.profileImage!)
+                                  : null),
+                          child: (_imageFile == null &&
+                                  (profileViewModel
+                                          .profileresponse?.profileImage ==
+                                      null))
+                              ? const Icon(Icons.camera_alt,
+                                  size: 40, color: Colors.white)
+                              : null,
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            child: IconButton(
+                              icon: const Icon(Icons.edit,
+                                  color: Colors.purple, size: 20),
+                              onPressed: () {
+                                _showImagePickerOptions();
+                              },
+                              padding: EdgeInsets.zero, // Remove extra padding
+                              constraints:
+                                  BoxConstraints(), // Prevents extra space
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
                 const SizedBox(width: 16),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,6 +311,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Navigator.pushNamed(context, AppRoutes.notifications);
                       } else if (menu.menuTitle == "Total Farm Alerts") {
                         Navigator.pushNamed(context, AppRoutes.allfarmland);
+                      } else if (menu.menuTitle == "Delete My Account") {
+                        showDeleteAccountDialog(context);
                       }
                     },
                   );

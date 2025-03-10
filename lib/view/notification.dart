@@ -79,7 +79,9 @@ class NotificationsScreenState extends State<NotificationsScreen> {
         itemCount: farmlandSections.length,
         itemBuilder: (context, index) {
           final notification = farmlandSections[index];
-
+          if (farmlandSections.isEmpty) {
+            return const Center(child: Text("No Notifications available"));
+          }
           return Container(
             padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
             margin: const EdgeInsets.only(bottom: 12),

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:nex2u/models/farmlands/farm_land_response.dart';
+import 'package:nex2u/models/farmlands/farmland_home_response.dart';
 import 'package:nex2u/viewModel/trackfarmland_view_model.dart';
 import 'package:provider/provider.dart';
 
 import '../models/trackfarmland/track_farm_land_response.dart';
 
 class FarmlandStatusScreen extends StatefulWidget {
-  final FarmLandList farm;
+  final FarmLandHomeList farm;
   const FarmlandStatusScreen({Key? key, required this.farm}) : super(key: key);
 
   @override

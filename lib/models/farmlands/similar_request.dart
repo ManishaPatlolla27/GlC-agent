@@ -1,9 +1,9 @@
 class SimilarRequest {
-  int? farmlandId;
-  int? regionId;
-  int? areaId;
-  int? priceRangeFrom;
-  int? priceRangeTo;
+  String? farmlandId;
+  String? regionId;
+  String? areaId;
+  String? priceRangeFrom;
+  String? priceRangeTo;
 
   SimilarRequest(
       {this.farmlandId,
