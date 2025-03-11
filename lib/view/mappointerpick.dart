@@ -1,8 +1,9 @@
 import 'dart:async';
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:google_places_flutter/google_places_flutter.dart';
+import 'package:google_places_flutter/model/prediction.dart';
 import 'package:location/location.dart';
 
 const String apiKey = "AIzaSyD2s1d-NbTMPxsKDems87TGyTLaJu3223g";
@@ -68,17 +69,56 @@ class HomeMapState extends State<HomeMap> {
     }
   }
 
-  void _onPlaceSelected(dynamic prediction) {
-    if (prediction["lat"] == null || prediction["lng"] == null) {
-      return;
-    }
+  Future<void> _onPlaceSelected(Prediction prediction) async {
+    if (prediction.lat == null || prediction.lng == null) {
+      if (prediction.placeId == null) return;
 
-    double lat = double.parse(prediction["lat"]);
-    double lng = double.parse(prediction["lng"]);
-    LatLng searchedLocation = LatLng(lat, lng);
+      String url =
+          "https://maps.googleapis.com/maps/api/place/details/json?place_id=${prediction.placeId}&key=$apiKey";
 
-    setState(() {
-      _selectedLocation = searchedLocation;
+      try {
+        final response = await Dio().get(url);
+
+        if (response.statusCode == 200) {
+          final data = response.data;
+
+          if (data['status'] == 'OK') {
+            final lat = data['result']['geometry']['location']['lat'];
+            final lng = data['result']['geometry']['location']['lng'];
+
+            print("Latitude: $lat, Longitude: $lng");
+            LatLng searchedLocation = LatLng(lat, lng);
+            markers.removeWhere(
+                (marker) => marker.markerId.value == "searched_location");
+            markers.add(
+              Marker(
+                markerId: const MarkerId("searched_location"),
+                position: searchedLocation,
+                icon: BitmapDescriptor.defaultMarker,
+              ),
+            );
+            setState(() {
+              _selectedLocation = searchedLocation;
+              markers;
+            });
+
+            _controller.animateCamera(
+              CameraUpdate.newLatLngZoom(searchedLocation, 15.0),
+            );
+          } else {
+            debugPrint("Error: ${data['status']}");
+          }
+        } else {
+          debugPrint(
+              "Failed to fetch place details, status code: ${response.statusCode}");
+        }
+      } catch (e) {
+        debugPrint("Error: $e");
+      }
+    } else {
+      double lat = double.parse(prediction.lat ?? "");
+      double lng = double.parse(prediction.lng ?? "");
+      LatLng searchedLocation = LatLng(lat, lng);
       markers.removeWhere(
           (marker) => marker.markerId.value == "searched_location");
       markers.add(
@@ -88,11 +128,15 @@ class HomeMapState extends State<HomeMap> {
           icon: BitmapDescriptor.defaultMarker,
         ),
       );
-    });
+      setState(() {
+        _selectedLocation = searchedLocation;
+        markers;
+      });
 
-    _controller.animateCamera(
-      CameraUpdate.newLatLngZoom(searchedLocation, 15.0),
-    );
+      _controller.animateCamera(
+        CameraUpdate.newLatLngZoom(searchedLocation, 15.0),
+      );
+    }
   }
 
   @override
@@ -131,38 +175,25 @@ class HomeMapState extends State<HomeMap> {
             top: 10,
             left: 20,
             right: 20,
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(10),
-                boxShadow: const [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 5,
-                    offset: Offset(0, 2),
-                  ),
-                ],
+            child: GooglePlaceAutoCompleteTextField(
+              boxDecoration: const BoxDecoration(color: Colors.white),
+              textEditingController: _searchController,
+              googleAPIKey: apiKey,
+              inputDecoration: const InputDecoration(
+                hintText: "Search Location",
+                border: InputBorder.none,
+                prefixIcon: Icon(Icons.search),
               ),
-              child: GooglePlaceAutoCompleteTextField(
-                textEditingController: _searchController,
-                googleAPIKey: apiKey,
-                inputDecoration: const InputDecoration(
-                  hintText: "Search Location",
-                  border: InputBorder.none,
-                  prefixIcon: Icon(Icons.search),
-                ),
-                debounceTime: 400,
-                isLatLngRequired: true,
-                getPlaceDetailWithLatLng: (prediction) {
-                  _onPlaceSelected(prediction);
-                },
-                itemClick: (prediction) {
-                  _searchController.text = prediction.description ?? "";
-                  _onPlaceSelected(prediction);
-                  FocusScope.of(context).unfocus();
-                },
-              ),
+              debounceTime: 400,
+              isLatLngRequired: true,
+              getPlaceDetailWithLatLng: (prediction) {
+                _onPlaceSelected(prediction);
+              },
+              itemClick: (prediction) {
+                _searchController.text = prediction.description ?? "";
+                _onPlaceSelected(prediction);
+                FocusScope.of(context).unfocus();
+              },
             ),
           ),
           Positioned(
