@@ -1,14 +1,18 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/bottom/bottom_response.dart';
+import 'package:provider/provider.dart';
 
-import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
+import '../viewModel/configuration_view_model.dart';
 
 class BottomRepository {
   final BaseApiClient _apiClient = BaseApiClient();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<List<BottomResponse>> getBottom() async {
+  Future<List<BottomResponse>> getBottom(BuildContext context) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
     try {
       final String? token = await _storage.read(key: "auth_token");
 
@@ -22,7 +26,7 @@ class BottomRepository {
       };
 
       final response = await _apiClient.get<BottomList>(
-        ApiConstants.bottom,
+        configService.enpoints!.gETAGENTBOTTOMBARMENU.toString(),
         fromJson: (json) => BottomList.fromJson(json as List<dynamic>),
         headers: headers,
       );

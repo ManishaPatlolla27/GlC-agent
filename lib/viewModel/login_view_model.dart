@@ -6,6 +6,7 @@ import '../models/login/login_response.dart';
 import '../page_routing/app_routes.dart';
 import '../repo/login_repository.dart';
 import '../res/validation_alert.dart';
+import '../utils/internet_check_dialog.dart';
 import '../utils/internet_connectivity.dart';
 
 class LoginViewModel with ChangeNotifier {
@@ -18,6 +19,9 @@ class LoginViewModel with ChangeNotifier {
       // Simulate network request
       if (!context.mounted) return;
       await loginUser(emailController.text, passwordController.text, context);
+    } else {
+      if (!context.mounted) return;
+      InternetCheckAlert().showAlert(context);
     }
   }
 

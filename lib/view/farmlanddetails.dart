@@ -215,72 +215,93 @@ class FarmlandsScreenState extends State<PendingFarmlanddetailsScreen> {
                                   ),
                                   ElevatedButton(
                                     onPressed: () async {
-                                      if (storage.read(key: "compare") == "") {
+                                      String? code =
+                                          await storage.read(key: "code");
+                                      String? code1 =
+                                          await storage.read(key: "code1");
+
+                                      if (code == null || code.isEmpty) {
                                         await storage.write(
                                             key: 'farmid',
                                             value: farmDetailsResponse
-                                                ?.farmlandId
-                                                .toString());
+                                                    ?.farmlandId
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
                                             key: 'code',
                                             value: farmDetailsResponse
-                                                ?.farmlandCode
-                                                .toString());
+                                                    ?.farmlandCode
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
                                             key: 'area',
                                             value: farmDetailsResponse?.areaName
-                                                .toString());
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
-                                          key: 'cost',
-                                          value:
-                                              "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
-                                        );
-                                        await storage.write(
-                                            key: 'image',
-                                            value: farmDetailsResponse!
-                                                .farmlandImages![0]
-                                                .toString());
-                                        if (storage.read(key: "code") != "" &&
-                                            storage.read(key: "code1") != "") {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.compareboth);
-                                        } else {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.compareadd);
+                                            key: 'cost',
+                                            value:
+                                                "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre");
+                                        if (farmDetailsResponse
+                                                    ?.farmlandImages !=
+                                                null &&
+                                            farmDetailsResponse!
+                                                .farmlandImages!.isNotEmpty) {
+                                          await storage.write(
+                                              key: 'image',
+                                              value: farmDetailsResponse
+                                                  ?.farmlandImages![0]
+                                                  .toString());
                                         }
                                       } else {
                                         await storage.write(
                                             key: 'farmid1',
                                             value: farmDetailsResponse
-                                                ?.farmlandId
-                                                .toString());
+                                                    ?.farmlandId
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
                                             key: 'code1',
                                             value: farmDetailsResponse
-                                                ?.farmlandCode
-                                                .toString());
+                                                    ?.farmlandCode
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
                                             key: 'area1',
                                             value: farmDetailsResponse?.areaName
-                                                .toString());
+                                                    ?.toString() ??
+                                                "");
                                         await storage.write(
-                                          key: 'cost1',
-                                          value:
-                                              "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre",
-                                        );
-                                        await storage.write(
-                                            key: 'image1',
-                                            value: farmDetailsResponse!
-                                                .farmlandImages![0]
-                                                .toString());
-                                        if (storage.read(key: "code") != "" &&
-                                            storage.read(key: "code1") != "") {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.compareboth);
-                                        } else {
-                                          Navigator.pushNamed(
-                                              context, AppRoutes.compareadd);
+                                            key: 'cost1',
+                                            value:
+                                                "₹${farmDetailsResponse?.landCost?.toString() ?? 'N/A'} / acre");
+                                        if (farmDetailsResponse
+                                                    ?.farmlandImages !=
+                                                null &&
+                                            farmDetailsResponse!
+                                                .farmlandImages!.isNotEmpty) {
+                                          await storage.write(
+                                              key: 'image1',
+                                              value: farmDetailsResponse
+                                                  ?.farmlandImages![0]
+                                                  .toString());
                                         }
+                                      }
+
+                                      // Check updated values before navigating
+                                      String? updatedCode =
+                                          await storage.read(key: "code");
+                                      String? updatedCode1 =
+                                          await storage.read(key: "code1");
+
+                                      if ((updatedCode?.isNotEmpty ?? false) &&
+                                          (updatedCode1?.isNotEmpty ?? false) &&
+                                          updatedCode != updatedCode1) {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareboth);
+                                      } else {
+                                        Navigator.pushNamed(
+                                            context, AppRoutes.compareadd);
                                       }
                                     },
                                     style: ElevatedButton.styleFrom(

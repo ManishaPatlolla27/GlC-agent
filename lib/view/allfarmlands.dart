@@ -169,7 +169,7 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
         return Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: Card(
-            margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
+            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
             ),
@@ -235,49 +235,34 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                   ),
                 ],
               ),
-              childrenPadding:
-                  const EdgeInsets.only(left: 90, right: 16, bottom: 12),
-              onExpansionChanged: (isExpanded) {
-                if (isExpanded) {
-                  Future.delayed(
-                    const Duration(
-                        milliseconds: 300), // Small delay for smooth UI
-                    () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => AlertViewScreen(farm: alert),
-                        ),
-                      );
-                    },
-                  );
-                }
-              },
+              childrenPadding: const EdgeInsets.only(
+                  left: 105, right: 16, bottom: 12, top: 0),
               children: [
-                const Divider(color: Colors.black26),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
-                      children: [
-                        const Text(
-                          "Farmland ID: ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black,
+                    if (alert.farmlandCode != null &&
+                        alert.farmlandCode!.isNotEmpty)
+                      Row(
+                        children: [
+                          const Text(
+                            "Farmland ID: ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                        Text(
-                          alert.farmlandCode ?? 'N/A',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black,
+                          Text(
+                            alert.farmlandCode!,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                     const SizedBox(height: 4),
                     Row(
                       children: [
@@ -298,6 +283,25 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                           ),
                         ),
                       ],
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => AlertViewScreen(farm: alert),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "View Details",
+                        style: TextStyle(
+                          color: Color(0xFF5C5C5C), // Hex color #5C5C5C
+                          fontSize: 12,
+                          decoration: TextDecoration.underline,
+                        ),
+                        textAlign: TextAlign.center, // Center align text
+                      ),
                     ),
                   ],
                 ),

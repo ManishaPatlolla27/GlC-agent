@@ -36,6 +36,16 @@ class _SearchLandState extends State<Searchlands> {
     );
   }
 
+  Future<void> _clearStoredData() async {
+    await storage.delete(key: "code");
+    await storage.delete(key: "code1");
+  }
+
+  Future<bool> _onWillPop() async {
+    await _clearStoredData();
+    return true; // Allows back navigation
+  }
+
   Future<void> loadFarmlands() async {
     const storage = FlutterSecureStorage();
     String? storedValue = await storage.read(key: "seeall");
@@ -55,76 +65,81 @@ class _SearchLandState extends State<Searchlands> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      key: _scaffoldKey,
-      // Assign Global Key
-      endDrawer: const FilterSelectionWidget(),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 0,
-        automaticallyImplyLeading: false, // Prevents the default drawer icon
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        title: Text(seeall, style: const TextStyle(color: Colors.black)),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "${farmlandSections.length} Farmlands Listing",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          key: _scaffoldKey,
+          // Assign Global Key
+          endDrawer: const FilterSelectionWidget(),
+          appBar: AppBar(
+            backgroundColor: Colors.white,
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            // Prevents the default drawer icon
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
-            const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.topRight,
-              child: ElevatedButton(
-                onPressed: () {
-                  _scaffoldKey.currentState?.openEndDrawer();
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  side: const BorderSide(
-                      color: Colors.black, width: 1), // Black border
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        8), // Slightly smaller border radius
+            title: Text(seeall, style: const TextStyle(color: Colors.black)),
+          ),
+          body: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "${farmlandSections.length} Farmlands Listing",
+                  style: const TextStyle(
+                      fontSize: 22, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 10),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _scaffoldKey.currentState?.openEndDrawer();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      side: const BorderSide(
+                          color: Colors.black, width: 1), // Black border
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(
+                            8), // Slightly smaller border radius
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8), // Reduced width
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      // Keeps the button compact
+                      children: const [
+                        Text("Filter",
+                            style: TextStyle(
+                                color: Colors.black)), // Text on the right
+                        SizedBox(width: 5), // Spacing between text and icon
+                        Icon(Icons.filter_list,
+                            color: Colors.black), // Icon on the left
+                      ],
+                    ),
                   ),
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: 8), // Reduced width
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min, // Keeps the button compact
-                  children: const [
-                    Text("Filter",
-                        style: TextStyle(
-                            color: Colors.black)), // Text on the right
-                    SizedBox(width: 5), // Spacing between text and icon
-                    Icon(Icons.filter_list,
-                        color: Colors.black), // Icon on the left
-                  ],
+                const SizedBox(height: 10),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: farmlandSections.length,
+                    itemBuilder: (context, index) {
+                      return farmlandCard(farmlandSections[index]);
+                    },
+                  ),
                 ),
-              ),
+              ],
             ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: ListView.builder(
-                itemCount: farmlandSections.length,
-                itemBuilder: (context, index) {
-                  return farmlandCard(farmlandSections[index]);
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   Widget farmlandCard(FarmLandList farmland) {

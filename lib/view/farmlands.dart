@@ -23,16 +23,17 @@ class _FarmLandState extends State<Farmlands> {
   FlutterSecureStorage storage = FlutterSecureStorage(); //
   List<DiscoveryList> farmlandSections = [];
 
-  void toggleWishlist(int index) async {
+  void toggleWishlist(int index, FarmlandsList2 farmland) async {
     final favProvider = Provider.of<FavViewModel>(context, listen: false);
     setState(() {
+      farmland.isFavorite = !(farmland.isFavorite ?? false);
       if (wishlist.contains(index)) {
         wishlist.remove(index);
         favProvider.togglefav(
             farmlandSections
                 .expand((e) => e.farmlands ?? [])
                 .toList()[index]
-                .farmlandId!,
+                .farmlandId,
             false,
             context);
       } else {
@@ -41,7 +42,7 @@ class _FarmLandState extends State<Farmlands> {
             farmlandSections
                 .expand((e) => e.farmlands ?? [])
                 .toList()[index]
-                .farmlandId!,
+                .farmlandId,
             true,
             context);
       }
@@ -56,14 +57,19 @@ class _FarmLandState extends State<Farmlands> {
       await provider.getDiscovery(context);
       setState(() {
         farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
-        loaddata();
+        _onWillPop();
       });
     });
   }
 
-  Future<void> loaddata() async {
-    await storage.write(key: 'code', value: '');
-    await storage.write(key: 'code1', value: '');
+  Future<void> _clearStoredData() async {
+    await storage.delete(key: "code");
+    await storage.delete(key: "code1");
+  }
+
+  Future<bool> _onWillPop() async {
+    await _clearStoredData();
+    return true; // Allows back navigation
   }
 
   @override
@@ -291,7 +297,7 @@ class _FarmLandState extends State<Farmlands> {
             title,
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
-          if (itemCount > 0) // Hide "See All" if there's only one item
+          if (itemCount > 1) // Hide "See All" if there's only one item
             GestureDetector(
               onTap: onSeeAllPressed,
               child: const Text(
@@ -403,7 +409,7 @@ class _FarmLandState extends State<Farmlands> {
                       child: GestureDetector(
                         onTap: () {
                           setState(() {
-                            toggleWishlist(index);
+                            toggleWishlist(index, farmland);
                           });
                         },
                         child: CircleAvatar(

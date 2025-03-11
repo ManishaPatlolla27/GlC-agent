@@ -24,19 +24,25 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<DashboardViewModel>(context, listen: false)
           .dashboard(context);
       if (mounted) setState(() {}); // Ensures UI updates safely
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    Provider.of<DashboardViewModel>(context, listen: false).dashboard(context);
-    if (mounted) setState(() {}); // Ensure UI updates safely
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   final dashboardViewModel =
+  //       Provider.of<DashboardViewModel>(context, listen: false);
+  //
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     dashboardViewModel.dashboard(context).then((_) {
+  //       if (mounted) setState(() {}); // Updates UI safely after the first frame
+  //     });
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +71,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
             ),
-            child: Row(
+            child: const Row(
               mainAxisSize:
                   MainAxisSize.min, // Ensures the button wraps its content
-              children: const [
+              children: [
                 Text("Alert", style: TextStyle(color: Colors.white)),
                 SizedBox(width: 8), // Space between text and icon
                 Icon(Icons.add, color: Colors.white),
@@ -111,24 +117,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
             // Grid Items
             Expanded(
-              child: response?.farmlandAnalytics != null
-                  ? GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        mainAxisSpacing: 15,
-                        crossAxisSpacing: 15,
-                        childAspectRatio: 1,
-                      ),
-                      itemCount: response?.farmlandAnalytics?.length ?? 0,
-                      itemBuilder: (context, index) {
-                        final item = response?.farmlandAnalytics?[index];
-                        if (item == null) return const SizedBox();
-                        return gridItem(item.title.toString(),
-                            item.count.toString(), item.icon.toString());
-                      },
-                    )
-                  : const Center(child: Text("")),
+              child: Consumer<DashboardViewModel>(
+                builder: (context, dashboardViewModel, child) {
+                  final response = dashboardViewModel.dashboardresponse;
+
+                  if (response == null || response.farmlandAnalytics == null) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+
+                  if (response.farmlandAnalytics!.isEmpty) {
+                    return const Center(child: Text("No data available"));
+                  }
+
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 15,
+                      crossAxisSpacing: 15,
+                      childAspectRatio: 1,
+                    ),
+                    itemCount: response.farmlandAnalytics!.length,
+                    itemBuilder: (context, index) {
+                      final item = response.farmlandAnalytics![index];
+                      return gridItem(
+                          item.title.toString(),
+                          item.count.toString(),
+                          item.icon.toString(),
+                          item.id.toString());
+                    },
+                  );
+                },
+              ),
             ),
           ],
         ),
@@ -274,23 +294,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   // Grid Item
-  Widget gridItem(String title, String count, String iconPath) {
+  Widget gridItem(String title, String count, String iconPath, String id) {
     return GestureDetector(
       onTap: () {
-        if (title == "All Farmlands") {
+        if (id == "1") {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const FarmlandsScreen()));
-        } else if (title == "Pending Farmlands") {
+        } else if (id == "2") {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => const PendingFarmlandsScreen()));
-        } else if (title == "Approved Farmlands") {
+        } else if (id == "3") {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => const ApprovedFarmlandsScreen()));
-        } else if (title == "Farmlands Leads") {
+        } else if (id == "4") {
           Navigator.push(
               context,
               MaterialPageRoute(

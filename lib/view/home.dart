@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:nex2u/view/profilescreen.dart';
 import 'package:nex2u/viewModel/bottom_view_model.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -37,9 +41,14 @@ class _HomePageState extends State<HomePage> {
                 onPressed: () => Navigator.of(context).pop(false),
               ),
               CupertinoDialogAction(
-                child: const Text("Yes"),
-                onPressed: () => Navigator.of(context).pop(true),
-              ),
+                  child: const Text("Yes"),
+                  onPressed: () {
+                    if (Platform.isAndroid) {
+                      SystemNavigator.pop();
+                    } else {
+                      exit(0);
+                    }
+                  }),
             ],
           ),
         ) ??
@@ -52,7 +61,7 @@ class _HomePageState extends State<HomePage> {
     var response = bottomProvider.bottomresponse;
 
     if (response == null || response.isEmpty) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
@@ -68,11 +77,11 @@ class _HomePageState extends State<HomePage> {
         case 'home':
           page = const HomeScreen(key: ValueKey('home'));
           break;
-        case 'profile':
-          page = const ProfileScreen(key: ValueKey('profile'));
-          break;
         case 'farmlands':
           page = const Farmlands(key: ValueKey('farmlands'));
+          break;
+        case 'profile':
+          page = const ProfileScreen(key: ValueKey('profile'));
           break;
         default:
           page = const Center(child: Text("Page Not Found"));
@@ -96,21 +105,22 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) => _onWillPop(),
       child: Scaffold(
-        body: pages[_currentIndex], // Use direct widget instead of IndexedStack
+        body: IndexedStack(
+          index: _currentIndex,
+          children: pages,
+        ),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           currentIndex: _currentIndex,
           onTap: (index) {
             if (_currentIndex == index) {
-              // Reload the current page by pushing it again
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => pages[index]),
-              );
+              // If tapped on the same tab, pop to the first screen in the stack (if using Navigator)
+              _navigatorKey.currentState?.popUntil((route) => route.isFirst);
             } else {
               setState(() {
                 _currentIndex = index;

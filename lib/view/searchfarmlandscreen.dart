@@ -65,6 +65,16 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
     });
   }
 
+  Future<void> _clearStoredData() async {
+    await storage.delete(key: "code");
+    await storage.delete(key: "code1");
+  }
+
+  Future<bool> _onWillPop() async {
+    await _clearStoredData();
+    return true; // Allows back navigation
+  }
+
   Future<void> loadStates() async {
     final stateProvider = Provider.of<StateViewModel>(context, listen: false);
     await stateProvider.getregion(context, selectedStateId.toString());
@@ -77,32 +87,34 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
-        title: const Text(
-          "Search Farmlands",
-          style: TextStyle(color: Colors.black),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            buildSearchCard(),
-            const SizedBox(height: 20),
-            buildSimilarFarmlandsSection(),
-          ],
-        ),
-      ),
-    );
+    return WillPopScope(
+        onWillPop: _onWillPop,
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: AppBar(
+            leading: IconButton(
+              icon: const Icon(Icons.arrow_back, color: Colors.black),
+              onPressed: () => Navigator.pop(context),
+            ),
+            title: const Text(
+              "Search Farmlands",
+              style: TextStyle(color: Colors.black),
+            ),
+            backgroundColor: Colors.white,
+            elevation: 0,
+          ),
+          body: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                buildSearchCard(),
+                const SizedBox(height: 20),
+                buildSimilarFarmlandsSection(),
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget buildSearchCard() {

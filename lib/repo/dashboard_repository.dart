@@ -1,14 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/dashboard/dashboard_response.dart';
+import 'package:provider/provider.dart';
 
 import '../data/api_urls.dart';
 import '../data/base_api_client.dart';
+import '../viewModel/configuration_view_model.dart';
 
 class DashboardRepository {
   final BaseApiClient _apiClient = BaseApiClient();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  Future<DashboardResponse> getdashboard() async {
+  Future<DashboardResponse> getdashboard(BuildContext context) async {
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
     try {
       final String? token = await _storage.read(key: "auth_token");
 
@@ -22,7 +27,7 @@ class DashboardRepository {
       };
 
       final response = await _apiClient.get<DashboardResponse>(
-        ApiConstants.dashboard,
+        ApiConstants.dashboard, //getMyAnalytics
         fromJson: (json) => DashboardResponse.fromJson(json),
         headers: headers,
       );

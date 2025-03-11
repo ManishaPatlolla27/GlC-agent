@@ -153,41 +153,40 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                       const SizedBox(height: 15),
 
                       /// Search by Regions (Only if a state is selected)
-                      //if (selectedState != null)
-                      _buildSearchSection(
-                        title: "Search By Regions",
-                        searchHint: "e.g. West Godavari",
-                        searchQuery: regionSearchQuery,
-                        onSearch: (query) =>
-                            setState(() => regionSearchQuery = query),
-                        items: regions,
-                        selectedItem: selectedRegion,
-                        onSelect: (id) {
-                          setState(() {
-                            selectedRegion = id;
-                            selectedArea =
-                                null; // Reset selected region when state changes
-                            area.clear(); // Clear previous region data
-                          });
-                          loadAreas(); // Fetch cities for the newly selected state
-                        },
-                      ),
+                      if (selectedState != null)
+                        _buildSearchSection(
+                          title: "Search By Regions",
+                          searchHint: "e.g. West Godavari",
+                          searchQuery: regionSearchQuery,
+                          onSearch: (query) =>
+                              setState(() => regionSearchQuery = query),
+                          items: regions,
+                          selectedItem: selectedRegion,
+                          onSelect: (id) {
+                            setState(() {
+                              selectedRegion = id;
+                              selectedArea =
+                                  null; // Reset selected region when state changes
+                              area.clear(); // Clear previous region data
+                            });
+                            loadAreas(); // Fetch cities for the newly selected state
+                          },
+                        ),
 
                       const SizedBox(height: 15),
 
                       /// Search by Area (Only if a region is selected)
-                      // if (selectedRegion != null)
-
-                      _buildSearchSection(
-                        title: "Search By Area",
-                        searchHint: "e.g. Tanuku",
-                        searchQuery: areaSearchQuery,
-                        onSearch: (query) =>
-                            setState(() => areaSearchQuery = query),
-                        items: area,
-                        selectedItem: selectedArea,
-                        onSelect: (id) => setState(() => selectedArea = id),
-                      ),
+                      if (selectedRegion != null)
+                        _buildSearchSection(
+                          title: "Search By Area",
+                          searchHint: "e.g. Tanuku",
+                          searchQuery: areaSearchQuery,
+                          onSearch: (query) =>
+                              setState(() => areaSearchQuery = query),
+                          items: area,
+                          selectedItem: selectedArea,
+                          onSelect: (id) => setState(() => selectedArea = id),
+                        ),
 
                       /// Budget Range Section with Black Border
                       Container(
@@ -422,7 +421,7 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                 title: Text(item.label.toString()),
                 controlAffinity: ListTileControlAffinity.leading,
                 // Checkbox left
-                activeColor: Colors.blueAccent,
+                activeColor: Color(0xFF8280FF),
               );
             }).toList(),
           ),
@@ -503,7 +502,7 @@ class FilterSelectionWidgetState extends State<FilterSelectionWidget> {
                 },
                 title: Text(getItemLabel(item)),
                 controlAffinity: ListTileControlAffinity.leading,
-                activeColor: Colors.blueAccent,
+                activeColor: Color(0xFF8280FF),
               );
             }).toList(),
           ),

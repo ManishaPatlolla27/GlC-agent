@@ -1,11 +1,11 @@
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:nex2u/models/profile/profile_response.dart';
 import 'package:nex2u/models/update_profile_pic_request.dart';
 import 'package:nex2u/repo/profile_repository.dart';
-import 'package:nex2u/utils/app_constants.dart';
 
 class ProfileViewModel with ChangeNotifier {
   late BuildContext context;
@@ -48,7 +48,7 @@ class ProfileViewModel with ChangeNotifier {
   }
 
   updateProfile(File image, BuildContext context) async {
-    final userId = AppConstants.userData?.userId;
+    final userId = profileresponse?.userId;
     final payload =
         UpdateProfilePicRequest(userId: userId ?? 0, imageFile: image.path);
     final response = await _profileRepository.updateProfile(payload, context);

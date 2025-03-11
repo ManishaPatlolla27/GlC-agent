@@ -34,8 +34,8 @@ class CreateAlertRepository {
 
   Future<bool> createbuyerAlert(
       CreateAlertRequest createAlertRequest, BuildContext context) async {
-    // final configService =
-    //     Provider.of<ConfigurationViewModel>(context, listen: false);
+    final configService =
+        Provider.of<ConfigurationViewModel>(context, listen: false);
 
     try {
       final response = await _apiClient.postWithoutJson(

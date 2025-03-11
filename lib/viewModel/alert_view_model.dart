@@ -23,7 +23,7 @@ class AlertViewModel with ChangeNotifier {
       _setLoading(true);
       _errorMessage = '';
 
-      List<AlertsList> response = await _profileRepository.getalerts();
+      List<AlertsList> response = await _profileRepository.getalerts(context);
 
       if (response.isNotEmpty) {
         _alertresponse = response;

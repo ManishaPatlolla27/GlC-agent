@@ -29,6 +29,8 @@ class ApiEndPointsResponse {
   String? gETMYEARNINGS;
   String? gETMYCREDITS;
   String? gETNOTIFICATIONS;
+  String? gETFAQS;
+  String? sENDMESSAGE;
   String? gETMYFARMLANDALERTS;
   String? gETMYFARMLANDS;
   String? gETMYFARMLEADS;
@@ -76,6 +78,8 @@ class ApiEndPointsResponse {
       this.gETMYEARNINGS,
       this.gETMYCREDITS,
       this.gETNOTIFICATIONS,
+      this.gETFAQS,
+      this.sENDMESSAGE,
       this.gETMYFARMLANDALERTS,
       this.gETMYFARMLANDS,
       this.gETMYFARMLEADS,
@@ -123,6 +127,8 @@ class ApiEndPointsResponse {
     gETMYEARNINGS = json['GET_MY_EARNINGS'];
     gETMYCREDITS = json['GET_MY_CREDITS'];
     gETNOTIFICATIONS = json['GET_NOTIFICATIONS'];
+    gETFAQS = json['GET_FAQS'];
+    sENDMESSAGE = json['SEND_MESSAGE'];
     gETMYFARMLANDALERTS = json['GET_MY_FARMLAND_ALERTS'];
     gETMYFARMLANDS = json['GET_MY_FARMLANDS'];
     gETMYFARMLEADS = json['GET_MY_FARM_LEADS'];
@@ -172,6 +178,8 @@ class ApiEndPointsResponse {
     data['GET_MY_EARNINGS'] = this.gETMYEARNINGS;
     data['GET_MY_CREDITS'] = this.gETMYCREDITS;
     data['GET_NOTIFICATIONS'] = this.gETNOTIFICATIONS;
+    data['GET_FAQS'] = this.gETFAQS;
+    data['SEND_MESSAGE'] = this.sENDMESSAGE;
     data['GET_MY_FARMLAND_ALERTS'] = this.gETMYFARMLANDALERTS;
     data['GET_MY_FARMLANDS'] = this.gETMYFARMLANDS;
     data['GET_MY_FARM_LEADS'] = this.gETMYFARMLEADS;

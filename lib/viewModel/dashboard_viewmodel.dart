@@ -23,7 +23,8 @@ class DashboardViewModel with ChangeNotifier {
       _setLoading(true);
       _errorMessage = '';
 
-      DashboardResponse response = await _profileRepository.getdashboard();
+      DashboardResponse response =
+          await _profileRepository.getdashboard(context);
 
       if (response.firstName != null) {
         _dashboardresponse = response;

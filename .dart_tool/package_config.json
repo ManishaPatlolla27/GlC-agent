@@ -489,7 +489,7 @@
     },
     {
       "name": "mime",
-      "rootUri": "file:///Users/nani/.pub-cache/hosted/pub.dev/mime-2.0.0",
+      "rootUri": "file:///Users/nani/.pub-cache/hosted/pub.dev/mime-1.0.6",
       "packageUri": "lib/",
       "languageVersion": "3.2"
     },
@@ -782,7 +782,7 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-03-07T13:21:07.289799Z",
+  "generated": "2025-03-10T12:18:10.316990Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///Users/nani/Desktop/flutter",

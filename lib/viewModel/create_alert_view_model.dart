@@ -6,6 +6,10 @@ class CreateAlertViewModel extends ChangeNotifier {
   final CreateAlertRepository _createAlertRepository = CreateAlertRepository();
 
   bool _isLoading = false;
+  setLoadingStatus(bool status) {
+    _isLoading = status;
+    notifyListeners();
+  }
 
   bool get isLoading => _isLoading;
 

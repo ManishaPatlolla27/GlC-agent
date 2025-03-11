@@ -127,7 +127,9 @@ class FarmlandsScreenState extends State<CompareFarmlandsScreen> {
               ClipRRect(
                 borderRadius: BorderRadius.circular(10),
                 child: Image.network(
-                  image ?? image1!,
+                  image ??
+                      image1! ??
+                      "https://glc-dev-resources.s3.ap-south-1.amazonaws.com/Staticimages/approved-fl-icon.png",
                   width: 100,
                   height: 80,
                   fit: BoxFit.cover,

@@ -2,7 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class ValidationIoSAlert {
-  showAlert(BuildContext context, {required String? description, bool? flag}) {
+  showAlert(BuildContext context,
+      {required String? description, bool? flag, void Function()? onPressed}) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -32,12 +33,13 @@ class ValidationIoSAlert {
                 "Ok",
                 style: TextStyle(color: Colors.black),
               ),
-              onPressed: () {
-                Navigator.of(context).pop();
-                if (flag ?? false) {
-                  Navigator.of(context).pop();
-                }
-              },
+              onPressed: onPressed ??
+                  () {
+                    Navigator.of(context).pop();
+                    if (flag ?? false) {
+                      Navigator.of(context).pop();
+                    }
+                  },
             ),
           ],
         );

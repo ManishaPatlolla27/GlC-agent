@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,8 @@ import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/profile_menu_view_model.dart';
 import 'package:nex2u/viewModel/profile_view_model.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -27,11 +31,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final pickedFile = await picker.pickImage(source: source);
 
     if (pickedFile != null) {
-      setState(() {
-        _imageFile = File(pickedFile.path);
-      });
-      if (!mounted) return;
-      await provider.updateProfile(_imageFile ?? File(''), context);
+      File originalFile = File(pickedFile.path);
+      File? compressedFile = await _compressImage(originalFile);
+
+      if (compressedFile != null) {
+        setState(() {
+          _imageFile = compressedFile;
+        });
+        if (!mounted) return;
+        await provider.updateProfile(compressedFile, context);
+      }
+    }
+  }
+
+  Future<File?> _compressImage(File file) async {
+    try {
+      // Read image as bytes
+      Uint8List bytes = await file.readAsBytes();
+
+      // Decode image
+      ui.Codec codec = await ui.instantiateImageCodec(bytes,
+          targetWidth: 800); // Resize if needed
+      ui.FrameInfo frameInfo = await codec.getNextFrame();
+      ui.Image image = frameInfo.image;
+
+      // Convert back to bytes
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return null;
+
+      Uint8List compressedBytes = byteData.buffer.asUint8List();
+
+      // Save compressed image to temp directory
+      final tempDir = await getTemporaryDirectory();
+      final targetPath =
+          path.join(tempDir.path, 'compressed_${path.basename(file.path)}');
+      File compressedFile = File(targetPath);
+
+      await compressedFile.writeAsBytes(compressedBytes);
+
+      return compressedFile;
+    } catch (e) {
+      print("Error compressing image: $e");
+      return null;
     }
   }
 
@@ -42,23 +84,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
         return CupertinoAlertDialog(
           title: Column(
             children: [
-              const SizedBox(height: 20),
-              Image.asset(
-                'assets/warning.png', // Replace with your warning icon
-                height: 60,
-              ),
               const SizedBox(height: 10),
               const Text(
                 'Account Deletion',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
+              const SizedBox(height: 20),
+              Image.asset(
+                'assets/warning.png', // Replace with your warning icon
+                height: 60,
+              ),
             ],
           ),
           content: const Column(
             children: [
-              SizedBox(height: 10),
+              SizedBox(height: 20),
               Text(
                 'Are you sure you want to delete your account?',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                 textAlign: TextAlign.center,
               ),
               SizedBox(height: 10),
@@ -195,12 +238,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               : null,
                         ),
                         Positioned(
+                          top: 80,
+                          left: 90,
                           bottom: 0,
                           right: 0,
                           child: Container(
                             child: IconButton(
                               icon: const Icon(Icons.edit,
-                                  color: Colors.purple, size: 20),
+                                  color: Color(0xFF8280FF), size: 20),
                               onPressed: () {
                                 _showImagePickerOptions();
                               },

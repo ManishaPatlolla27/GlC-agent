@@ -24,7 +24,8 @@ class BottomViewModel with ChangeNotifier {
       _setLoading(true);
       _errorMessage = '';
 
-      List<BottomResponse> response = await _profileRepository.getBottom();
+      List<BottomResponse> response =
+          await _profileRepository.getBottom(context);
 
       if (response.isNotEmpty) {
         _bottomresponse = response;
