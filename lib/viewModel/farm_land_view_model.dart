@@ -30,6 +30,15 @@ class FarmLandViewModel with ChangeNotifier {
   FarmLandResponse? get farmlandresponse2 => _farmlandresponse2;
   List<FilterStateModel>? get getStateList => stateList;
 
+  clearAllLists() {
+    _bottomresponse = [];
+    _farmlandresponse = [];
+    _farmlandhomeresponse = [];
+    _farmlandresponse2;
+    stateList;
+    notifyListeners();
+  }
+
   // Fetch farmland leads
   Future<void> getFarmLeads(BuildContext context) async {
     try {

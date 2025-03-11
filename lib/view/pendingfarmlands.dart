@@ -15,6 +15,7 @@ class PendingFarmlandsScreenState extends State<PendingFarmlandsScreen> {
   @override
   void initState() {
     super.initState();
+    Provider.of<FarmLandViewModel>(context, listen: false).clearAllLists();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<FarmLandViewModel>(context, listen: false)
           .getFarmLands(context, "Pending");
