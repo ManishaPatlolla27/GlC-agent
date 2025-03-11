@@ -19,7 +19,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int _currentIndex = 0;
-  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  Key _pageKey = UniqueKey(); // Unique key to force rebuild
 
   @override
   void initState() {
@@ -61,33 +61,15 @@ class _HomePageState extends State<HomePage> {
     var response = bottomProvider.bottomresponse;
 
     if (response == null || response.isEmpty) {
-      return Scaffold(
+      return const Scaffold(
         body: Center(
           child: CircularProgressIndicator(),
         ),
       );
     }
 
-    List<Widget> pages = [];
     List<BottomNavigationBarItem> bottomItems = [];
-
     for (var item in response) {
-      Widget page;
-      switch (item.menuTitle?.toLowerCase()) {
-        case 'home':
-          page = const HomeScreen(key: ValueKey('home'));
-          break;
-        case 'farmlands':
-          page = const Farmlands(key: ValueKey('farmlands'));
-          break;
-        case 'profile':
-          page = const ProfileScreen(key: ValueKey('profile'));
-          break;
-        default:
-          page = const Center(child: Text("Page Not Found"));
-      }
-
-      pages.add(page);
       bottomItems.add(
         BottomNavigationBarItem(
           icon: item.menuIcon != null && item.menuIcon!.startsWith("http")
@@ -105,25 +87,38 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
+    Widget getPage(String? title) {
+      switch (title?.toLowerCase()) {
+        case 'home':
+          return HomeScreen(key: _pageKey);
+        case 'farmlands':
+          return Farmlands(key: _pageKey);
+        case 'profile':
+          return ProfileScreen(key: _pageKey);
+        default:
+          return const Center(child: Text("Page Not Found"));
+      }
+    }
+
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) => _onWillPop(),
       child: Scaffold(
-        body: IndexedStack(
-          index: _currentIndex,
-          children: pages,
-        ),
+        body: getPage(response[_currentIndex].menuTitle),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           backgroundColor: Colors.white,
           currentIndex: _currentIndex,
           onTap: (index) {
             if (_currentIndex == index) {
-              // If tapped on the same tab, pop to the first screen in the stack (if using Navigator)
-              _navigatorKey.currentState?.popUntil((route) => route.isFirst);
+              // If same tab is tapped, refresh by updating the key
+              setState(() {
+                _pageKey = UniqueKey();
+              });
             } else {
               setState(() {
                 _currentIndex = index;
+                _pageKey = UniqueKey(); // Reset key when switching tabs
               });
             }
           },

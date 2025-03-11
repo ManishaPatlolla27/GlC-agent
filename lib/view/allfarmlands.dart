@@ -415,6 +415,8 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
         return Colors.red;
       case 'Critical':
         return Colors.red;
+      case 'Dismissed':
+        return Colors.red;
       case 'Moderate':
         return Colors.orange;
       case 'Low':

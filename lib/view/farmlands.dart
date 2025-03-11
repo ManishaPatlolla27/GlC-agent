@@ -52,6 +52,7 @@ class _FarmLandState extends State<Farmlands> {
   @override
   void initState() {
     super.initState();
+    Future.delayed(Duration.zero, () => _fetchFarmlandData());
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
       await provider.getDiscovery(context);
@@ -59,6 +60,20 @@ class _FarmLandState extends State<Farmlands> {
         farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
         _onWillPop();
       });
+    });
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _fetchFarmlandData();
+  }
+
+  void _fetchFarmlandData() async {
+    final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
+    await provider.getDiscovery(context);
+    setState(() {
+      farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
     });
   }
 
@@ -85,7 +100,19 @@ class _FarmLandState extends State<Farmlands> {
             children: [
               _buildHeader(),
               const SizedBox(height: 20),
-              if (farmlandSections.isNotEmpty) _buildDynamicContent(),
+              if (farmlandSections.isNotEmpty)
+                _buildDynamicContent()
+              else
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16.0),
+                    child: Text(
+                      "No data found",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
             ],
           ),
         ),

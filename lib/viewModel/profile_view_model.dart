@@ -50,7 +50,7 @@ class ProfileViewModel with ChangeNotifier {
   updateProfile(File image, BuildContext context) async {
     final userId = profileresponse?.userId;
     final payload =
-        UpdateProfilePicRequest(userId: userId ?? 0, imageFile: image.path);
+        UpdateProfilePicRequest(userId: userId!, imageFile: image.path);
     final response = await _profileRepository.updateProfile(payload, context);
     if (response ?? false) {
       Fluttertoast.showToast(msg: "Profile Update successfully");

@@ -36,7 +36,7 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
 
   Future<void> loadFarmlands() async {
     const storage = FlutterSecureStorage();
-    farmid = await storage.read(key: "farmid");
+    farmid = await storage.read(key: "farmid") ?? "0";
     debugPrint("Fetched farmid: $farmid");
     if (farmid == null) return;
 

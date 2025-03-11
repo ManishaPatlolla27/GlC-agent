@@ -22,6 +22,6 @@ class ApiConstants {
   static const String fav = "/lms-api/agent-farmland/getMyFavoriteFarmlands";
 
   static const String createBuyerAlert =
-      "lms-api/agent-farmland/sendFarmlandLeads";
+      "/lms-api/agent-farmland/sendFarmlandLeads";
   static const String filterStateApi = "/mdm-api/filters/states";
 }
