@@ -20,7 +20,7 @@ class DiscoveryViewModel with ChangeNotifier {
   // Fetch profile details
   Future<void> getDiscovery(BuildContext context) async {
     try {
-      _setLoading(true);
+      setLoading(true);
       _errorMessage = '';
 
       DiscoveryResponse response =
@@ -28,18 +28,19 @@ class DiscoveryViewModel with ChangeNotifier {
 
       if (response.bottomlist != null) {
         _trackFarmlandResponse = response;
+        notifyListeners();
       } else {
         _errorMessage = 'Invalid profile data received';
       }
     } catch (e) {
       _errorMessage = 'Failed to load profile: $e';
     } finally {
-      _setLoading(false);
+      setLoading(false);
     }
   }
 
   // Helper to update loading state
-  void _setLoading(bool value) {
+  void setLoading(bool value) {
     _isLoading = value;
     notifyListeners();
   }

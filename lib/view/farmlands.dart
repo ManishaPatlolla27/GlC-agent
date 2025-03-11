@@ -20,7 +20,7 @@ class Farmlands extends StatefulWidget {
 class _FarmLandState extends State<Farmlands> {
   int _currentIndex = 0;
   Set<int> wishlist = {};
-  FlutterSecureStorage storage = FlutterSecureStorage(); //
+  FlutterSecureStorage storage = const FlutterSecureStorage(); //
   List<DiscoveryList> farmlandSections = [];
 
   void toggleWishlist(int index, FarmlandsList2 farmland) async {
@@ -56,9 +56,9 @@ class _FarmLandState extends State<Farmlands> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
       await provider.getDiscovery(context);
+      _onWillPop();
       setState(() {
         farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
-        _onWillPop();
       });
     });
   }
@@ -89,34 +89,40 @@ class _FarmLandState extends State<Farmlands> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        top: false,
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 20),
-              if (farmlandSections.isNotEmpty)
-                _buildDynamicContent()
-              else
-                const Center(
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: Text(
-                      "No data found",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+    final provider = Provider.of<DiscoveryViewModel>(context);
+    return Stack(
+      children: [
+        Scaffold(
+          extendBodyBehindAppBar: true,
+          backgroundColor: Colors.white,
+          body: SafeArea(
+            top: false,
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  const SizedBox(height: 20),
+                  if (farmlandSections.isNotEmpty)
+                    _buildDynamicContent()
+                  else
+                    const Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: Text(
+                          "No data found",
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
                     ),
-                  ),
-                ),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
-      ),
+        if (provider.getLoadingStatus) const CircularProgressIndicator()
+      ],
     );
   }
 
@@ -142,24 +148,25 @@ class _FarmLandState extends State<Farmlands> {
               if (farmlandSections.isNotEmpty)
                 _buildCarousel(farmlandSections[0].farmlands ?? []),
               const SizedBox(height: 8),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  farmlandSections[0].farmlands!.length,
-                  (index) => Container(
-                    width: 6.0,
-                    height: 6.0,
-                    margin: const EdgeInsets.symmetric(
-                        vertical: 10.0, horizontal: 2.0),
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: _currentIndex == index
-                          ? Colors.white
-                          : Colors.white.withValues(alpha: 0.5),
+              if (farmlandSections.isNotEmpty)
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(
+                    farmlandSections[0].farmlands!.length,
+                    (index) => Container(
+                      width: 6.0,
+                      height: 6.0,
+                      margin: const EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 2.0),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: _currentIndex == index
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.5),
+                      ),
                     ),
                   ),
                 ),
-              ),
             ],
           ),
         ),
@@ -206,8 +213,9 @@ class _FarmLandState extends State<Farmlands> {
         var section = farmlandSections[index];
         var itemCount = section.farmlands?.length ?? 0;
 
-        if (index == 0)
+        if (index == 0) {
           return const SizedBox(); // Skip as carousel is already built
+        }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -254,7 +262,8 @@ class _FarmLandState extends State<Farmlands> {
           onTap: () async {
             await storage.write(
                 key: 'farmid', value: farmland.farmlandId.toString());
-            print(farmland.farmlandId);
+
+            debugPrint("${farmland.farmlandId}");
             Navigator.push(
               context,
               MaterialPageRoute(

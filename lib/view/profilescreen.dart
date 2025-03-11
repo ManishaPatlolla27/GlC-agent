@@ -72,7 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       return compressedFile;
     } catch (e) {
-      print("Error compressing image: $e");
+      debugPrint("Error compressing image: $e");
       return null;
     }
   }
@@ -117,11 +117,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: () {
                 Navigator.pushReplacementNamed(context, AppRoutes.login);
               },
+              isDestructiveAction: true,
               child: const Text(
                 'Delete Account',
                 style: TextStyle(color: Colors.redAccent),
               ),
-              isDestructiveAction: true,
             ),
             CupertinoDialogAction(
               onPressed: () {
@@ -189,193 +189,223 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final response = profileViewModel.profileresponse;
     final dashboardresponse = dashboardViewModel.dashboardresponse;
 
-    return Scaffold(
-      backgroundColor: Colors.white, // Set background to white
-      appBar: AppBar(
-        title: const Text("My Profile", style: TextStyle(color: Colors.black)),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushNamedAndRemoveUntil(
-                context, AppRoutes.home, (route) => false);
-            ;
-          },
-        ),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              crossAxisAlignment:
-                  CrossAxisAlignment.start, // Align content at the top
-              children: [
-                GestureDetector(
-                    onTap: _showImagePickerOptions,
-                    child: Stack(
-                      children: [
-                        CircleAvatar(
-                          radius: 50,
-                          backgroundColor: Colors.grey.shade200,
-                          backgroundImage: _imageFile != null
-                              ? FileImage(_imageFile!)
-                              : (profileViewModel
-                                              .profileresponse?.profileImage !=
-                                          null &&
-                                      profileViewModel.profileresponse!
-                                          .profileImage!.isNotEmpty
-                                  ? NetworkImage(profileViewModel
-                                      .profileresponse!.profileImage!)
-                                  : null),
-                          child: (_imageFile == null &&
-                                  (profileViewModel
-                                          .profileresponse?.profileImage ==
-                                      null))
-                              ? const Icon(Icons.camera_alt,
-                                  size: 40, color: Colors.white)
-                              : null,
-                        ),
-                        Positioned(
-                          top: 80,
-                          left: 90,
-                          bottom: 0,
-                          right: 0,
-                          child: Container(
-                            child: IconButton(
-                              icon: const Icon(Icons.edit,
-                                  color: Color(0xFF8280FF), size: 20),
-                              onPressed: () {
-                                _showImagePickerOptions();
-                              },
-                              padding: EdgeInsets.zero, // Remove extra padding
-                              constraints:
-                                  BoxConstraints(), // Prevents extra space
-                            ),
-                          ),
-                        ),
-                      ],
-                    )),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 20),
-                    Text(
-                      "${response?.firstName ?? ''} ${response?.lastName ?? ''}",
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    Text("ID: ${response?.userCode}",
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox(height: 8),
-                Row(
-                  children: [
-                    const Icon(Icons.phone, color: Colors.grey, size: 16),
-                    const SizedBox(width: 8),
-                    Text("+91-${response!.mobileNumber}",
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    const Icon(Icons.email, color: Colors.grey, size: 16),
-                    const SizedBox(width: 8),
-                    Text(response.userEmail.toString(),
-                        style: const TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Divider(thickness: 1),
-          Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  children: [
-                    Text(
-                      dashboardresponse?.totalEarnings.toString() ?? '0',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("Amount", style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
-                Container(
-                    width: 1,
-                    height: 40,
-                    color: Colors.grey), // Divider between items
-                Column(
-                  children: [
-                    Text(
-                      dashboardresponse?.totalCredits.toString() ?? '0',
-                      style: const TextStyle(
-                          fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                    const Text("Credits", style: TextStyle(color: Colors.grey)),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const Divider(thickness: 1),
-          if (profilemenuresponse != null && profilemenuresponse.isNotEmpty)
-            Expanded(
-              child: ListView.builder(
-                itemCount: profilemenuresponse.length,
-                itemBuilder: (context, index) {
-                  final menu = profilemenuresponse[index];
-                  return ListTile(
-                    leading: Image.network(menu.menuIcon ?? "",
-                        errorBuilder: (context, error, stackTrace) =>
-                            Image.asset("assets/home.png"),
-                        width: 20,
-                        height: 20),
-                    title: Text(menu.menuTitle ?? "Unknown"),
-                    onTap: () {
-                      if (menu.menuTitle == "My Shortlists") {
-                        Navigator.pushNamed(context, AppRoutes.myshortlist);
-                      } else if (menu.menuTitle == "Notifications") {
-                        Navigator.pushNamed(context, AppRoutes.notifications);
-                      } else if (menu.menuTitle == "Total Farm Alerts") {
-                        Navigator.pushNamed(context, AppRoutes.allfarmland);
-                      } else if (menu.menuTitle == "Delete My Account") {
-                        showDeleteAccountDialog(context);
-                      }
-                    },
-                  );
+    return Stack(
+      children: [
+        Scaffold(
+            backgroundColor: Colors.white, // Set background to white
+            appBar: AppBar(
+              title: const Text("My Profile",
+                  style: TextStyle(color: Colors.black)),
+              backgroundColor: Colors.white,
+              elevation: 0,
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, AppRoutes.home, (route) => false);
                 },
               ),
             ),
-          const Divider(thickness: 1),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text("Log Out", style: TextStyle(color: Colors.red)),
-            onTap: () {
-              Navigator.pushReplacementNamed(context, AppRoutes.login);
-              const storage = FlutterSecureStorage();
-              storage.write(key: 'userloggedin', value: 'false');
-            },
-          ),
-        ],
-      ),
+            body: response != null
+                ? Column(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment
+                              .start, // Align content at the top
+                          children: [
+                            GestureDetector(
+                                onTap: _showImagePickerOptions,
+                                child: Stack(
+                                  children: [
+                                    CircleAvatar(
+                                      radius: 50,
+                                      backgroundColor: Colors.grey.shade200,
+                                      backgroundImage: _imageFile != null
+                                          ? FileImage(_imageFile!)
+                                          : (profileViewModel.profileresponse
+                                                          ?.profileImage !=
+                                                      null &&
+                                                  profileViewModel
+                                                      .profileresponse!
+                                                      .profileImage!
+                                                      .isNotEmpty
+                                              ? NetworkImage(profileViewModel
+                                                  .profileresponse!
+                                                  .profileImage!)
+                                              : null),
+                                      child: (_imageFile == null &&
+                                              (profileViewModel.profileresponse
+                                                      ?.profileImage ==
+                                                  null))
+                                          ? const Icon(Icons.camera_alt,
+                                              size: 40, color: Colors.white)
+                                          : null,
+                                    ),
+                                    Positioned(
+                                      top: 80,
+                                      left: 90,
+                                      bottom: 0,
+                                      right: 0,
+                                      child: Container(
+                                        child: IconButton(
+                                          icon: const Icon(Icons.edit,
+                                              color: Color(0xFF8280FF),
+                                              size: 20),
+                                          onPressed: () {
+                                            _showImagePickerOptions();
+                                          },
+                                          padding: EdgeInsets
+                                              .zero, // Remove extra padding
+                                          constraints:
+                                              const BoxConstraints(), // Prevents extra space
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                            const SizedBox(width: 16),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 20),
+                                Text(
+                                  "${response?.firstName ?? ''} ${response?.lastName ?? ''}",
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                Text("ID: ${response?.userCode}",
+                                    style: const TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(Icons.phone,
+                                    color: Colors.grey, size: 16),
+                                const SizedBox(width: 8),
+                                Text("+91-${response!.mobileNumber}",
+                                    style: const TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.email,
+                                    color: Colors.grey, size: 16),
+                                const SizedBox(width: 8),
+                                Text(response.userEmail.toString(),
+                                    style: const TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      const Divider(thickness: 1),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0, vertical: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Column(
+                              children: [
+                                Text(
+                                  dashboardresponse?.totalEarnings.toString() ??
+                                      '0',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const Text("Amount",
+                                    style: TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                            Container(
+                                width: 1,
+                                height: 40,
+                                color: Colors.grey), // Divider between items
+                            Column(
+                              children: [
+                                Text(
+                                  dashboardresponse?.totalCredits.toString() ??
+                                      '0',
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                const Text("Credits",
+                                    style: TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(thickness: 1),
+                      if (profilemenuresponse != null &&
+                          profilemenuresponse.isNotEmpty)
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: profilemenuresponse.length,
+                            itemBuilder: (context, index) {
+                              final menu = profilemenuresponse[index];
+                              return ListTile(
+                                leading: Image.network(menu.menuIcon ?? "",
+                                    errorBuilder:
+                                        (context, error, stackTrace) =>
+                                            Image.asset("assets/home.png"),
+                                    width: 20,
+                                    height: 20),
+                                title: Text(menu.menuTitle ?? "Unknown"),
+                                onTap: () {
+                                  if (menu.menuTitle == "My Shortlists") {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.myshortlist);
+                                  } else if (menu.menuTitle ==
+                                      "Notifications") {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.notifications);
+                                  } else if (menu.menuTitle ==
+                                      "Total Farm Alerts") {
+                                    Navigator.pushNamed(
+                                        context, AppRoutes.allfarmland);
+                                  } else if (menu.menuTitle ==
+                                      "Delete My Account") {
+                                    showDeleteAccountDialog(context);
+                                  }
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      const Divider(thickness: 1),
+                      ListTile(
+                        leading: const Icon(Icons.logout, color: Colors.red),
+                        title: const Text("Log Out",
+                            style: TextStyle(color: Colors.red)),
+                        onTap: () {
+                          Navigator.pushReplacementNamed(
+                              context, AppRoutes.login);
+                          const storage = FlutterSecureStorage();
+                          storage.write(key: 'userloggedin', value: 'false');
+                        },
+                      ),
+                    ],
+                  )
+                : const SizedBox.shrink()),
+        if (profileViewModel.getLoadingStatus) const CircularProgressIndicator()
+      ],
     );
   }
 }
