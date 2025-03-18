@@ -7,6 +7,10 @@ import 'package:nex2u/models/profile/profile_response.dart';
 import 'package:nex2u/models/update_profile_pic_request.dart';
 import 'package:nex2u/repo/profile_repository.dart';
 
+import '../models/update_alert_image_pic_request.dart';
+import '../page_routing/app_routes.dart';
+import '../res/validation_alert.dart';
+
 class ProfileViewModel with ChangeNotifier {
   late BuildContext context;
   ProfileResponse? _profileresponse;
@@ -55,5 +59,25 @@ class ProfileViewModel with ChangeNotifier {
     if (response ?? false) {
       Fluttertoast.showToast(msg: "Profile Update successfully");
     }
+  }
+
+  updateAlert(File image, int alertid, BuildContext context) async {
+    final payload =
+        UpdateAlertPicRequest(alertId: alertid, imageFile: image.path);
+    final response = await _profileRepository.updateAlert(payload, context);
+    if (response ?? false) {
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (!context.mounted) return;
+        _showSuccessDialog("Alert Submitted", context);
+      });
+    }
+  }
+
+  void _showSuccessDialog(String message, BuildContext context) {
+    ValidationIoSAlert().showAlert(context, description: message,
+        onPressed: () {
+      Navigator.pushReplacementNamed(context, AppRoutes.home);
+    }, flag: true); // Implement your success dialog or snackbar here
+    debugPrint(message); // or use showDialog, showSnackBar, etc.
   }
 }

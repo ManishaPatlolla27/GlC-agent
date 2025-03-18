@@ -5,7 +5,7 @@ class UpdateProfilePicRequest {
   factory UpdateProfilePicRequest.fromJson(Map<String, dynamic> json) {
     return UpdateProfilePicRequest(
       userId: json['user_id'],
-      imageFile: json['image_file'], // Convert path back to File
+      imageFile: json['file'], // Convert path back to File
     );
   }
 
@@ -13,7 +13,7 @@ class UpdateProfilePicRequest {
   Map<String, dynamic> toJson() {
     return {
       "user_id": userId,
-      "image_file": imageFile, // Store only the file path
+      "file": imageFile, // Store only the file path
     };
   }
 }

@@ -4,6 +4,7 @@ import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/viewModel/alert_view_model.dart';
 import 'package:nex2u/viewModel/bottom_view_model.dart';
 import 'package:nex2u/viewModel/configuration_view_model.dart';
+import 'package:nex2u/viewModel/contact_view_model.dart';
 import 'package:nex2u/viewModel/create_alert_view_model.dart';
 import 'package:nex2u/viewModel/dashboard_viewmodel.dart';
 import 'package:nex2u/viewModel/discovery_view_model.dart';
@@ -90,6 +91,9 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(
           create: (context) => StateViewModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => ContactViewModel(),
         ),
       ],
       child: MaterialApp(

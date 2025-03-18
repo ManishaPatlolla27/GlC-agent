@@ -14,14 +14,15 @@ class TrackfarmlandViewModel with ChangeNotifier {
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   // Getters
-  bool get getLoadingStatus => _isLoading;
-  String get getErrorMessage => _errorMessage;
+  bool get isLoading => _isLoading;
+  String get errorMessage => _errorMessage;
   TrackFarmlandResponse? get trackFarmlandResponse => _trackFarmlandResponse;
 
-  // Fetch profile details
+  // Fetch farmland tracking details
   Future<void> getTrackFarm(BuildContext context, String status) async {
     try {
       _setLoading(true);
+      _trackFarmlandResponse = null; // Reset previous data before fetching new
       _errorMessage = '';
 
       TrackFarmlandResponse response =
@@ -33,7 +34,7 @@ class TrackfarmlandViewModel with ChangeNotifier {
         _errorMessage = 'Invalid profile data received';
       }
     } catch (e) {
-      _errorMessage = 'Failed to load profile: $e';
+      _errorMessage = 'Failed to load data: $e';
     } finally {
       _setLoading(false);
     }
@@ -42,6 +43,12 @@ class TrackfarmlandViewModel with ChangeNotifier {
   // Helper to update loading state
   void _setLoading(bool value) {
     _isLoading = value;
+    notifyListeners();
+  }
+
+  // Helper to clear errors
+  void clearError() {
+    _errorMessage = '';
     notifyListeners();
   }
 }

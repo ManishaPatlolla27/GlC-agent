@@ -265,26 +265,28 @@ class FarmlandsScreenState extends State<FarmlandsScreen> {
                         ],
                       ),
                     const SizedBox(height: 4),
-                    Row(
-                      children: [
-                        const Text(
-                          "Date of Creation: ",
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black54,
+                    if (alert.farmlandCode != null &&
+                        alert.farmlandCode!.isNotEmpty)
+                      Row(
+                        children: [
+                          const Text(
+                            "Date of Creation: ",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.black54,
+                            ),
                           ),
-                        ),
-                        Text(
-                          _formatDate(alert.createdOn),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
-                            color: Colors.black,
+                          Text(
+                            _formatDate(alert.createdOn),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
+                        ],
+                      ),
                     GestureDetector(
                       onTap: () {
                         Navigator.push(

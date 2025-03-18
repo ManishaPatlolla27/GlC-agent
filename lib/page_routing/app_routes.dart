@@ -23,4 +23,7 @@ class AppRoutes {
   static const String compare = "/compare";
   static const String compareadd = "/compareadd";
   static const String compareboth = "/compareboth";
+  static const String similarfarmland = "/similarfarmland";
+  static const String faq = "/faq";
+  static const String contact = "/contact";
 }

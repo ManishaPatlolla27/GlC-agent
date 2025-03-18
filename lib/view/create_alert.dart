@@ -1,12 +1,21 @@
+import 'dart:io';
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:email_validator/email_validator.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:nex2u/viewModel/create_alert_view_model.dart';
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
 
 import '../models/createAlert/create_alert_request.dart';
 import '../page_routing/app_routes.dart';
 import '../res/validation_alert.dart';
+import '../viewModel/profile_view_model.dart';
 
 class CreateAlertScreen extends StatefulWidget {
   const CreateAlertScreen({super.key});
@@ -17,7 +26,8 @@ class CreateAlertScreen extends StatefulWidget {
 
 class CreateAlertScreenState extends State<CreateAlertScreen> {
   final _formKey = GlobalKey<FormState>();
-
+  File? _imageFile;
+  bool _imageError = false;
   // Text Controllers
   final TextEditingController _firstNameController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
@@ -206,6 +216,28 @@ class CreateAlertScreenState extends State<CreateAlertScreen> {
                                   TextStyle(color: Colors.red, fontSize: 13)),
                         ),
                       const SizedBox(height: 20),
+                      Text("Upload Image",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 16)),
+                      SizedBox(height: 10),
+                      GestureDetector(
+                        onTap: _showImagePickerOptions,
+                        child: Container(
+                          height: 150,
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            border: Border.all(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: _imageFile == null
+                              ? const Center(
+                                  child: Icon(Icons.add_a_photo,
+                                      size: 50, color: Colors.grey),
+                                )
+                              : Image.file(_imageFile!, fit: BoxFit.cover),
+                        ),
+                      ),
+                      SizedBox(height: 20),
                       Row(
                         mainAxisAlignment:
                             MainAxisAlignment.center, // Center the button
@@ -218,6 +250,14 @@ class CreateAlertScreenState extends State<CreateAlertScreen> {
                                 if (_formKey.currentState!.validate()) {
                                   if (selectedLocation == null) {
                                     setState(() => locationError = true);
+                                    return;
+                                  }
+                                  if (_imageFile == null) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                          content: Text(
+                                              "Please upload an image before proceeding")),
+                                    );
                                     return;
                                   }
                                   String genderInitial = selectedGender != null
@@ -240,13 +280,33 @@ class CreateAlertScreenState extends State<CreateAlertScreen> {
                                   );
                                   await createProvider.createAlert(
                                       request, context);
-                                  if (createProvider.otpSent) {
-                                    Future.delayed(
-                                        const Duration(milliseconds: 500), () {
-                                      if (!context.mounted) return;
-                                      _showSuccessDialog(
-                                          "Alert Submitted", context);
-                                    });
+                                  if (createProvider
+                                          .trackFarmlandResponse?.alertId !=
+                                      null) {
+                                    // Future.delayed(
+                                    //     const Duration(milliseconds: 500), () {
+                                    //   if (!context.mounted) return;
+                                    //   _showSuccessDialog(
+                                    //       "Alert Submitted", context);
+                                    // });
+
+                                    final provider =
+                                        Provider.of<ProfileViewModel>(context,
+                                            listen: false);
+                                    if (!mounted) return;
+                                    File? compressedFile =
+                                        await _compressImage(_imageFile!);
+
+                                    if (compressedFile != null) {
+                                      await provider.updateAlert(
+                                          compressedFile,
+                                          createProvider
+                                              .trackFarmlandResponse!.alertId!
+                                              .toInt(),
+                                          context);
+                                    } else {
+                                      print("Image compression failed");
+                                    }
                                   }
                                   createProvider.setLoadingStatus(false);
                                   print(
@@ -325,5 +385,84 @@ class CreateAlertScreenState extends State<CreateAlertScreen> {
       Navigator.pushReplacementNamed(context, AppRoutes.home);
     }, flag: true); // Implement your success dialog or snackbar here
     debugPrint(message); // or use showDialog, showSnackBar, etc.
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(source: source);
+
+    if (pickedFile != null) {
+      File originalFile = File(pickedFile.path);
+      File? compressedFile = await _compressImage(originalFile);
+
+      if (compressedFile != null) {
+        setState(() {
+          _imageFile = compressedFile;
+          _imageError = false; // Reset error state when an image is selected
+        });
+      }
+    }
+  }
+
+  Future<File?> _compressImage(File file) async {
+    try {
+      // Read image as bytes
+      Uint8List bytes = await file.readAsBytes();
+
+      // Decode image
+      ui.Codec codec = await ui.instantiateImageCodec(bytes,
+          targetWidth: 800); // Resize if needed
+      ui.FrameInfo frameInfo = await codec.getNextFrame();
+      ui.Image image = frameInfo.image;
+
+      // Convert back to bytes
+      ByteData? byteData =
+          await image.toByteData(format: ui.ImageByteFormat.png);
+      if (byteData == null) return null;
+
+      Uint8List compressedBytes = byteData.buffer.asUint8List();
+
+      // Save compressed image to temp directory
+      final tempDir = await getTemporaryDirectory();
+      final targetPath =
+          path.join(tempDir.path, 'compressed_${path.basename(file.path)}');
+      File compressedFile = File(targetPath);
+
+      await compressedFile.writeAsBytes(compressedBytes);
+
+      return compressedFile;
+    } catch (e) {
+      print("Error compressing image: $e");
+      return null;
+    }
+  }
+
+  void _showImagePickerOptions() {
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => CupertinoActionSheet(
+        title: const Text("Select Profile Picture"),
+        actions: [
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.camera);
+            },
+            child: const Text("Capture from Camera"),
+          ),
+          CupertinoActionSheetAction(
+            onPressed: () {
+              Navigator.pop(context);
+              _pickImage(ImageSource.gallery);
+            },
+            child: const Text("Upload from Gallery"),
+          ),
+        ],
+        cancelButton: CupertinoActionSheetAction(
+          onPressed: () => Navigator.pop(context),
+          child: const Text("Cancel", style: TextStyle(color: Colors.red)),
+        ),
+      ),
+    );
   }
 }

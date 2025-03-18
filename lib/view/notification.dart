@@ -144,7 +144,7 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                               setState(() {});
                             },
                             child: const Text(
-                              "Mark as read",
+                              "", //Mark as read
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,
@@ -157,7 +157,7 @@ class NotificationsScreenState extends State<NotificationsScreen> {
                               setState(() {});
                             },
                             child: const Text(
-                              "Clear",
+                              "", //Clear
                               style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

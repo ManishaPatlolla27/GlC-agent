@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/view/comparebothfarmland.dart';
+import 'package:nex2u/view/contact_us.dart';
+import 'package:nex2u/view/faq.dart';
 import 'package:nex2u/view/mappointerpick.dart';
 import 'package:nex2u/view/myshortlist.dart';
 import 'package:nex2u/view/notification.dart';
 import 'package:nex2u/view/onboarding.dart';
 import 'package:nex2u/view/passwordupdate.dart';
+import 'package:nex2u/view/similar_farmlands.dart';
 import 'package:nex2u/view/validateotp.dart';
 
 import '../view/allfarmlands.dart';
@@ -44,6 +47,9 @@ class AppPages {
       AppRoutes.compare: (context) => const CompareFarmlands(),
       AppRoutes.compareadd: (context) => const CompareFarmlandsScreen(),
       AppRoutes.compareboth: (context) => const CompareBothFarmlandsScreen(),
+      AppRoutes.similarfarmland: (context) => const SimilarFarmlandScreen(),
+      AppRoutes.faq: (context) => const FAQScreen(),
+      AppRoutes.contact: (context) => const ContactUsScreen(),
     };
   }
 }

@@ -380,6 +380,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       "Total Farm Alerts") {
                                     Navigator.pushNamed(
                                         context, AppRoutes.allfarmland);
+                                  } else if (menu.menuTitle == "Help") {
+                                    Navigator.pushNamed(context, AppRoutes.faq);
                                   } else if (menu.menuTitle ==
                                       "Delete My Account") {
                                     showDeleteAccountDialog(context);

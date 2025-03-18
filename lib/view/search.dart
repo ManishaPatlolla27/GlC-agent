@@ -17,23 +17,20 @@ class Searchlands extends StatefulWidget {
 
 class _SearchLandState extends State<Searchlands> {
   List<FarmLandList> farmlandSections = [];
-  late String seeall = "Farmlands"; // Default value to prevent null errors
-
+  late String seeall = "Farmlands";
+  bool isLoading = true;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final FlutterSecureStorage storage = FlutterSecureStorage();
 
-//  final storage = const FlutterSecureStorage();
-
-  FlutterSecureStorage storage = FlutterSecureStorage(); // Initialize once
   @override
   void initState() {
     super.initState();
     loadFarmlands();
-    WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) async {
-        final provider = Provider.of<FarmLandViewModel>(context, listen: false);
-        await provider.getStateListApi(context);
-      },
-    );
+    _clearStoredData();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final provider = Provider.of<FarmLandViewModel>(context, listen: false);
+      await provider.getStateListApi(context);
+    });
   }
 
   Future<void> _clearStoredData() async {
@@ -41,105 +38,99 @@ class _SearchLandState extends State<Searchlands> {
     await storage.delete(key: "code1");
   }
 
-  Future<bool> _onWillPop() async {
-    await _clearStoredData();
-    return true; // Allows back navigation
-  }
-
   Future<void> loadFarmlands() async {
-    const storage = FlutterSecureStorage();
+    setState(() => isLoading = true);
     String? storedValue = await storage.read(key: "seeall");
-
     if (storedValue != null) {
-      setState(() {
-        seeall = storedValue;
-      });
-
+      setState(() => seeall = storedValue);
       final provider = Provider.of<FarmLandViewModel>(context, listen: false);
       await provider.getseeall(context, seeall);
       setState(() {
         farmlandSections = provider.farmlandresponse ?? [];
+        isLoading = false;
       });
+    } else {
+      setState(() => isLoading = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
+    return PopScope(
+      canPop: true,
+      onPopInvoked: (didPop) async {
+        if (!didPop) {
+          await _clearStoredData();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        key: _scaffoldKey,
+        endDrawer: const FilterSelectionWidget(),
+        appBar: AppBar(
           backgroundColor: Colors.white,
-          key: _scaffoldKey,
-          // Assign Global Key
-          endDrawer: const FilterSelectionWidget(),
-          appBar: AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0,
-            automaticallyImplyLeading: false,
-            // Prevents the default drawer icon
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () {
-                Navigator.pop(context);
-              },
-            ),
-            title: Text(seeall, style: const TextStyle(color: Colors.black)),
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
           ),
-          body: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "${farmlandSections.length} Farmlands Listing",
-                  style: const TextStyle(
-                      fontSize: 22, fontWeight: FontWeight.bold),
+          title: Text(seeall, style: const TextStyle(color: Colors.black)),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                "${farmlandSections.length} Farmlands Listing",
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              Align(
+                alignment: Alignment.topRight,
+                child: ElevatedButton(
+                  onPressed: () => _scaffoldKey.currentState?.openEndDrawer(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.black, width: 1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text("Filter", style: TextStyle(color: Colors.black)),
+                      SizedBox(width: 5),
+                      Icon(Icons.filter_list, color: Colors.black),
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _scaffoldKey.currentState?.openEndDrawer();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      side: const BorderSide(
-                          color: Colors.black, width: 1), // Black border
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                            8), // Slightly smaller border radius
+              ),
+              const SizedBox(height: 10),
+              isLoading
+                  ? const Expanded(
+                      child: Center(
+                        child: CircularProgressIndicator(),
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: 8), // Reduced width
+                    )
+                  : Expanded(
+                      child: ListView.builder(
+                        itemCount: farmlandSections.length,
+                        itemBuilder: (context, index) {
+                          return farmlandCard(farmlandSections[index]);
+                        },
+                      ),
                     ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      // Keeps the button compact
-                      children: const [
-                        Text("Filter",
-                            style: TextStyle(
-                                color: Colors.black)), // Text on the right
-                        SizedBox(width: 5), // Spacing between text and icon
-                        Icon(Icons.filter_list,
-                            color: Colors.black), // Icon on the left
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Expanded(
-                  child: ListView.builder(
-                    itemCount: farmlandSections.length,
-                    itemBuilder: (context, index) {
-                      return farmlandCard(farmlandSections[index]);
-                    },
-                  ),
-                ),
-              ],
-            ),
+            ],
           ),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget farmlandCard(FarmLandList farmland) {

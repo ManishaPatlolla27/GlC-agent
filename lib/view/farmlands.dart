@@ -63,11 +63,11 @@ class _FarmLandState extends State<Farmlands> {
     });
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    _fetchFarmlandData();
-  }
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //   _fetchFarmlandData();
+  // }
 
   void _fetchFarmlandData() async {
     final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
@@ -109,11 +109,11 @@ class _FarmLandState extends State<Farmlands> {
                     const Center(
                       child: Padding(
                         padding: EdgeInsets.all(16.0),
-                        child: Text(
-                          "No data found",
-                          style: TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+                        // child: Text(
+                        //   "No data found",
+                        //   style: TextStyle(
+                        //       fontSize: 18, fontWeight: FontWeight.bold),
+                        // ),
                       ),
                     ),
                 ],
@@ -121,7 +121,7 @@ class _FarmLandState extends State<Farmlands> {
             ),
           ),
         ),
-        if (provider.getLoadingStatus) const CircularProgressIndicator()
+        // if (provider.getLoadingStatus) const CircularProgressIndicator()
       ],
     );
   }
@@ -181,10 +181,12 @@ class _FarmLandState extends State<Farmlands> {
         Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.white),
-              onPressed: () => Navigator.pushNamedAndRemoveUntil(
-                  context, AppRoutes.home, (route) => false),
-            ),
+                icon: const Icon(Icons.arrow_back, color: Colors.white),
+                onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(
+                      context, AppRoutes.home, (route) => false);
+                  _clearStoredData();
+                }),
             const SizedBox(width: 8),
             const Text(
               'Farmlands',
@@ -196,7 +198,10 @@ class _FarmLandState extends State<Farmlands> {
           ],
         ),
         GestureDetector(
-          onTap: () => Navigator.pushNamed(context, AppRoutes.search),
+          onTap: () {
+            Navigator.pushNamed(context, AppRoutes.search);
+            _clearStoredData();
+          },
           child: const CircleAvatar(
             backgroundColor: Colors.white,
             radius: 16,
@@ -221,9 +226,10 @@ class _FarmLandState extends State<Farmlands> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildSectionTitle(section.title.toString(), () async {
+              _clearStoredData();
               const storage = FlutterSecureStorage();
               await storage.write(
-                  key: 'seeall', value: section.title.toString());
+                  key: 'seeall', value: section.code.toString());
               Navigator.push(
                 context,
                 MaterialPageRoute(
@@ -260,6 +266,7 @@ class _FarmLandState extends State<Farmlands> {
       items: farmlands.map((farmland) {
         return GestureDetector(
           onTap: () async {
+            _clearStoredData();
             await storage.write(
                 key: 'farmid', value: farmland.farmlandId.toString());
 
@@ -361,6 +368,7 @@ class _FarmLandState extends State<Farmlands> {
               children: [
                 GestureDetector(
                   onTap: () async {
+                    _clearStoredData();
                     await storage.write(
                         key: 'farmid', value: farmland.farmlandId.toString());
                     Navigator.push(
@@ -412,7 +420,7 @@ class _FarmLandState extends State<Farmlands> {
                   setState(() {
                     selectedIndex = index; // Update selected index
                   });
-
+                  _clearStoredData();
                   await storage.write(
                       key: 'farmid', value: farmland.farmlandId.toString());
                   Navigator.push(

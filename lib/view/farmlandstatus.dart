@@ -27,8 +27,6 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final dashboardViewModel = Provider.of<TrackfarmlandViewModel>(context);
-    final response = dashboardViewModel.trackFarmlandResponse;
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -38,17 +36,61 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: Text(
-          response!.farmlandCode.toString(),
-          style: TextStyle(
-              color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+        title: Consumer<TrackfarmlandViewModel>(
+          builder: (context, viewModel, child) {
+            if (viewModel.isLoading) {
+              return const Text(
+                "Loading...",
+                style: TextStyle(color: Colors.black, fontSize: 18),
+              );
+            }
+            return Text(
+              viewModel.trackFarmlandResponse?.farmlandCode ?? "Farmland",
+              style: const TextStyle(
+                color: Colors.black,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            );
+          },
         ),
       ),
       body: Consumer<TrackfarmlandViewModel>(
         builder: (context, viewModel, child) {
+          if (viewModel.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (viewModel.errorMessage.isNotEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 50),
+                    const SizedBox(height: 10),
+                    Text(
+                      viewModel.errorMessage,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16, color: Colors.red),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () => viewModel.getTrackFarm(
+                          context, widget.farm.farmlandId.toString()),
+                      child: const Text("Retry"),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+
           TrackFarmlandResponse? farmland = viewModel.trackFarmlandResponse;
           if (farmland == null) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: Text("No data available."));
           }
 
           return SingleChildScrollView(
@@ -56,7 +98,7 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  // Top Farmland Image
+                  // Farmland Image
                   Container(
                     width: double.infinity,
                     height: 180,
@@ -72,7 +114,7 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Status Timeline Container
+                  // Status Timeline
                   Container(
                     padding: const EdgeInsets.all(16),
                     decoration: BoxDecoration(
@@ -100,10 +142,11 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
                                     fontWeight: FontWeight.bold),
                               ),
                               TextSpan(
-                                text: farmland.farmlandStatus ?? "Unknown",
-                                style: const TextStyle(
+                                text: farmland.farmlandStatus ?? 'Unknown',
+                                style: TextStyle(
+                                    color: getStatusColor(
+                                        farmland.farmlandStatus ?? ""),
                                     fontSize: 16,
-                                    color: Colors.orange,
                                     fontWeight: FontWeight.bold),
                               ),
                             ],
@@ -111,7 +154,7 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
                         ),
                         const SizedBox(height: 12),
 
-                        // Dynamic Timeline
+                        // Timeline
                         if (farmland.statusTrack != null &&
                             farmland.statusTrack!.isNotEmpty)
                           Column(
@@ -181,7 +224,7 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
                           ),
                         ),
                         const Spacer(),
-                        if (response?.liveInWebSite ?? false)
+                        if (farmland.liveInWebSite ?? false)
                           const Icon(
                             Icons.check_circle,
                             color: Colors.green,
@@ -252,7 +295,7 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
             ],
           ],
         ),
-        const SizedBox(width: 16), // Space between dot and text
+        const SizedBox(width: 16),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -276,5 +319,28 @@ class _FarmlandStatusScreenState extends State<FarmlandStatusScreen> {
         ),
       ],
     );
+  }
+
+  Color getStatusColor(String status) {
+    switch (status) {
+      case 'Pending':
+        return Colors.orange;
+      case 'Approved':
+        return Colors.green;
+      case 'Completed':
+        return Colors.green;
+      case 'Rejected':
+        return Colors.red;
+      case 'Critical':
+        return Colors.red;
+      case 'Dismissed':
+        return Colors.red;
+      case 'Moderate':
+        return Colors.orange;
+      case 'Low':
+        return Colors.green;
+      default:
+        return Colors.black;
+    }
   }
 }

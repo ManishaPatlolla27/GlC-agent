@@ -34,6 +34,7 @@ class AlertsList {
   String? farmlandCode;
   String? farmlandCreatedOn;
   String? thumbnailImage;
+  String? dismissReason;
 
   AlertsList(
       {this.alertId,
@@ -56,7 +57,8 @@ class AlertsList {
       this.createdOn,
       this.farmlandCode,
       this.farmlandCreatedOn,
-      this.thumbnailImage});
+      this.thumbnailImage,
+      this.dismissReason});
 
   AlertsList.fromJson(Map<String, dynamic> json) {
     alertId = json['alertId'];
@@ -80,6 +82,7 @@ class AlertsList {
     farmlandCode = json['farmlandCode'];
     farmlandCreatedOn = json['farmlandCreatedOn'];
     thumbnailImage = json['thumbnailImage'];
+    dismissReason = json['dismissReason'];
   }
 
   Map<String, dynamic> toJson() {
@@ -105,6 +108,7 @@ class AlertsList {
     data['farmlandCode'] = farmlandCode;
     data['farmlandCreatedOn'] = farmlandCreatedOn;
     data['thumbnailImage'] = thumbnailImage;
+    data['dismissReason'] = dismissReason;
     return data;
   }
 }

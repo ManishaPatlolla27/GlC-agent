@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:nex2u/models/dashboard/dashboard_response.dart';
 import 'package:nex2u/page_routing/app_routes.dart';
 import 'package:nex2u/view/pendingfarmlands.dart';
+import 'package:nex2u/view/profilescreen.dart';
 import 'package:provider/provider.dart';
 
 import '../viewModel/configuration_view_model.dart';
@@ -31,19 +32,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   final dashboardViewModel =
-  //       Provider.of<DashboardViewModel>(context, listen: false);
-  //
-  //   WidgetsBinding.instance.addPostFrameCallback((_) {
-  //     dashboardViewModel.dashboard(context).then((_) {
-  //       if (mounted) setState(() {}); // Updates UI safely after the first frame
-  //     });
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     final dashboardViewModel = Provider.of<DashboardViewModel>(context);
@@ -54,12 +42,20 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: Image.asset(
-            'assets/menu.png', // Ensure this asset exists in pubspec.yaml
-            width: 24,
-            height: 24,
+        leading: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
+            );
+          },
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Image.asset(
+              'assets/menu.png', // Ensure this asset exists in pubspec.yaml
+              width: 24,
+              height: 24,
+            ),
           ),
         ),
         actions: [
@@ -208,7 +204,7 @@ class _HomeScreenState extends State<HomeScreen> {
       "Total Earnings",
       isAmountVisible
           ? "₹ ${response?.totalEarnings?.toString() ?? '0.00'}"
-          : "₹ XXXXXXX.XX",
+          : "₹ XXXX.XX",
       Icons.currency_rupee,
       () => setState(() => isAmountVisible = !isAmountVisible),
       isAmountVisible ? Icons.visibility : Icons.visibility_off,

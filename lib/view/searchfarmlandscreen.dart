@@ -32,6 +32,12 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
   void initState() {
     super.initState();
     loadFarmlands();
+    _clearStoredData();
+  }
+
+  Future<void> _clearStoredData() async {
+    await storage.delete(key: "code");
+    await storage.delete(key: "code1");
   }
 
   Future<void> loadFarmlands() async {
@@ -65,11 +71,6 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
     });
   }
 
-  Future<void> _clearStoredData() async {
-    await storage.delete(key: "code");
-    await storage.delete(key: "code1");
-  }
-
   Future<bool> _onWillPop() async {
     await _clearStoredData();
     return true; // Allows back navigation
@@ -87,34 +88,39 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
 
   @override
   Widget build(BuildContext context) {
+    var farmviewprov = Provider.of<FarmLandViewModel>(context);
+
     return WillPopScope(
-        onWillPop: _onWillPop,
-        child: Scaffold(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: const Text(
+            "Search Farmlands",
+            style: TextStyle(color: Colors.black),
+          ),
           backgroundColor: Colors.white,
-          appBar: AppBar(
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back, color: Colors.black),
-              onPressed: () => Navigator.pop(context),
-            ),
-            title: const Text(
-              "Search Farmlands",
-              style: TextStyle(color: Colors.black),
-            ),
-            backgroundColor: Colors.white,
-            elevation: 0,
-          ),
-          body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                buildSearchCard(),
-                const SizedBox(height: 20),
-                buildSimilarFarmlandsSection(),
-              ],
-            ),
-          ),
-        ));
+          elevation: 0,
+        ),
+        body: farmviewprov.getLoadingStatus // Show loader if loading
+            ? const Center(child: CircularProgressIndicator())
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildSearchCard(),
+                    const SizedBox(height: 20),
+                    buildSimilarFarmlandsSection(),
+                  ],
+                ),
+              ),
+      ),
+    );
   }
 
   Widget buildSearchCard() {
@@ -243,9 +249,12 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
                     priceRangeFrom: minBudget.toString(),
                     priceRangeTo: maxBudget.toString(),
                   );
+
                   var farmviewprov =
                       Provider.of<FarmLandViewModel>(context, listen: false);
+
                   await farmviewprov.getsimilar(context, similarRequest);
+
                   setState(() {
                     farmlandSections =
                         farmviewprov.farmlandresponse2?.farmlandlist ?? [];
@@ -282,7 +291,9 @@ class SearchFarmlandScreenState extends State<SearchFarmlandScreen> {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             TextButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushNamed(context, AppRoutes.similarfarmland);
+              },
               child: const Text("View All"),
             ),
           ],

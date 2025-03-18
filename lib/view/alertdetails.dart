@@ -56,6 +56,10 @@ class AlertViewScreen extends StatelessWidget {
                 ),
               ),
             ),
+            const SizedBox(height: 16),
+            if (farm.alertStatus == "Dismissed")
+              _buildTextField(
+                  "Reason for Dismiss", farm.dismissReason.toString()),
           ],
         ),
       ),

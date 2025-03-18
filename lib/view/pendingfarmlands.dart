@@ -102,9 +102,15 @@ class PendingFarmlandsScreenState extends State<PendingFarmlandsScreen> {
             Expanded(
               child: Consumer<FarmLandViewModel>(
                 builder: (context, farmLandProvider, _) {
+                  if (farmLandProvider.getLoadingStatus) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+
                   final farmlandList = farmLandProvider.farmlandhomeresponse;
 
-                  if (farmlandList!.isEmpty) {
+                  if (farmlandList == null || farmlandList.isEmpty) {
                     return const Center(
                         child: Text("No pending farmlands found"));
                   }
@@ -145,9 +151,7 @@ class PendingFarmlandsScreenState extends State<PendingFarmlandsScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                farmland.areaName! +
-                                    "," +
-                                    farmland.stateName.toString(),
+                                "${farmland.areaName}, ${farmland.stateName}",
                                 style: const TextStyle(
                                     color: Colors.grey, fontSize: 12),
                               ),

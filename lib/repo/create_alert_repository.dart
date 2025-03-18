@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/data/api_urls.dart';
 import 'package:nex2u/data/base_api_client.dart';
+import 'package:nex2u/models/alerts/alert_submit_response.dart';
 import 'package:provider/provider.dart';
 
 import '../models/createAlert/create_alert_request.dart';
@@ -11,24 +12,22 @@ class CreateAlertRepository {
   final BaseApiClient _apiClient = BaseApiClient();
   final storage = const FlutterSecureStorage();
 
-  Future<bool> createAlert(
+  Future<AlertSubmitResponse> createAlert(
       CreateAlertRequest createAlertRequest, BuildContext context) async {
     final configService =
         Provider.of<ConfigurationViewModel>(context, listen: false);
-
     try {
-      final response = await _apiClient.postWithoutJson(
+      final response = await _apiClient.post<AlertSubmitResponse>(
         configService.enpoints?.cREATEFARMLANDALERT.toString() ??
-            ApiConstants.createAlert, // API endpoint
-        createAlertRequest.toJson(), // Convert request to JSON
+            ApiConstants.createAlert, // API endpointr login endpoint
+        createAlertRequest.toJson(), // Convert to JSON
+        fromJson: (json) =>
+            AlertSubmitResponse.fromJson(json), // Parse response
         isJson: true, // Content-Type: application/json
       );
-
-      // If response is not null or an empty string, consider it successful
-      return response != null && response != false;
+      return response;
     } catch (e) {
-      debugPrint('createfarmland failed: $e');
-      return false; // Return false on failure
+      throw Exception('Login failed: $e');
     }
   }
 
