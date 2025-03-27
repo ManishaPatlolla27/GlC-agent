@@ -20,8 +20,9 @@ class Farmlands extends StatefulWidget {
 class _FarmLandState extends State<Farmlands> {
   int _currentIndex = 0;
   Set<int> wishlist = {};
-  FlutterSecureStorage storage = const FlutterSecureStorage(); //
+  FlutterSecureStorage storage = const FlutterSecureStorage();
   List<DiscoveryList> farmlandSections = [];
+  bool isLoading = true; // Track loading state
 
   void toggleWishlist(int index, FarmlandsList2 farmland) async {
     final favProvider = Provider.of<FavViewModel>(context, listen: false);
@@ -52,29 +53,25 @@ class _FarmLandState extends State<Farmlands> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration.zero, () => _fetchFarmlandData());
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
-      await provider.getDiscovery(context);
-      _onWillPop();
-      setState(() {
-        farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
-      });
-    });
+    _fetchFarmlandData(); // Fetch data when the screen initializes
   }
 
-  // @override
-  // void didChangeDependencies() {
-  //   super.didChangeDependencies();
-  //   _fetchFarmlandData();
-  // }
-
-  void _fetchFarmlandData() async {
-    final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
-    await provider.getDiscovery(context);
-    setState(() {
-      farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
-    });
+  Future<void> _fetchFarmlandData() async {
+    try {
+      final provider = Provider.of<DiscoveryViewModel>(context, listen: false);
+      await provider.getDiscovery(context);
+      setState(() {
+        farmlandSections = provider.trackFarmlandResponse?.bottomlist ?? [];
+        isLoading = false; // Stop loading after data is fetched
+      });
+    } catch (e) {
+      setState(() {
+        isLoading = false; // Stop loading if there's an error
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Failed to load data: $e")),
+      );
+    }
   }
 
   Future<void> _clearStoredData() async {
@@ -82,47 +79,36 @@ class _FarmLandState extends State<Farmlands> {
     await storage.delete(key: "code1");
   }
 
-  Future<bool> _onWillPop() async {
-    await _clearStoredData();
-    return true; // Allows back navigation
-  }
-
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<DiscoveryViewModel>(context);
-    return Stack(
-      children: [
-        Scaffold(
-          extendBodyBehindAppBar: true,
-          backgroundColor: Colors.white,
-          body: SafeArea(
-            top: false,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 20),
-                  if (farmlandSections.isNotEmpty)
-                    _buildDynamicContent()
-                  else
-                    const Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(16.0),
-                        // child: Text(
-                        //   "No data found",
-                        //   style: TextStyle(
-                        //       fontSize: 18, fontWeight: FontWeight.bold),
-                        // ),
-                      ),
+    return Scaffold(
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      body: SafeArea(
+        top: false,
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(), // Show loader
+              )
+            : farmlandSections.isEmpty
+                ? const Center(
+                    child: Text(
+                      "No farmlands available",
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        // if (provider.getLoadingStatus) const CircularProgressIndicator()
-      ],
+                  )
+                : SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildHeader(),
+                        const SizedBox(height: 20),
+                        _buildDynamicContent(),
+                      ],
+                    ),
+                  ),
+      ),
     );
   }
 
@@ -145,10 +131,12 @@ class _FarmLandState extends State<Farmlands> {
               SizedBox(height: MediaQuery.of(context).padding.top),
               _buildAppBar(),
               const SizedBox(height: 16),
-              if (farmlandSections.isNotEmpty)
-                _buildCarousel(farmlandSections[0].farmlands ?? []),
+              if (farmlandSections.isNotEmpty &&
+                  farmlandSections[0].farmlands != null)
+                _buildCarousel(farmlandSections[0].farmlands!),
               const SizedBox(height: 8),
-              if (farmlandSections.isNotEmpty)
+              if (farmlandSections.isNotEmpty &&
+                  farmlandSections[0].farmlands != null)
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: List.generate(
@@ -162,7 +150,7 @@ class _FarmLandState extends State<Farmlands> {
                         shape: BoxShape.circle,
                         color: _currentIndex == index
                             ? Colors.white
-                            : Colors.white.withValues(alpha: 0.5),
+                            : Colors.white.withOpacity(0.5),
                       ),
                     ),
                   ),
@@ -227,7 +215,6 @@ class _FarmLandState extends State<Farmlands> {
           children: [
             _buildSectionTitle(section.title.toString(), () async {
               _clearStoredData();
-              const storage = FlutterSecureStorage();
               await storage.write(
                   key: 'seeall', value: section.code.toString());
               Navigator.push(
@@ -238,11 +225,44 @@ class _FarmLandState extends State<Farmlands> {
               );
             }, itemCount),
             if (index == 1)
-              _buildHorizontalList(section.farmlands ?? [])
+              section.farmlands != null && section.farmlands!.isNotEmpty
+                  ? _buildHorizontalList(section.farmlands!)
+                  : const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text(
+                          "No data available",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
             else if (index == 2)
-              _buildVerticalList(section.farmlands ?? [])
+              section.farmlands != null && section.farmlands!.isNotEmpty
+                  ? _buildVerticalList(section.farmlands!)
+                  : const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text(
+                          "No data available",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
             else if (index == 3)
-              _buildHorizontalList(section.farmlands ?? []),
+              section.farmlands != null && section.farmlands!.isNotEmpty
+                  ? _buildVerticalList(section.farmlands!)
+                  : const Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: Center(
+                        child: Text(
+                          "No data available",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )
           ],
         );
       }),
@@ -269,8 +289,6 @@ class _FarmLandState extends State<Farmlands> {
             _clearStoredData();
             await storage.write(
                 key: 'farmid', value: farmland.farmlandId.toString());
-
-            debugPrint("${farmland.farmlandId}");
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -287,9 +305,8 @@ class _FarmLandState extends State<Farmlands> {
                   fit: BoxFit.cover,
                   width: double.infinity,
                 ),
-                const SizedBox(height: 10),
                 const Padding(
-                  padding: EdgeInsets.all(10.0), // Adjust the value as needed
+                  padding: EdgeInsets.all(10.0),
                   child: Text(
                     "The Most Searched\nFarmland",
                     style: TextStyle(
@@ -402,14 +419,9 @@ class _FarmLandState extends State<Farmlands> {
     );
   }
 
-  int? selectedIndex; // Declare selected index
-
   Widget _buildVerticalList(List<FarmlandsList2> farmlands) {
     return Column(
       children: farmlands.map((farmland) {
-        int index = farmlands.indexOf(farmland);
-        bool isSelected = selectedIndex == index;
-
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
           child: Column(
@@ -417,9 +429,6 @@ class _FarmLandState extends State<Farmlands> {
             children: [
               GestureDetector(
                 onTap: () async {
-                  setState(() {
-                    selectedIndex = index; // Update selected index
-                  });
                   _clearStoredData();
                   await storage.write(
                       key: 'farmid', value: farmland.farmlandId.toString());
@@ -435,16 +444,11 @@ class _FarmLandState extends State<Farmlands> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Image.network(
-                          farmland.thumbnailImage.toString(),
-                          fit: BoxFit.cover,
-                          width: double.infinity,
-                          height: 160,
-                        ),
+                      child: Image.network(
+                        farmland.thumbnailImage.toString(),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 160,
                       ),
                     ),
                     Positioned(
@@ -452,9 +456,7 @@ class _FarmLandState extends State<Farmlands> {
                       right: 15,
                       child: GestureDetector(
                         onTap: () {
-                          setState(() {
-                            toggleWishlist(index, farmland);
-                          });
+                          toggleWishlist(farmlands.indexOf(farmland), farmland);
                         },
                         child: CircleAvatar(
                             backgroundColor: Colors.white,

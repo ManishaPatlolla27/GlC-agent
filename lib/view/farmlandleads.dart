@@ -11,12 +11,19 @@ class FarmlandLeadScreen extends StatefulWidget {
 }
 
 class FarmlandLeadScreenState extends State<FarmlandLeadScreen> {
+  bool isLoading = true; // Track loading state
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<FarmLandViewModel>(context, listen: false)
-          .getFarmLeads(context);
+          .getFarmLeads(context)
+          .then((_) {
+        setState(() {
+          isLoading = false; // Hide loader after API call
+        });
+      });
     });
   }
 
@@ -83,10 +90,18 @@ class FarmlandLeadScreenState extends State<FarmlandLeadScreen> {
             Expanded(
               child: Consumer<FarmLandViewModel>(
                 builder: (context, farmleadsprovider, _) {
+                  if (isLoading) {
+                    return const Center(
+                      child: CircularProgressIndicator(), // Show loader
+                    );
+                  }
+
                   final response = farmleadsprovider.bottomresponse;
 
-                  if (response!.isEmpty) {
-                    return const Center(child: Text("No leads available"));
+                  if (response == null || response.isEmpty) {
+                    return const Center(
+                      child: Text("No data found"), // Show no data message
+                    );
                   }
 
                   return ListView.builder(

@@ -147,7 +147,9 @@ class CreateAlertScreenState extends State<CreateAlertScreen> {
                         if (pickedDate != null) {
                           setState(() {
                             _dobController.text =
-                                "${pickedDate.day}/${pickedDate.month}/${pickedDate.year}";
+                                "${pickedDate.day.toString().padLeft(2, '0')}/"
+                                "${pickedDate.month.toString().padLeft(2, '0')}/"
+                                "${pickedDate.year}";
                           });
                         }
                       }, validator: (value) {

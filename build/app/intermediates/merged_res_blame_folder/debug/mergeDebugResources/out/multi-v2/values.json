@@ -59,6 +59,25 @@
                     }
                 },
                 {
+                    "source": "/Users/nani/Desktop/projects/GlC-agent/android/app/src/main/res/values/styles.xml",
+                    "from": {
+                        "startLines": "3,14",
+                        "startColumns": "4,4",
+                        "startOffsets": "173,738",
+                        "endLines": "7,16",
+                        "endColumns": "12,12",
+                        "endOffsets": "396,825"
+                    },
+                    "to": {
+                        "startLines": "184,188",
+                        "startColumns": "4,4",
+                        "startOffsets": "11111,11212",
+                        "endLines": "187,190",
+                        "endColumns": "12,12",
+                        "endOffsets": "11207,11299"
+                    }
+                },
+                {
                     "source": "/Users/nani/.gradle/caches/8.10.2/transforms/1b91be3af319ede480d7185430690ee1/transformed/lifecycle-viewmodel-2.7.0/res/values/values.xml",
                     "from": {
                         "startLines": "2",
@@ -148,7 +167,7 @@
                     }
                 },
                 {
-                    "source": "/Users/nani/Desktop/GlC-agent/android/app/src/main/res/values/colors.xml",
+                    "source": "/Users/nani/Desktop/projects/GlC-agent/android/app/src/main/res/values/colors.xml",
                     "from": {
                         "startLines": "2",
                         "startColumns": "4",
@@ -234,25 +253,6 @@
                         "endLines": "59,60,61,62,63,64,65,66,165,166,167,168,169,170,171,172,174,175,176,177,178,179,180,181,182,357,439",
                         "endColumns": "89,79,89,89,79,80,79,79,104,180,124,106,179,122,115,102,187,104,180,124,174,147,62,61,78,20,20",
                         "endOffsets": "2149,2229,2319,2409,2489,2570,2650,2730,8807,8988,9113,9220,9400,9523,9639,9742,10097,10202,10383,10508,10683,10831,10894,10956,11035,17568,19492"
-                    }
-                },
-                {
-                    "source": "/Users/nani/Desktop/GlC-agent/android/app/src/main/res/values/styles.xml",
-                    "from": {
-                        "startLines": "3,14",
-                        "startColumns": "4,4",
-                        "startOffsets": "173,738",
-                        "endLines": "7,16",
-                        "endColumns": "12,12",
-                        "endOffsets": "396,825"
-                    },
-                    "to": {
-                        "startLines": "184,188",
-                        "startColumns": "4,4",
-                        "startOffsets": "11111,11212",
-                        "endLines": "187,190",
-                        "endColumns": "12,12",
-                        "endOffsets": "11207,11299"
                     }
                 }
             ]

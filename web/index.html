@@ -1,26 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-  <base href="$FLUTTER_BASE_HREF">
-
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
 
-  <!-- iOS meta tags & icons -->
+  <!-- Progressive Web App (PWA) Support -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="glcagent">
@@ -29,10 +15,27 @@
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>glcagent</title>
+  <!-- Content Security Policy (CSP) -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;">
+
+  <!-- Manifest for PWA -->
   <link rel="manifest" href="manifest.json">
+
+  <!-- Preload Key Resources -->
+  <link rel="preload" href="flutter.js" as="script">
+  <link rel="preload" href="flutter_bootstrap.js" as="script">
+
+  <title>glcagent</title>
 </head>
 <body>
-  <script src="flutter_bootstrap.js" async></script>
+
+<!-- Enable Optimized Rendering -->
+<script>
+  window.flutterWebRenderer = "canvaskit"; // Use Canvaskit for performance
+</script>
+
+<!-- Load Flutter Bootstrap Efficiently -->
+<script src="flutter_bootstrap.js" defer></script>
+
 </body>
 </html>

@@ -498,10 +498,6 @@ yaml
 3.4
 file:///Users/nani/.pub-cache/hosted/pub.dev/yaml-3.1.3/
 file:///Users/nani/.pub-cache/hosted/pub.dev/yaml-3.1.3/lib/
-nex2u
-3.5
-file:///Users/nani/Desktop/GlC-agent/
-file:///Users/nani/Desktop/GlC-agent/lib/
 sky_engine
 3.7
 file:///Users/nani/Desktop/flutter/bin/cache/pkg/sky_engine/
@@ -518,4 +514,8 @@ flutter_web_plugins
 3.7
 file:///Users/nani/Desktop/flutter/packages/flutter_web_plugins/
 file:///Users/nani/Desktop/flutter/packages/flutter_web_plugins/lib/
+nex2u
+3.5
+file:///Users/nani/Desktop/projects/GlC-agent/
+file:///Users/nani/Desktop/projects/GlC-agent/lib/
 2

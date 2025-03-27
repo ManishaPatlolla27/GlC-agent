@@ -782,10 +782,10 @@
       "languageVersion": "3.5"
     }
   ],
-  "generated": "2025-03-10T12:18:10.316990Z",
+  "generated": "2025-03-18T09:33:48.274572Z",
   "generator": "pub",
   "generatorVersion": "3.7.0",
   "flutterRoot": "file:///Users/nani/Desktop/flutter",
-  "flutterVersion": "3.29.0",
+  "flutterVersion": "3.29.1",
   "pubCache": "file:///Users/nani/.pub-cache"
 }

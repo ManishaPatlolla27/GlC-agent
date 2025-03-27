@@ -1,8 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:nex2u/models/favourite/favourite_response.dart';
 import 'package:nex2u/viewModel/fav_view_model.dart';
 import 'package:provider/provider.dart';
+
+import 'farmlanddetails.dart';
 
 class MyShortlistsScreen extends StatefulWidget {
   const MyShortlistsScreen({super.key});
@@ -13,6 +16,8 @@ class MyShortlistsScreen extends StatefulWidget {
 
 class MyShortlistsScreenState extends State<MyShortlistsScreen> {
   List<FavList> farmlands = [];
+  bool isLoading = true; // Track loading state
+  FlutterSecureStorage storage = const FlutterSecureStorage();
 
   void toggleWishlist(int index) {
     showCupertinoDialog(
@@ -52,13 +57,16 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final provider = Provider.of<FavViewModel>(context, listen: false);
-      await provider.getfav(context);
+    fetchData(); // Fetch data when the screen initializes
+  }
 
-      setState(() {
-        farmlands = provider.favResponse?.favlist ?? [];
-      });
+  Future<void> fetchData() async {
+    final provider = Provider.of<FavViewModel>(context, listen: false);
+    await provider.getfav(context);
+
+    setState(() {
+      farmlands = provider.favResponse?.favlist ?? [];
+      isLoading = false; // Stop loading after data is fetched
     });
   }
 
@@ -85,72 +93,96 @@ class MyShortlistsScreenState extends State<MyShortlistsScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: farmlands.isEmpty
-            ? const Center(child: Text("No Shortlist available"))
-            : GridView.builder(
-                itemCount: farmlands.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                  childAspectRatio: 0.7,
-                ),
-                itemBuilder: (context, index) {
-                  final item = farmlands[index];
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Stack(
+        child: isLoading
+            ? const Center(
+                child: CircularProgressIndicator(), // Show loader
+              )
+            : farmlands.isEmpty
+                ? const Center(
+                    child: Text("No Shortlist available"), // No data message
+                  )
+                : GridView.builder(
+                    itemCount: farmlands.length,
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10,
+                      childAspectRatio: 0.7,
+                    ),
+                    itemBuilder: (context, index) {
+                      final item = farmlands[index];
+                      return GestureDetector(
+                        onTap: () async {
+                          await storage.write(
+                              key: 'farmid', value: item.farmlandId.toString());
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  const PendingFarmlanddetailsScreen(),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(10),
-                              child: Image.network(
-                                item.thumbnailImage.toString(),
-                                height: 220,
-                                width: double.infinity,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.image_not_supported),
+                            Expanded(
+                              child: Stack(
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(10),
+                                    child: Image.network(
+                                      item.thumbnailImage.toString(),
+                                      height: 220,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error,
+                                              stackTrace) =>
+                                          const Icon(Icons.image_not_supported),
+                                    ),
+                                  ),
+                                  Positioned(
+                                    top: 10,
+                                    right: 10,
+                                    child: GestureDetector(
+                                      onTap: () => toggleWishlist(index),
+                                      child: const CircleAvatar(
+                                        backgroundColor: Colors.white,
+                                        radius: 14,
+                                        child: Icon(
+                                          Icons.favorite,
+                                          color: Color(0xFF8280FF),
+                                          size: 16,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                            Positioned(
-                              top: 10,
-                              right: 10,
-                              child: GestureDetector(
-                                onTap: () => toggleWishlist(index),
-                                child: const CircleAvatar(
-                                  backgroundColor: Colors.white,
-                                  radius: 14,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: Color(0xFF8280FF),
-                                    size: 16,
-                                  ),
-                                ),
-                              ),
+                            const SizedBox(height: 8),
+                            Text(item.farmlandCode ?? "",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            Text(item.regionName ?? "",
+                                style: const TextStyle(
+                                    color: Colors.black54, fontSize: 12)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("₹ ${item.landCost ?? ''}",
+                                    style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold)),
+                              ],
                             ),
                           ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(item.farmlandCode ?? "",
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(item.regionName ?? "",
-                          style: const TextStyle(
-                              color: Colors.black54, fontSize: 12)),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text("₹ ${item.landCost ?? ''}",
-                              style: const TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.bold)),
-                        ],
-                      ),
-                    ],
-                  );
-                },
-              ),
+                      );
+                    },
+                  ),
       ),
     );
   }
